@@ -1,4 +1,5 @@
 #include "asm_types.h"
+#include <netinet/ip.h>
 
 struct iphdr prepare_empty_ipv4();
 
@@ -11,6 +12,6 @@ char* packet_assemble(struct iphdr ip_head, void *data, __u32 data_size);
 
 int make_socket(int PROTOCOL);
 void send_packet(int sock ,struct iphdr ip_head, char *packet, int port);
-unsigned short in_cksum(unsigned short *ptr, int nbytes);
+__u16 in_cksum(unsigned short *ptr, int nbytes);
 
 void next_ip_addr(char *current, __u8 offset);

@@ -29,4 +29,4 @@ Copyright © 2020 [Ben Yoo](http://.github.com/BenYoo-ben), [Hansu Kim](https://
 
 ## Run
 
-* ./attack.out
+* sudo ./attack.out

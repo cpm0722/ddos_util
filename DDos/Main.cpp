@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "icmp_flood.h"
+#include "syn_flood.h"
 
 #define __SIZE_OF_INPUT__ 100
 #define __MAX_TOKEN_NUM__ 10
@@ -11,16 +12,18 @@
 char input[__SIZE_OF_INPUT__];
 char *tokens[__MAX_TOKEN_NUM__];
 
+
+
 void get_input() {
 	printf("$ ");
 	fgets(input, __SIZE_OF_INPUT__, stdin);
 
 }
 void make_tokens() {
-	int i=0;
-	for(i=0;i<__MAX_TOKEN_NUM__;i++)
-		tokens[i]=0;
-	i=0;
+	int i = 0;
+	for (i = 0; i < __MAX_TOKEN_NUM__; i++)
+		tokens[i] = 0;
+	i = 0;
 
 	tokens[i] = strtok(input, " ");
 	while (tokens[i] != NULL) {
@@ -28,6 +31,21 @@ void make_tokens() {
 		tokens[i] = strtok(NULL, " ");
 	}
 
+}
+int choose_running_type() {
+	printf("== Choose Running Type\n");
+	printf("== 1. Number Based\n"
+			"== 2. Over Time\n");
+	printf("== ");
+	get_input();
+	int t = atoi(input);
+	while (t <= 0 || t > 2) {
+		printf("Input should be over 0 AND <=2\n");
+		get_input();
+		t = atoi(input);
+	}
+
+	return t;
 }
 
 int type_choose_menu() {
@@ -56,6 +74,7 @@ int type_choose_menu() {
 }
 
 int main(void) {
+int mode;
 
 	while (1) {
 		switch (type_choose_menu()) {
@@ -70,14 +89,20 @@ int main(void) {
 		case 5:
 			break; //get flooding
 		case 6:
-			break; //SYN flooding
+			mode = choose_running_type();
+			syn_flood_print_usage(mode);
+			get_input();
+			make_tokens();
+			syn_flood_run(tokens,mode);
+			break;
 		case 7:
 			break; //UDP flooding
 		case 8:
-			icmp_flood_print_usage();
+			mode = choose_running_type();
+			icmp_flood_print_usage(mode);
 			get_input();
 			make_tokens();
-			icmp_flood_run(tokens);
+			icmp_flood_run(tokens,mode);
 			break; //ICMP flooding
 		case 9:
 			break; //Hash Dos

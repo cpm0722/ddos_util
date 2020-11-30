@@ -34,7 +34,7 @@ struct tcphdr prepare_empty_tcp() {
 	tcp_head.rst = 0;
 	tcp_head.res2 = 0;
 
-	tcp_head.window = htons(256);
+	tcp_head.window = htons (5840);
 	tcp_head.check =0;
 
 	return tcp_head;

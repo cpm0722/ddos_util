@@ -49,7 +49,8 @@ struct iphdr ipv4_set_daddr(struct iphdr ip_head, __u32 daddr) {
 struct iphdr ipv4_add_size(struct iphdr ip_head, __u32 data_size) {
 	ip_head.tot_len += data_size;
 
-	ip_head.check = in_cksum((unsigned short*) &ip_head, sizeof(struct iphdr)+ data_size);
+	ip_head.check = in_cksum((unsigned short*) &ip_head,
+			sizeof(struct iphdr) + data_size);
 	return ip_head;
 }
 
@@ -95,7 +96,7 @@ void send_packet(int sock, struct iphdr ip_head, char *packet, int port) {
 		perror("sendto() error");
 		exit(-1);
 	}
-		//printf(" sendto() is OK\n");
+	//printf(" sendto() is OK\n");
 }
 
 __u16 in_cksum(unsigned short *ptr, int nbytes) {

@@ -11,7 +11,7 @@ struct iphdr ipv4_add_size(struct iphdr ip_head, __u32 data_size);
 char* packet_assemble(struct iphdr ip_head, void *data, __u32 data_size);
 
 int make_socket(int PROTOCOL);
-void send_packet(int sock ,struct iphdr ip_head, char *packet, int port);
+void send_packet(int sock, struct iphdr ip_head, char *packet, int port);
 __u16 in_cksum(unsigned short *ptr, int nbytes);
 
 void next_ip_addr(char *current, __u8 offset);

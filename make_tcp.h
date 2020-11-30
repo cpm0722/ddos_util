@@ -1,6 +1,6 @@
-#include "asm_types.h"
-#include <netinet/tcp.h>
-#include <netinet/ip.h>
+#ifndef MAKE_TCP
+
+#define MAKE_TCP
 
 struct pseudo_header
 {
@@ -22,3 +22,5 @@ struct tcphdr tcp_set_seq(struct tcphdr tcph, __u32 seq);
 struct tcphdr tcp_set_ack_seq(struct tcphdr tcph, __u32 ack_seq);
 struct tcphdr tcp_set_syn_flag(struct tcphdr tcph);
 struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph, int datasize);
+
+#endif

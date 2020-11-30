@@ -1,11 +1,4 @@
-#include <netinet/tcp.h>
-#include <math.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "header.h"
 
 #include "make_ipv4.h"
 #include "make_tcp.h"

@@ -1,17 +1,7 @@
-#include <stdlib.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <errno.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
-#include <wait.h>
-#include <time.h>
-#include <pthread.h>
+#include "header.h"
 
-#include "make_tcp.h"
 #include "make_ipv4.h"
+#include "make_tcp.h"
 
 int tcpsyn_total;
 int tcpsyn_produced;

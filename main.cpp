@@ -1,10 +1,8 @@
-#include <stdio.h>
-#include <cstdio>
-#include <stdlib.h>
-#include <string.h>
+#include "header.h"
 
 #include "icmp_flood.h"
 #include "syn_flood.h"
+#include "udp_flood.h"
 
 #define __SIZE_OF_INPUT__ 100
 #define __MAX_TOKEN_NUM__ 10
@@ -96,6 +94,10 @@ int main(void) {
 			syn_flood_run(tokens, mode);
 			break;
 		case 7:
+			udp_flood_print_usage();
+			get_input();
+			make_tokens();
+			udp_flood_run(tokens);
 			break; //UDP flooding
 		case 8:
 			mode = choose_running_type();

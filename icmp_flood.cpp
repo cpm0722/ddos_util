@@ -1,15 +1,4 @@
-#include <stdlib.h>
-#include <string.h>
-#include <netinet/ip.h>
-#include <netinet/ip_icmp.h>
-#include <arpa/inet.h>
-#include <errno.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <signal.h>
-#include <wait.h>
-#include <pthread.h>
+#include "header.h"
 
 #include "icmp_flood.h"
 #include "make_ipv4.h"
@@ -185,10 +174,8 @@ void icmp_flood_run(char *argv[], int mode) {
 	icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	icmp_produced = 0;
-	if (mode == 1) {
+	if (mode == 1)
 		icmp_total = atoi(argv[3]);
-		icmp_received = 0;
-	}
 
 	if (mode == 2) {
 		icmp_total = 0;

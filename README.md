@@ -11,18 +11,17 @@
 
 ## Author
 
-👤 **Hansu Kim**
-
-* Github: [@cpm0722](https://github.com/cpm0722)
-
 👤 **Ben Yoo**
 
 * Github: [@BenYoo-ben](https://github.com/BenYoo-ben)
 
+👤 **Hansu Kim**
+
+* Github: [@cpm0722](https://github.com/cpm0722)
+
 ## 📝 License
 
-Copyright © 2019 [Hansu Kim](https://github.com/cpm0722).<br />
-This project is [Ben Yoo](http://.github.com/BenYoo-ben) licensed.
+Copyright © 2020 [Ben Yoo](http://.github.com/BenYoo-ben), [Hansu Kim](https://github.com/cpm0722).<br />
 
 ## Build
 

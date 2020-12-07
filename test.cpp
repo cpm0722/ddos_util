@@ -2,10 +2,10 @@
 #include "make_ipv4.h"
 #include "make_tcp.h"
 int main() {
-	char tcpsyn_src_ip[] = "10.0.2.15";
-	char tcpsyn_dest_ip[] = "192.168.1.101";
+	char tcpsyn_src_ip[] = "192.168.50.41";
+	char tcpsyn_dest_ip[] = "192.168.50.144";
 	int tcpsyn_src_port = 12349;
-	int tcpsyn_dest_port = 54323;
+	int tcpsyn_dest_port = 8080;
 
 	int sock = make_socket(IPPROTO_TCP);
 	char msg[]= "GET / HTTP/1.1\r\n"
@@ -16,7 +16,7 @@ int main() {
 	                "Accept-Language: en-us\r\n"
 	                "Accept-Encoding: gzip, deflate\r\n"
 	                "Connection: keep-alive\r\n\r\n";
-	printf("MSG size : %d\n",strlen(msg));
+	printf("MSG size : %ld\n",strlen(msg));
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
 	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
@@ -45,7 +45,7 @@ int main() {
 	char *packet = packet_assemble(ipv4_h, tcp_with_data, sizeof(tcp_h)+strlen(msg));
 	//send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
 
-	printf("Sent Size: %d\n",sizeof(ipv4_h)+sizeof(tcp_h)+strlen(msg));
+	printf("Sent Size: %ld\n",sizeof(ipv4_h)+sizeof(tcp_h)+strlen(msg));
 
 	free(tcp_with_data);
 	free(packet);
@@ -55,7 +55,7 @@ int SIZE=100;
 	str[SIZE-1] = '\0';
 	printf("%s\n",str);
 
-	int socket = tcp_make_socket(inet_addr(tcpsyn_src_ip),inet_addr(tcpsyn_dest_ip),12345,55555);
+	int socket = tcp_make_socket(inet_addr(tcpsyn_src_ip),inet_addr(tcpsyn_dest_ip), tcpsyn_src_port, tcpsyn_dest_port);
 
 	getchar();
 }

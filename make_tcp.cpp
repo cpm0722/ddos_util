@@ -128,6 +128,7 @@ int tcp_make_socket(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port)
 
 	send(sock,buffer,1024,0);
 	getchar();
+	return 0;
 }
 
 

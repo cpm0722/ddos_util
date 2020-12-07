@@ -23,6 +23,7 @@ pthread_cond_t udp_cond;
 void udp_flood_print_usage(void)
 {
 	printf("UDP flood Usage : [Src-IP] [Dest-IP] [Src-Port] [Dest-Port] [# thread] [# requests] \n");
+	return;
 }
 
 void* generate_udp_request(void *data)

@@ -11,8 +11,8 @@ TARGET = attack
 
 .SUFFIXES : .cpp.o
 
-$(TARGET): main.o make_ipv4.o make_tcp.o icmp_flood.o syn_flood.o udp_flood.o
-	$(CC) main.o make_ipv4.o make_tcp.o icmp_flood.o syn_flood.o udp_flood.o -o attack.out -lpthread
+$(TARGET): main.o make_ipv4.o make_tcp.o icmp_flood.o syn_flood.o udp_flood.o get_flood.o
+	$(CC) main.o make_ipv4.o make_tcp.o icmp_flood.o syn_flood.o udp_flood.o get_flood.o -o attack -lpthread
 
 main.o: main.cpp $(HEADER)
 	$(CC) $(CCOPTS) main.cpp $(LINKOPTS)
@@ -31,6 +31,9 @@ syn_flood.o: syn_flood.cpp $(HEADER) make_ipv4.h make_tcp.h
 
 udp_flood.o: udp_flood.cpp $(HEADER) udp_flood.h
 	$(CC) $(CCOPTS) udp_flood.cpp make_ipv4.cpp $(LINKOPTS)
+
+get_flood.o: get_flood.cpp $(HEADER) get_flood.h
+	$(CC) $(CCOPTS) get_flood.cpp make_ipv4.cpp $(LINKOPTS)
 
 $(ERASE):
 	rm *.o

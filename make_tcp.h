@@ -2,7 +2,7 @@
 
 #define MAKE_TCP
 
-struct pseudo_header
+struct tcp_pseudo_header
 {
 __u32 source_address;
 __u32 dest_address;
@@ -21,6 +21,10 @@ struct tcphdr tcp_set_seq(struct tcphdr tcph, __u32 seq);
 
 struct tcphdr tcp_set_ack_seq(struct tcphdr tcph, __u32 ack_seq);
 struct tcphdr tcp_set_syn_flag(struct tcphdr tcph);
-struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph, int datasize);
+char *tcp_add_data(struct tcphdr tcph, void * data, int datasize);
 
+struct tcp_pseudo_header tcp_prepare_pseudo(struct iphdr ipv4h,struct tcphdr tcph, int add_datasize);
+struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph, void *data,int datasize);
+
+int tcp_make_socket(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port);
 #endif

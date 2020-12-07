@@ -5,8 +5,8 @@
 #include "udp_flood.h"
 #include "icmp_flood.h"
 
-#define __SIZE_OF_INPUT__ 100
-#define __MAX_TOKEN_NUM__ 10
+#define __SIZE_OF_INPUT__ 200
+#define __MAX_TOKEN_NUM__ 20
 
 char input[__SIZE_OF_INPUT__];
 char *tokens[__MAX_TOKEN_NUM__];
@@ -19,7 +19,7 @@ void get_input() {
 void make_tokens() {
 	int i = 0;
 	for (i = 0; i < __MAX_TOKEN_NUM__; i++)
-		tokens[i] = 0;
+		tokens[i] = NULL;
 	i = 0;
 
 	tokens[i] = strtok(input, " ");
@@ -98,23 +98,23 @@ int main(void) {
 			make_tokens();
 			syn_flood_run(tokens, mode);
 			break;
-		case 7:		//UDP flooding
+		case 7:
 			udp_flood_print_usage();
 			get_input();
 			make_tokens();
 			udp_flood_run(tokens);
-			break; 
-		case 8:		//ICMP flooding
+			break; //UDP flooding
+		case 8:
 			mode = choose_running_type();
 			icmp_flood_print_usage(mode);
 			get_input();
 			make_tokens();
 			icmp_flood_run(tokens, mode);
-			break; 
-		case 9:		//Hash Dos
-			break; 
-		case 10:	//Ref Ref
-			break; 
+			break; //ICMP flooding
+		case 9:
+			break; //Hash Dos
+		case 10:
+			break; //Ref Ref
 
 		}
 

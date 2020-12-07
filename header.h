@@ -20,4 +20,6 @@
 
 #include "asm_types.h"
 
+#define __UINT_MAXIMUM__ (1L << (31)) - 1
+
 #endif

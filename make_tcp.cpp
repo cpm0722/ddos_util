@@ -55,16 +55,15 @@ struct tcphdr tcp_set_syn_flag(struct tcphdr tcph) {
 	return tcph;
 }
 
-char *tcp_add_data(struct tcphdr tcph, void* data, int datasize)
-{
-	char *return_data = (char*)malloc(sizeof(struct tcphdr) + datasize);
-	memcpy(return_data,&tcph,sizeof(tcph));
-	memcpy(return_data+sizeof(tcph),data,datasize);
+char* tcp_add_data(struct tcphdr tcph, void *data, int datasize) {
+	char *return_data = (char*) malloc(sizeof(struct tcphdr) + datasize);
+	memcpy(return_data, &tcph, sizeof(tcph));
+	memcpy(return_data + sizeof(tcph), data, datasize);
 	return return_data;
 }
 
-struct tcp_pseudo_header tcp_prepare_pseudo(struct iphdr ipv4h,struct tcphdr tcph, int add_datasize)
-{
+struct tcp_pseudo_header tcp_prepare_pseudo(struct iphdr ipv4h,
+		struct tcphdr tcph, int add_datasize) {
 	struct tcp_pseudo_header psh;
 	memset(&psh, 0, sizeof(struct tcp_pseudo_header));
 	psh.source_address = ipv4h.saddr;
@@ -75,7 +74,7 @@ struct tcp_pseudo_header tcp_prepare_pseudo(struct iphdr ipv4h,struct tcphdr tcp
 	return psh;
 }
 
-struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph,
+struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph, void *data,
 		int datasize) {
 	struct tcp_pseudo_header psh;
 	psh = tcp_prepare_pseudo(ipv4h,tcph,datasize);
@@ -83,47 +82,52 @@ struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph,
 	char *assembled = (char*) malloc(psize);
 	memcpy(assembled, (char*) &psh, sizeof(struct tcp_pseudo_header));
 	memcpy(assembled + sizeof(struct tcp_pseudo_header), &tcph,
-			sizeof(struct tcphdr)+datasize);
+			sizeof(struct tcphdr));
+	if(data!=NULL && datasize!=0)
+		memcpy(assembled+sizeof(struct tcp_pseudo_header)+sizeof(struct tcphdr),data,datasize);
 
-	//tcph.check = in_cksum((__u16*) psh, psize);
+	tcph.check = in_cksum((__u16*) assembled, psize);
 
 	return tcph;
 }
 
-void compute_tcp_checksum(struct iphdr *pIph, unsigned short *ipPayload) {
-    register unsigned long sum = 0;
-    unsigned short tcpLen = ntohs(pIph->tot_len) - (pIph->ihl<<2);
-    struct tcphdr *tcphdrp = (struct tcphdr*)(ipPayload);
-    //add the pseudo header
-    //the source ip
-    sum += (pIph->saddr>>16)&0xFFFF;
-    sum += (pIph->saddr)&0xFFFF;
-    //the dest ip
-    sum += (pIph->daddr>>16)&0xFFFF;
-    sum += (pIph->daddr)&0xFFFF;
-    //protocol and reserved: 6
-    sum += htons(IPPROTO_TCP);
-    //the length
-    sum += htons(tcpLen);
+//3way handshake completed socket
+int tcp_make_socket(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port)
+{
+	int sock;
+	struct sockaddr_in local_addr, remote_addr;
+	int recv_length;
 
-    //add the IP payload
-    //initialize checksum to 0
-    tcphdrp->check = 0;
-    while (tcpLen > 1) {
-        sum += * ipPayload++;
-        tcpLen -= 2;
-    }
-    //if any bytes left, pad the bytes and add
-    if(tcpLen > 0) {
-        //printf("+++++++++++padding, %dn", tcpLen);
-        sum += ((*ipPayload)&htons(0xFF00));
-    }
-      //Fold 32-bit sum to 16 bits: add carrier to result
-      while (sum>>16) {
-          sum = (sum & 0xffff) + (sum >> 16);
-      }
-      sum = ~sum;
-    //set computation result
-    tcphdrp->check = (unsigned short)sum;
+	char buffer[1024];
+
+	sock = socket(PF_INET,SOCK_STREAM,0);
+	if(sock== -1){
+		perror("sock create error\n");
+		exit(1);
+	}
+
+
+	local_addr.sin_family = AF_INET;
+	local_addr.sin_port = htons(src_port);
+	local_addr.sin_addr.s_addr = src_ip;
+
+	if(bind(sock,(struct sockaddr *)&local_addr,sizeof(struct sockaddr))==-1)
+	{
+		perror("bind failed\n");
+		exit(1);
+	}
+
+	remote_addr.sin_family = AF_INET;
+	remote_addr.sin_addr.s_addr = dest_ip;
+	remote_addr.sin_port = htons(dest_port);
+	if(connect(sock,(struct sockaddr *)&remote_addr ,sizeof(remote_addr))==-1)
+	{
+		perror("connect failed\n");
+		exit(1);
+	}
+
+	send(sock,buffer,1024,0);
+	getchar();
 }
+
 

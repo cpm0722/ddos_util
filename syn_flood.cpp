@@ -54,7 +54,7 @@ void* generate_syn_request1(void *data) {
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
 
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, 0);
+		tcp_h = tcp_get_checksum(ipv4_h, tcp_h,NULL, 0);
 
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
@@ -102,7 +102,7 @@ void* generate_syn_request2(void *data) {
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
 
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, 0);
+		tcp_h = tcp_get_checksum(ipv4_h, tcp_h,NULL, 0);
 
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));

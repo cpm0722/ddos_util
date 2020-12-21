@@ -91,6 +91,7 @@ void* generate_conn_flooding1(void *data) {
 	close(sock);
 	return 0;
 	*/
+	return NULL;
 }
 
 void* generate_conn_flooding2(void *data) {

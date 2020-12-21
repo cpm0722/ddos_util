@@ -77,21 +77,21 @@ int main(void) {
 		int type = type_choose_menu();
 
 		switch (type) {
-		case 1:
-			break; //header buffering
-		case 2:
-			break; //body buffering
-		case 3:
-			break; //response buffering
-		case 4:
+		case 1:		//header buffering
+			break; 
+		case 2:		//body buffering
+			break; 
+		case 3:		//response buffering
+			break; 
+		case 4:		//connection flooding
 			mode = choose_running_type();
 			conn_flood_print_usage(mode);
 			get_input();
 			make_tokens();
 			conn_flood_run(tokens,mode);
 			break;
-		case 5:
-			break; //get flooding
+		case 5:		//get flooding
+			break; 
 		case 6:
 			mode = choose_running_type();
 			syn_flood_print_usage(mode);
@@ -99,23 +99,23 @@ int main(void) {
 			make_tokens();
 			syn_flood_run(tokens, mode);
 			break;
-		case 7:
+		case 7:		//UDP flooding
 			udp_flood_print_usage();
 			get_input();
 			make_tokens();
 			udp_flood_run(tokens);
-			break; //UDP flooding
-		case 8:
+			break; 
+		case 8:		//ICMP flooding
 			mode = choose_running_type();
 			icmp_flood_print_usage(mode);
 			get_input();
 			make_tokens();
 			icmp_flood_run(tokens, mode);
-			break; //ICMP flooding
-		case 9:
-			break; //Hash Dos
-		case 10:
-			break; //Ref Ref
+			break; 
+		case 9:		//Hash Dos
+			break;
+		case 10:	//Ref Ref
+			break;
 
 		}
 

@@ -209,7 +209,7 @@ void icmp_flood_run(char *argv[], int mode) {
 		icmp_dest_port = atoi(argv[5]);
 	}
 
-	printf("Maximum = %d\n",__UINT_MAXIMUM__);
+	printf("Maximum = %ld\n",__UINT_MAXIMUM__);
 
 	int num_threads = atoi(argv[2]);
 

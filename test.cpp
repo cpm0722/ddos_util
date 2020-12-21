@@ -5,8 +5,8 @@
 int main() {
 	char tcpsyn_src_ip[] = "192.168.56.3";
 	char tcpsyn_dest_ip[] = "192.168.56.1";
-	int tcpsyn_src_port = 12349;
-	int tcpsyn_dest_port = 55555;
+	int tcpsyn_src_port = 11111;
+	int tcpsyn_dest_port = 11111;
 /*
 	int sock = make_socket(IPPROTO_TCP);
 	char msg[]= "GET / HTTP/1.1\r\n"
@@ -60,8 +60,10 @@ int SIZE=100;
 
 	int socket = tcp_make_socket(inet_addr(tcpsyn_src_ip),inet_addr(tcpsyn_dest_ip),12345,55555);
 */
+	while(1)
+	{
 	int sock = make_socket(IPPROTO_TCP);
-	struct iphdr ipv4_h;
+		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
@@ -71,6 +73,7 @@ int SIZE=100;
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
 
 		struct tcphdr tcp_h;
+
 		tcp_h = prepare_empty_tcp();
 		tcp_h = tcp_set_source(tcp_h, tcpsyn_src_port);
 		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
@@ -97,32 +100,96 @@ int SIZE=100;
 
 		struct recv recvd;
 		recvd = get_response(sock);
-		struct iphdr *ip_p = (struct iphdr*)malloc(sizeof(struct iphdr));
-		struct tcphdr *tcp_p = (struct tcphdr*)malloc(sizeof(struct tcphdr));
 
-		unsigned char *data = (unsigned char*)malloc(sizeof(struct tcphdr));
-		packet_dismantle(recvd,ip_p,data);
+		unsigned char data[__MAX_RECV_MSG_LENGTH__];
+		memset(data,0,__MAX_RECV_MSG_LENGTH__);
+		packet_dismantle(recvd,NULL,data);
 		printf("size of tcphdr : %d\n",sizeof(struct tcphdr));
 		printf("size of iphdr : %d\n",sizeof(struct iphdr));
 
 		__u32 seq_num;
+		__u32 ack_seq_num;
+
 		memcpy(&seq_num,data+4,4);
-		printf("written : ");
-		int i;
-		for(i=4;i<4+4;i++)
-		{
-			printf("%x,",data[i]);
-		}
-		printf("\n");
+		memcpy(&ack_seq_num,data+8,4);
+		seq_num = ntohl(seq_num);
+		ack_seq_num = ntohl(ack_seq_num);
+
+		struct iphdr ipv4_h2;
+		ipv4_h2 = prepare_empty_ipv4();
+		ipv4_h2 = ipv4_set_protocol(ipv4_h2, IPPROTO_TCP);
+		ipv4_h2 = ipv4_set_saddr(ipv4_h2, inet_addr(tcpsyn_src_ip));
+
+		/*** If you want to modify ip address*/
+		//next_ip_addr(tcpsyn_src_ip, 1);
+		ipv4_h2 = ipv4_set_daddr(ipv4_h2, inet_addr(tcpsyn_dest_ip));
+
+		struct tcphdr tcp_h2;
+		tcp_h2 = prepare_empty_tcp();
+		tcp_h2 = tcp_set_source(tcp_h2, tcpsyn_src_port);
+		tcp_h2 = tcp_set_dest(tcp_h2, tcpsyn_dest_port);
+		//tcp_h2 = tcp_set_ack_seq(tcp_h2, seq_num);
+		tcp_h2 = tcp_set_seq(tcp_h2, ack_seq_num);
+		tcp_h2 = tcp_set_ack_seq(tcp_h2,seq_num+1);
+		/***For SYN TCP request, ACK seq should not be provided.*/
+
+		tcp_h2 = tcp_set_ack_flag(tcp_h2);
+
+		tcp_h2 = tcp_get_checksum(ipv4_h2, tcp_h2,NULL, 0);
+
+		ipv4_h2= ipv4_add_size(ipv4_h2, sizeof(tcp_h2));
 
 
-		unsigned int seq = tcp_get_seq(*tcp_p);
-		unsigned int src = tcp_get_source(*tcp_p);
-		unsigned int dest = tcp_get_dest(*tcp_p);
+		ipv4_h = prepare_empty_ipv4();
+		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
 
-		printf("seq : %u\n src : %u\n dest : %u\n",seq_num,src,dest);
+		/*** If you want to modify ip address*/
+		//next_ip_addr(tcpsyn_src_ip, 1);
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
+
+		tcp_h = prepare_empty_tcp();
+		tcp_h = tcp_set_source(tcp_h, tcpsyn_src_port);
+		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
+		tcp_h = tcp_set_seq(tcp_h, 1);
+
+		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
+		/***For SYN TCP request, ACK seq should not be provided.*/
+
+		tcp_h = tcp_set_syn_flag(tcp_h);
+
+		tcp_h = tcp_get_checksum(ipv4_h, tcp_h,NULL, 0);
+
+		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
 
 
 
+		char *packet2 = packet_assemble(ipv4_h2, &tcp_h2, sizeof(tcp_h2));
 
+		printf("%d\n", ((struct iphdr*) packet2)->tot_len);
+
+		send_packet(sock, ipv4_h2, packet2, tcpsyn_dest_port);
+
+		free(packet2);
+/*
+		ipv4_h2.tot_len -= sizeof(tcp_h2);
+		tcp_h2.ack=0;
+		tcp_h2.fin = 1;
+		tcp_h2 = tcp_get_checksum(ipv4_h2,tcp_h2,NULL,0);
+
+		char *packet3 = packet_assemble(ipv4_h2,&tcp_h2,sizeof(tcp_h2));
+
+		send_packet(sock,ipv4_h2,packet3,tcpsyn_dest_port);
+		free(packet3);*/
+
+		close(sock);
+		tcpsyn_src_port++;
+		tcpsyn_dest_port++;
+
+	exit(1);
+		//free(recvd.msg);
+
+		//next_ip_addr(tcpsyn_src_ip ,1);
+
+	}
 }

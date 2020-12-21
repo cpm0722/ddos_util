@@ -28,19 +28,8 @@ struct recv get_response(int socket_fd) {
 
 	bytes = recvfrom(socket_fd,buffer, 1500, MSG_WAITALL,(struct sockaddr *)&cliaddr, &len);
 
-
-	printf("recv : %d,\n",bytes);
-	int i;
-	for(i=0;i<bytes;i++)
-	{
-		printf("%x,",buffer[i]);
-
-	}
-	printf("\n");
-
 	recvd.msg_length = bytes;
 
-	recvd.msg = (unsigned char*)malloc(sizeof(char)*(bytes+1));
 	memset(recvd.msg,0,bytes);
 	memcpy(recvd.msg+0,buffer+0,bytes);
 
@@ -49,14 +38,13 @@ struct recv get_response(int socket_fd) {
 }
 void packet_dismantle(struct recv recvd,struct iphdr *ip, void *data)
 {
-	memcpy(ip,recvd.msg,20);
+	//memcpy(ip,recvd.msg,20);
 	memcpy(data,recvd.msg+20,recvd.msg_length - 20);
 
 }
 
 
 void free_recv(struct recv recvd) {
-	free(recvd.msg);
-	recvd.msg = NULL;
+
 }
 

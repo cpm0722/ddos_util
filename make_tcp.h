@@ -21,7 +21,7 @@ struct tcphdr tcp_set_seq(struct tcphdr tcph, __u32 seq);
 
 struct tcphdr tcp_set_ack_seq(struct tcphdr tcph, __u32 ack_seq);
 struct tcphdr tcp_set_syn_flag(struct tcphdr tcph);
-
+struct tcphdr tcp_set_ack_flag(struct tcphdr tcph);
 __u32 tcp_get_seq(struct tcphdr tcph);
 __u32 tcp_get_source(struct tcphdr tcph);
 __u32 tcp_get_dest(struct tcphdr tcph);

@@ -54,6 +54,9 @@ char* packet_assemble(struct iphdr ip_head, void *data, __u32 data_size) {
 	return packet;
 }
 
+
+
+
 int make_socket(int PROTOCOL) {
 	int sock;
 	sock = socket(PF_INET, SOCK_RAW, PROTOCOL);
@@ -160,3 +163,6 @@ void next_ip_addr(char *current, __u8 offset) {
 	strcpy(current, ips_c);
 
 }
+
+
+

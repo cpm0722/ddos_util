@@ -20,6 +20,9 @@ int udp_dest_port;
 pthread_mutex_t udp_mutex;
 pthread_cond_t udp_cond;
 
+int udp_generated_count;
+
+
 void udp_flood_print_usage(void)
 {
 	printf("UDP flood Usage : [Src-IP] [Dest-IP] [Src-Port] [Dest-Port] [# thread] [# requests] \n");
@@ -66,6 +69,7 @@ void* generate_udp_request(void *data)
 		}
 
 		send_packet(sock, ipv4_h, packet, udp_src_port);
+		udp_generated_count++;
 		free(packet);
 		udp_produced++;
 
@@ -81,6 +85,7 @@ void udp_flood_run(char *argv[])
 	udp_src_ip = (char*) malloc(sizeof(char) * 20);
 
 	int argc = 0;
+	udp_generated_count=0;
 
 	while (argv[argc] != NULL) {
 		argc++;
@@ -130,8 +135,11 @@ void udp_flood_run(char *argv[])
 	}
 
 
+
 	pthread_mutex_destroy(&udp_mutex);
 	pthread_exit(NULL);
+
+	printf("UDP flood finished\nTotal %d packets sent.\n",udp_generated_count);
 
 	free(generate_thread_id);
 	free(generate_thread);

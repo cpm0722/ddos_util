@@ -16,6 +16,8 @@ char *tcpsyn_src_ip;
 int tcpsyn_src_port;
 int tcpsyn_dest_port;
 
+int tcpsyn_generated_count;
+short tcpsyn_timed_finisher;
 pthread_mutex_t tcpsyn_mutex;
 pthread_cond_t tcpsyn_cond;
 
@@ -70,6 +72,7 @@ void* generate_syn_request1(void *data) {
 		}
 
 		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
+		tcpsyn_generated_count++;
 		free(packet);
 		tcpsyn_produced++;
 
@@ -112,6 +115,7 @@ void* generate_syn_request2(void *data) {
 		if (tcpsyn_elapsed_time >= tcpsyn_duration) {
 			pthread_mutex_unlock(&tcpsyn_mutex);
 			pthread_cond_broadcast(&tcpsyn_cond);
+			tcpsyn_timed_finisher=1;
 			return 0;
 		}
 
@@ -120,6 +124,7 @@ void* generate_syn_request2(void *data) {
 		}
 
 		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
+		tcpsyn_generated_count++;
 		free(packet);
 		tcpsyn_produced++;
 		tcpsyn_total++;
@@ -139,6 +144,7 @@ void* syn_time_check(void *data) {
 
 	while (1) {
 		pthread_mutex_lock(&tcpsyn_mutex);
+		if(tcpsyn_timed_finisher==1) return 0;
 		t2 = clock();
 		time_taken = ((double) (t2 - t1)) / CLOCKS_PER_SEC;
 
@@ -159,6 +165,8 @@ void syn_flood_run(char *argv[], int mode) {
 	tcpsyn_src_ip = (char*) malloc(sizeof(char) * 20);
 
 	int argc = 0;
+	tcpsyn_generated_count = 0;
+	tcpsyn_timed_finisher=0;
 
 	while (argv[argc] != NULL) {
 		argc++;
@@ -241,7 +249,7 @@ void syn_flood_run(char *argv[], int mode) {
 		printf("thread %d joined\n", i);
 	}
 
-	printf("SYN flood finished\n");
+	printf("SYN flood finished\nTotal %d packets sent.\n",tcpsyn_generated_count);
 
 	pthread_mutex_destroy(&tcpsyn_mutex);
 	pthread_exit(NULL);

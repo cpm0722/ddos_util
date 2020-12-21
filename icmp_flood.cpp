@@ -12,9 +12,12 @@ double icmp_elapsed_time;
 char *icmp_dest_ip;
 char *icmp_src_ip;
 int icmp_dest_port;
+short icmp_timed_finisher;
 
 pthread_mutex_t icmp_mutex;
 pthread_cond_t icmp_cond;
+
+int icmp_generated_count;
 
 void icmp_flood_print_usage(int mode) {
 	if (mode == 1)
@@ -66,6 +69,7 @@ void* generate_icmp_request1(void *data) {
 		}
 
 		send_packet(sock, ipv4_h, packet,icmp_dest_port);
+		icmp_generated_count++;
 		free(packet);
 		icmp_produced++;
 
@@ -111,6 +115,7 @@ void* generate_icmp_request2(void *data) {
 		if (icmp_elapsed_time >= icmp_duration) {
 			pthread_mutex_unlock(&icmp_mutex);
 			pthread_cond_broadcast(&icmp_cond);
+			icmp_timed_finisher=1;
 			return 0;
 		}
 
@@ -118,6 +123,7 @@ void* generate_icmp_request2(void *data) {
 			pthread_cond_wait(&icmp_cond, &icmp_mutex);
 		}
 		send_packet(sock, ipv4_h, packet, icmp_dest_port);
+		icmp_generated_count++;
 		free(packet);
 		icmp_produced++;
 		icmp_total++;
@@ -137,6 +143,7 @@ void* icmp_time_check(void *data) {
 
 	while (1) {
 		pthread_mutex_lock(&icmp_mutex);
+		if(icmp_timed_finisher==1) return 0;
 		t2 = clock();
 		time_taken = ((double) (t2 - t1)) / CLOCKS_PER_SEC;
 
@@ -148,6 +155,8 @@ void* icmp_time_check(void *data) {
 
 			pthread_cond_signal(&icmp_cond);
 		}
+
+
 		pthread_mutex_unlock(&icmp_mutex);
 	}
 }
@@ -157,6 +166,8 @@ void icmp_flood_run(char *argv[], int mode) {
 	icmp_src_ip = (char*) malloc(sizeof(char) * 20);
 
 	int argc = 0;
+	icmp_generated_count=0;
+	icmp_timed_finisher=0;
 
 	while (argv[argc] != NULL) {
 		argc++;
@@ -236,11 +247,12 @@ void icmp_flood_run(char *argv[], int mode) {
 
 	for (i = 0; i < num_threads; i++) {
 		void *status;
+		printf("called\n");
 		pthread_join(generate_thread[i], &status);
 		printf("thread %d joined\n", i);
 	}
 
-	printf("ICMP flood Finished\n");
+	printf("ICMP flood Finished\nTotal %d packets sent.\n",icmp_generated_count);
 
 	pthread_mutex_destroy(&icmp_mutex);
 	pthread_exit(NULL);

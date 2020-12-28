@@ -91,7 +91,6 @@ void* generate_conn_flooding1(void *data) {
 	close(sock);
 	return 0;
 	*/
-	return NULL;
 }
 
 void* generate_conn_flooding2(void *data) {
@@ -113,7 +112,7 @@ void* generate_conn_flooding2(void *data) {
 		tcp_h = prepare_empty_tcp();
 		tcp_h = tcp_set_source(tcp_h, conn_src_port);
 		tcp_h = tcp_set_dest(tcp_h, conn_dest_port);
-		tcp_h = tcp_set_seq(tcp_h, conn_total);
+		tcp_h = tcp_set_seq(tcp_h, rand()%65432);
 		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
@@ -226,10 +225,18 @@ void* receive_conn(void *data) {
 		conn_recvd[thread_id] = get_response(conn_recvd[thread_id].socket);
 		packet_dismantle(conn_recvd[thread_id],NULL,data);
 
+		memset(&(conn_recvd[thread_id].seq_num),0,sizeof(__u32));
+		memset(&(conn_recvd[thread_id].ack_seq_num),0,sizeof(__u32));
+
 		memcpy(&(conn_recvd[thread_id].seq_num),data+4,4);
 		memcpy(&(conn_recvd[thread_id].ack_seq_num),data+8,4);
+
+		printf("BEFORE> seq : %u, ack : %u\n",conn_recvd[thread_id].seq_num, conn_recvd[thread_id].ack_seq_num);
+
 		conn_recvd[thread_id].seq_num = ntohl(conn_recvd[thread_id].seq_num);
 		conn_recvd[thread_id].ack_seq_num = ntohl(conn_recvd[thread_id].ack_seq_num);
+
+		printf("AFTER > seq : %u, ack : %u\n",conn_recvd[thread_id].seq_num, conn_recvd[thread_id].ack_seq_num);
 
 		conn_receiving_flag[thread_id]=0;
 		pthread_cond_signal(&conn_cond);

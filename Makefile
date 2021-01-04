@@ -27,6 +27,7 @@ GET_FLOOD_H = $(DDOS_DIR)get_flood.h
 SYN_FLOOD_H = $(DDOS_DIR)syn_flood.h
 UDP_FLOOD_H = $(DDOS_DIR)udp_flood.h
 ICMP_FLOOD_H = $(DDOS_DIR)icmp_flood.h
+HASH_DOS_H = $(DDOS_DIR)hash_dos.h
 
 HEADER = $(SRC_DIR)header.h
 
@@ -44,6 +45,7 @@ GET_FLOOD_C = $(DDOS_DIR)get_flood.c
 SYN_FLOOD_C = $(DDOS_DIR)syn_flood.c
 UDP_FLOOD_C = $(DDOS_DIR)udp_flood.c
 ICMP_FLOOD_C = $(DDOS_DIR)icmp_flood.c
+HASH_DOS_C = $(DDOS_DIR)hash_dos.c
 
 MAIN_C = $(SRC_DIR)main.c
 
@@ -59,6 +61,7 @@ GET_FLOOD_O = $(OBJ_DIR)get_flood.o
 SYN_FLOOD_O = $(OBJ_DIR)syn_flood.o
 UDP_FLOOD_O = $(OBJ_DIR)udp_flood.o
 ICMP_FLOOD_O = $(OBJ_DIR)icmp_flood.o
+HASH_DOS_O = $(OBJ_DIR)hash_dos.o
 
 MAIN_O = $(OBJ_DIR)main.o
 
@@ -66,8 +69,8 @@ MAIN_O = $(OBJ_DIR)main.o
 
 .SUFFIXES : .c.h.o.out
 
-$(TARGET): $(MAIN_O) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) $(CONN_FLOOD_O) $(SYN_FLOOD_O) $(UDP_FLOOD_O) $(ICMP_FLOOD_O) 
-	$(CC) $(MAIN_O) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) $(CONN_FLOOD_O) $(SYN_FLOOD_O) $(UDP_FLOOD_O) $(ICMP_FLOOD_O) $(RENAME) $(TARGET).out $(LINKOPTS)
+$(TARGET): $(MAIN_O) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) $(CONN_FLOOD_O) $(SYN_FLOOD_O) $(UDP_FLOOD_O) $(ICMP_FLOOD_O) $(HASH_DOS_O)
+	$(CC) $(MAIN_O) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) $(CONN_FLOOD_O) $(SYN_FLOOD_O) $(UDP_FLOOD_O) $(ICMP_FLOOD_O) $(HASH_DOS_O) $(RENAME) $(TARGET).out $(LINKOPTS)
 
 $(MAIN_O): $(MAIN_C)
 	$(CC) $(CCOPTS) $(MAIN_C) $(LINKOPTS) $(RENAME) $(MAIN_O)
@@ -92,6 +95,9 @@ $(UDP_FLOOD_O): $(UDP_FLOOD_C) $(BASE_HEADER) $(UDP_FLOOD_H)
 
 $(ICMP_FLOOD_O): $(ICMP_FLOOD_C) $(BASE_HEADER) $(ICMP_FLOOD_H)
 	$(CC) $(CCOPTS) $(ICMP_FLOOD_C) $(LINKOPTS) $(RENAME) $(ICMP_FLOOD_O)
+
+$(HASH_DOS_O): $(HASH_DOS_C) $(BASE_HEADER) $(HASH_DOS_H)
+	$(CC) $(CCOPTS) $(HASH_DOS_C) $(LINKOPTS) $(RENAME) $(HASH_DOS_O)
 
 $(ERASE):
 	rm $(OBJ_DIR)*.o

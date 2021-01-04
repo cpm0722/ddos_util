@@ -4,6 +4,7 @@
 #include "ddos/syn_flood.h"
 #include "ddos/udp_flood.h"
 #include "ddos/conn_flood.h"
+#include "ddos/hash_dos.h"
 
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
@@ -113,6 +114,10 @@ int main(void) {
 			icmp_flood_run(tokens, mode);
 			break; 
 		case 9:		//Hash Dos
+			hash_dos_print_usage();
+			get_input();
+			make_tokens();
+			hash_dos_run(tokens);
 			break;
 		case 10:	//Ref Ref
 			break;

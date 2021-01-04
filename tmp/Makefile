@@ -66,5 +66,7 @@ MAIN_O = $(OBJ_DIR)main.o
 
 .SUFFIXES : .c.h.o.out
 
-a.out: 
+tmp: 
+	touch a.out
+	rm a.out
 	$(CC) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) hash_dos.c

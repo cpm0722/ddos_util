@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo ./attack.out
+sudo ./a.out

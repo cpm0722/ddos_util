@@ -1,7 +1,6 @@
-#include "header.h"
-
-#include "make_ipv4.h"
-#include "udp_flood.h"
+#include "../header.h"
+#include "../base/make_ipv4.h"
+#include "../ddos/udp_flood.h"
 
 #define DATA "Hello, This is Data!"
 
@@ -17,7 +16,8 @@ char *udp_src_ip;
 int udp_src_port;
 int udp_dest_port;
 
-pthread_mutex_t udp_mutex;
+pthread_mutex_t udp_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 pthread_cond_t udp_cond;
 
 int udp_generated_count;
@@ -97,8 +97,6 @@ void udp_flood_run(char *argv[])
 	}
 
 	strcpy(udp_src_ip, argv[0]);
-
-	udp_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	udp_src_port = atoi(argv[2]);
 	udp_dest_port = atoi(argv[3]);

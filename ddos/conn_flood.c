@@ -1,8 +1,8 @@
-#include "header.h"
-
-#include "make_ipv4.h"
-#include "make_tcp.h"
-#include "receiver.h"
+#include "../header.h"
+#include "../base/make_ipv4.h"
+#include "../base/make_tcp.h"
+#include "../base/receiver.h"
+#include "../ddos/conn_flood.h"
 
 unsigned int conn_total;
 unsigned int conn_produced;
@@ -23,8 +23,8 @@ short conn_receiver_count;
 short* conn_receiving_flag;
 
 
-pthread_mutex_t conn_mutex;
-pthread_cond_t conn_cond;
+pthread_mutex_t conn_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t conn_cond = PTHREAD_COND_INITIALIZER;
 
 pthread_mutex_t *conn_recv_mutex;
 pthread_cond_t *conn_recv_cond;
@@ -316,8 +316,6 @@ void conn_flood_run(char *argv[], int mode) {
 
 	strcpy(conn_src_ip, argv[0]);
 
-	conn_mutex = PTHREAD_MUTEX_INITIALIZER;
-	conn_cond = PTHREAD_COND_INITIALIZER;
 	conn_produced = 0;
 	if (mode == 1) {
 		conn_total = atoi(argv[3]);

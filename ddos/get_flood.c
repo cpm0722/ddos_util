@@ -1,7 +1,6 @@
-#include "header.h"
-
-#include "make_ipv4.h"
-#include "get_flood.h"
+#include "../header.h"
+#include "../base/make_ipv4.h"
+#include "../ddos/get_flood.h"
 
 
 void get_flood_print_usage(void)

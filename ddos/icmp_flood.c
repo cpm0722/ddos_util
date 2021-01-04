@@ -1,7 +1,6 @@
-#include "header.h"
-
-#include "icmp_flood.h"
-#include "make_ipv4.h"
+#include "../header.h"
+#include "../base/make_ipv4.h"
+#include "../ddos/icmp_flood.h"
 
 unsigned int icmp_total;
 unsigned int icmp_produced;
@@ -14,7 +13,8 @@ char *icmp_src_ip;
 int icmp_dest_port;
 short icmp_timed_finisher;
 
-pthread_mutex_t icmp_mutex;
+pthread_mutex_t icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 pthread_cond_t icmp_cond;
 
 int icmp_generated_count;
@@ -182,8 +182,6 @@ void icmp_flood_run(char *argv[], int mode) {
 	}
 
 	strcpy(icmp_src_ip, argv[0]);
-
-	icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	icmp_produced = 0;
 	if (mode == 1)

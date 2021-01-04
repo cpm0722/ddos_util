@@ -1,9 +1,9 @@
 #include "header.h"
 
-#include "icmp_flood.h"
-#include "syn_flood.h"
-#include "udp_flood.h"
-#include "conn_flood.h"
+#include "ddos/icmp_flood.h"
+#include "ddos/syn_flood.h"
+#include "ddos/udp_flood.h"
+#include "ddos/conn_flood.h"
 
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20

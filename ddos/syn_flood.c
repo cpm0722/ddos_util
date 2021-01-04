@@ -1,7 +1,7 @@
-#include "header.h"
-
-#include "make_ipv4.h"
-#include "make_tcp.h"
+#include "../header.h"
+#include "../base/make_ipv4.h"
+#include "../base/make_tcp.h"
+#include "../ddos/syn_flood.h"
 
 unsigned int tcpsyn_total;
 unsigned int tcpsyn_produced;
@@ -18,7 +18,8 @@ int tcpsyn_dest_port;
 
 int tcpsyn_generated_count;
 short tcpsyn_timed_finisher;
-pthread_mutex_t tcpsyn_mutex;
+pthread_mutex_t tcpsyn_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 pthread_cond_t tcpsyn_cond;
 
 void syn_flood_print_usage(int mode) {
@@ -181,8 +182,6 @@ void syn_flood_run(char *argv[], int mode) {
 	}
 
 	strcpy(tcpsyn_src_ip, argv[0]);
-
-	tcpsyn_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 	tcpsyn_produced = 0;
 	if (mode == 1) {

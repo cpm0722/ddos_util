@@ -1,7 +1,6 @@
-#include "header.h"
-
-#include "make_ipv4.h"
-#include "make_tcp.h"
+#include "../header.h"
+#include "../base/make_ipv4.h"
+#include "../base/make_tcp.h"
 
 struct tcphdr prepare_empty_tcp() {
 

@@ -115,7 +115,7 @@ struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph,
 }
 
 //3way handshake completed socket
-int tcp_make_socket(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port) {
+int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port) {
 	int sock;
 	struct sockaddr_in local_addr, remote_addr;
 
@@ -129,18 +129,20 @@ int tcp_make_socket(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port) {
 	local_addr.sin_port = htons(src_port);
 	local_addr.sin_addr.s_addr = src_ip;
 
+	if (bind(sock, (struct sockaddr*) &local_addr, sizeof(struct sockaddr))
+				== -1) {
+			perror("bind failed\n");
+			exit(1);
+		}
+
 	int optval = 1;
-	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval))
+	if (setsockopt(sock, SOL_SOCKET,SO_KEEPALIVE, &optval, sizeof(optval))
 			== -1) {
 		perror("sock opt err\n");
 		exit(1);
 	}
 
-	if (bind(sock, (struct sockaddr*) &local_addr, sizeof(struct sockaddr))
-			== -1) {
-		perror("bind failed\n");
-		exit(1);
-	}
+
 
 	remote_addr.sin_family = AF_INET;
 	remote_addr.sin_addr.s_addr = dest_ip;

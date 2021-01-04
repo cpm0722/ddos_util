@@ -92,37 +92,8 @@ void* generate_conn_flooding1(void *data) {
 	return 0;
 	*/
 }
+
 void* generate_conn_flooding2(void *data) {
-	int thread_id = *((int*) data);
-
-	while (1) {
-
-		pthread_mutex_lock(&conn_mutex);
-
-		if (conn_elapsed_time >= conn_duration) {
-			pthread_mutex_unlock(&conn_mutex);
-			pthread_cond_broadcast(&conn_cond);
-			conn_timed_finisher=1;
-			return 0;
-		}
-
-		if (conn_produced == conn_per_second) {
-			pthread_cond_wait(&conn_cond, &conn_mutex);
-		}
-
-		int sock =  tcp_make_connection(inet_addr(conn_src_ip), inet_addr(conn_dest_ip),
-				conn_src_port, conn_dest_port);
-		conn_src_port++;
-		conn_generated_count++;
-		conn_produced++;
-		conn_total++;
-
-		pthread_mutex_unlock(&conn_mutex);
-	}
-	//close(sock);
-	return 0;
-}
-void* generate_conn_flooding3(void *data) {
 	int thread_id = *((int*) data);
 	int sock = make_socket(IPPROTO_TCP);
 	while (1) {
@@ -141,7 +112,7 @@ void* generate_conn_flooding3(void *data) {
 		tcp_h = prepare_empty_tcp();
 		tcp_h = tcp_set_source(tcp_h, conn_src_port);
 		tcp_h = tcp_set_dest(tcp_h, conn_dest_port);
-		int seq = rand()%100000000;
+		int seq = rand()%10000000;
 		tcp_h = tcp_set_seq(tcp_h, seq);
 		conn_syn_seq[thread_id] = seq;
 		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
@@ -165,7 +136,7 @@ void* generate_conn_flooding3(void *data) {
 		if (conn_produced == conn_per_second) {
 			pthread_cond_wait(&conn_cond, &conn_mutex);
 		}
-		printf("SEND [SYN] seq:%d\n",conn_syn_seq[thread_id]);
+		printf("SEND [1] id:%d\n",thread_id);
 		send_packet(sock, ipv4_h, packet,conn_dest_port);
 		conn_generated_count++;
 		free(packet);
@@ -241,7 +212,6 @@ void* conn_time_check(void *data) {
 		pthread_mutex_unlock(&conn_mutex);
 	}
 }
-/*
 void* receive_conn(void *data) {
 	int thread_id = conn_receiver_count;
 	conn_receiver_count ++;
@@ -256,10 +226,7 @@ void* receive_conn(void *data) {
 		unsigned char data[__MAX_RECV_MSG_LENGTH__];
 
 		while(1){
-
-
 		conn_recvd[thread_id] = get_response(conn_recvd[thread_id].socket);
-
 		packet_dismantle(conn_recvd[thread_id],NULL,data);
 
 		memset(&(conn_recvd[thread_id].seq_num),0,sizeof(__u32));
@@ -268,21 +235,15 @@ void* receive_conn(void *data) {
 		memcpy(&(conn_recvd[thread_id].seq_num),data+4,4);
 		memcpy(&(conn_recvd[thread_id].ack_seq_num),data+8,4);
 
-		//printf("BEFORE> seq : %u, ack : %u\n",conn_recvd[thread_id].seq_num, conn_recvd[thread_id].ack_seq_num);
+		printf("BEFORE> seq : %u, ack : %u\n",conn_recvd[thread_id].seq_num, conn_recvd[thread_id].ack_seq_num);
 
 		conn_recvd[thread_id].seq_num = ntohl(conn_recvd[thread_id].seq_num);
 		conn_recvd[thread_id].ack_seq_num = ntohl(conn_recvd[thread_id].ack_seq_num);
 
-		printf("RECEIVED > seq : %u, ack : %u\n",conn_recvd[thread_id].seq_num, conn_recvd[thread_id].ack_seq_num);
+		printf("AFTER > seq : %u, ack : %u\n",conn_recvd[thread_id].seq_num, conn_recvd[thread_id].ack_seq_num);
 
-			if(conn_recvd[thread_id].ack_seq_num == conn_syn_seq[thread_id]+1)
-			{
-				printf("RIGHT!\n");
+			if(conn_recvd[thread_id].ack_seq_num == conn_syn_seq[thread_id])
 				break;
-			}
-
-			break;
-
 		}
 
 		conn_receiving_flag[thread_id]=0;
@@ -293,7 +254,7 @@ void* receive_conn(void *data) {
 	}
 
 }
-*/
+
 void conn_flood_run(char *argv[], int mode) {
 
 	conn_src_ip = (char*) malloc(sizeof(char) * 20);
@@ -378,8 +339,7 @@ void conn_flood_run(char *argv[], int mode) {
 		{
 			pthread_create(&generate_thread[i], NULL, generate_conn_flooding2,
 								(void*) &generate_thread_id[i]);
-			/*RECEIVE THREAD DEACTIVATION*/
-			//pthread_create(&receive_thread[i],NULL,receive_conn,(void*)&receive_thread_id[i]);
+			pthread_create(&receive_thread[i],NULL,receive_conn,(void*)&receive_thread_id[i]);
 		}
 
 	}
@@ -393,8 +353,7 @@ void conn_flood_run(char *argv[], int mode) {
 	for (i = 0; i < num_threads; i++) {
 		void *status1,*status2;
 		pthread_join(generate_thread[i], &status1);
-		/*RECEIVE THREAD DEACTIVATION*/
-		//pthread_join(receive_thread[i],&status2);
+		pthread_join(receive_thread[i],&status2);
 		printf("threads %d joined\n", i);
 	}
 

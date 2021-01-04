@@ -1,7 +1,7 @@
-#include "header/header.h"
-#include "header/make_ipv4.h"
-#include "header/make_tcp.h"
-#include "header/receiver.h"
+#include "../src/header.h"
+#include "../src/base/make_ipv4.h"
+#include "../src/base/make_tcp.h"
+#include "../src/base/receiver.h"
 
 int main(void) {
 	char conn_src_ip[] = "192.168.56.3";

@@ -25,7 +25,8 @@ short* conn_receiving_flag;
 clock_t conn_global_time;
 
 pthread_mutex_t conn_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t conn_cond =PTHREAD_COND_INITIALIZER;
+pthread_cond_t conn_cond = PTHREAD_COND_INITIALIZER;
+
 
 pthread_mutex_t *conn_recv_mutex;
 pthread_cond_t *conn_recv_cond;
@@ -374,7 +375,10 @@ void conn_flood_run(char *argv[], int mode) {
 
 	strcpy(conn_src_ip, argv[0]);
 
+<<<<<<< HEAD:ddos/conn_flood.c
 
+=======
+>>>>>>> 51ce004bd89cee0a1e56bf871eddbb8c9c97d454:src/ddos/conn_flood.c
 	conn_produced = 0;
 	if (mode == 1) {
 		conn_total = atoi(argv[3]);

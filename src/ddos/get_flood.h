@@ -1,5 +1,9 @@
-#include <netdb.h>
+#ifndef GET_FLOOD
 
-void get_flood_print_usage(void);
-void* generate_get_request(void *);
-void get_flood_run(char *[]);
+#define GET_FLOOD
+
+#define __GET_REQUEST_MSG_SIZE__ 100
+
+void get_flood_print_usage(int mode);
+void get_flood_run(char *argv[], int mode);
+#endif

@@ -19,6 +19,9 @@ pthread_cond_t icmp_cond;
 
 int icmp_generated_count;
 
+clock_t icmp_global_time;
+clock_t icmp_global_elapsed_time;
+
 void icmp_flood_print_usage(int mode) {
 	if (mode == 1)
 		printf(
@@ -82,6 +85,8 @@ void* generate_icmp_request1(void *data) {
 void* generate_icmp_request2(void *data) {
 	int thread_id = *((int*) data);
 	int sock = make_socket(IPPROTO_ICMP);
+	clock_t thread_clock;
+
 	while (1) {
 
 		struct icmp *p;
@@ -112,6 +117,10 @@ void* generate_icmp_request2(void *data) {
 
 		pthread_mutex_lock(&icmp_mutex);
 
+		thread_clock = clock();
+		icmp_elapsed_time = ((double) (thread_clock - icmp_global_elapsed_time))
+										/ CLOCKS_PER_SEC;
+
 		if (icmp_elapsed_time >= icmp_duration) {
 			pthread_mutex_unlock(&icmp_mutex);
 			pthread_cond_broadcast(&icmp_cond);
@@ -136,21 +145,25 @@ void* generate_icmp_request2(void *data) {
 
 void* icmp_time_check(void *data) {
 	int thread_id = *((int*) data);
-	clock_t t1, t2;
+	clock_t t1;
 	t1 = clock();
-	clock_t elapsed_time = clock();
+	icmp_global_elapsed_time = clock();
 	double time_taken;
 
 	while (1) {
 		pthread_mutex_lock(&icmp_mutex);
+
+
+		icmp_global_time = clock();
+		icmp_elapsed_time = ((double) (icmp_global_time - icmp_elapsed_time)) / CLOCKS_PER_SEC;
+
 		if(icmp_timed_finisher==1) return 0;
-		t2 = clock();
-		time_taken = ((double) (t2 - t1)) / CLOCKS_PER_SEC;
+		time_taken = ((double) (icmp_global_time - t1)) / CLOCKS_PER_SEC;
+
 
 		if (time_taken >= 1.0) {
 			icmp_produced = 0;
 			t1 = clock();
-			icmp_elapsed_time = ((double) (t1 - elapsed_time)) / CLOCKS_PER_SEC;
 			time_taken = 0;
 
 			pthread_cond_signal(&icmp_cond);

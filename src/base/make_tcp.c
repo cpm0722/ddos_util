@@ -121,7 +121,7 @@ int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port,
 		exit(1);
 	}
 
-	local_addr.sin_family = AF_INET;
+	/*local_addr.sin_family = AF_INET;
 	local_addr.sin_port = htons(src_port);
 	local_addr.sin_addr.s_addr = src_ip;
 
@@ -136,7 +136,7 @@ int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port,
 			== -1) {
 		perror("sock opt err\n");
 		exit(1);
-	}
+	}*/
 
 	remote_addr.sin_family = AF_INET;
 	remote_addr.sin_addr.s_addr = dest_ip;

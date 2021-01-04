@@ -19,8 +19,10 @@ int tcpsyn_dest_port;
 int tcpsyn_generated_count;
 short tcpsyn_timed_finisher;
 pthread_mutex_t tcpsyn_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t tcpsyn_cond = PTHREAD_COND_INITIALIZER;
 
-pthread_cond_t tcpsyn_cond;
+clock_t tcpsyn_global_time;
+clock_t tcpsyn_global_elapsed_time;
 
 void syn_flood_print_usage(int mode) {
 
@@ -86,6 +88,8 @@ void* generate_syn_request1(void *data) {
 void* generate_syn_request2(void *data) {
 	int thread_id = *((int*) data);
 	int sock = make_socket(IPPROTO_TCP);
+	clock_t thread_clock;
+
 	while (1) {
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
@@ -113,6 +117,9 @@ void* generate_syn_request2(void *data) {
 
 		pthread_mutex_lock(&tcpsyn_mutex);
 
+		tcpsyn_elapsed_time = ((double) (thread_clock - tcpsyn_global_elapsed_time))
+										/ CLOCKS_PER_SEC;
+
 		if (tcpsyn_elapsed_time >= tcpsyn_duration) {
 			pthread_mutex_unlock(&tcpsyn_mutex);
 			pthread_cond_broadcast(&tcpsyn_cond);
@@ -138,16 +145,21 @@ void* generate_syn_request2(void *data) {
 
 void* syn_time_check(void *data) {
 	int thread_id = *((int*) data);
-	clock_t t1, t2;
+	clock_t t1;
 	t1 = clock();
 	clock_t elapsed_time = clock();
 	double time_taken;
 
 	while (1) {
 		pthread_mutex_lock(&tcpsyn_mutex);
+
+		tcpsyn_global_time = clock();
+
+		tcpsyn_elapsed_time = ((double) (tcpsyn_global_time - tcpsyn_global_elapsed_time))
+									/ CLOCKS_PER_SEC;
+
 		if(tcpsyn_timed_finisher==1) return 0;
-		t2 = clock();
-		time_taken = ((double) (t2 - t1)) / CLOCKS_PER_SEC;
+		time_taken = ((double) (tcpsyn_global_time  - t1)) / CLOCKS_PER_SEC;
 
 		if (time_taken >= 1.0) {
 			tcpsyn_produced = 0;

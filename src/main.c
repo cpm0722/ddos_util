@@ -1,5 +1,6 @@
 #include "header.h"
 
+#include "ddos/get_flood.h"
 #include "ddos/icmp_flood.h"
 #include "ddos/syn_flood.h"
 #include "ddos/udp_flood.h"
@@ -92,6 +93,11 @@ int main(void) {
 			conn_flood_run(tokens,mode);
 			break;
 		case 5:		//get flooding
+			mode = choose_running_type();
+			get_flood_print_usage(mode);
+			get_input();
+			make_tokens();
+			get_flood_run(tokens,mode);
 			break; 
 		case 6:
 			mode = choose_running_type();

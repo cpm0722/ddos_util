@@ -116,7 +116,7 @@ __u16 in_cksum(unsigned short *ptr, int nbytes) {
 	return (answer);
 }
 
-void next_ip_addr(char *current, __u8 offset) {
+void next_ip_addr(char *current, __u32 offset) {
 	char *loc = current + 0;
 	__u8 ips[4];
 
@@ -134,25 +134,28 @@ void next_ip_addr(char *current, __u8 offset) {
 	for (i = 3; i >= 0; i--) {
 		if (i != 3 && top == 0)
 			break;
-		if (top == 1)
-			ips[i]++;
+		else{
+			ips[i]+=top;
+			val_check = ips[i]+top;
+		}
 
-		if (top == -1)
-			ips[i]--;
 
 		top = 0;
 
-		if (i == 3) {
-			val_check = ips[i] + offset;
-			ips[i] += offset;
+		if(i==3){
+		val_check = ips[i] + offset;
+		ips[i] += offset;
 		}
 
-		if (val_check > 255) {
-			top = 1;
+		while (val_check > 255) {
+			top ++;
+			val_check -= 255;
+
 		}
 
-		if (val_check < 0) {
-			top = -1;
+		while (val_check < 0) {
+			top --;
+			val_check += 255;
 		}
 		val_check = 0;
 	}

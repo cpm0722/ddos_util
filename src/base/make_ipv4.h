@@ -15,6 +15,6 @@ int make_socket(int PROTOCOL);
 void send_packet(int sock, struct iphdr ip_head, char *packet, int port);
 __u16 in_cksum(unsigned short *ptr, int nbytes);
 
-void next_ip_addr(char *current, __u8 offset);
+void next_ip_addr(char *current, __u32 offset);
 
 #endif

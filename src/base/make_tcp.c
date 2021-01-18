@@ -111,12 +111,13 @@ struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph,
 
 //3way handshake completed socket
 int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port,
-		int dest_port) {
+		int dest_port, int type) {
 	int sock;
 	struct sockaddr_in local_addr, remote_addr;
 
-	sock = socket(PF_INET, SOCK_STREAM, 0);
-	if (sock == -1) {
+
+	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	{
 		perror("sock create error\n");
 		exit(1);
 	}
@@ -136,16 +137,21 @@ int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port,
 			== -1) {
 		perror("sock opt err\n");
 		exit(1);
-	}*/
-
+	}
+*/
 	remote_addr.sin_family = AF_INET;
 	remote_addr.sin_addr.s_addr = dest_ip;
 	remote_addr.sin_port = htons(dest_port);
-	if (connect(sock, (struct sockaddr*) &remote_addr, sizeof(remote_addr))
-			== -1) {
+	int connecting_v = -1;
+	if ( (connecting_v = connect(sock, (struct sockaddr*) &remote_addr, sizeof(remote_addr)))
+			!= 0) {
 		perror("connect failed\n");
 		exit(1);
 	}
+	printf("Connecting ");
+	while(connecting_v!=0)
+		printf(".");
+	printf(" Connected!\n");
 
 	return 0;
 }

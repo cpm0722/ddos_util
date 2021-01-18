@@ -3,8 +3,6 @@
 #include "../base/subnet_mask.h"
 #include "../ddos/udp_flood.h"
 
-select
-
 #define DATA "Hello, This is Data!"
 
 int udp_total;

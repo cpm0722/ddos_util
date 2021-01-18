@@ -114,7 +114,7 @@ void* generate_conn_flooding2(void *data) {
 		}
 
 		int sock =  tcp_make_connection(inet_addr(conn_src_ip), inet_addr(conn_dest_ip),
-				conn_src_port, conn_dest_port);
+				conn_src_port, conn_dest_port, SOCK_STREAM);
 		conn_src_port++;
 		conn_generated_count++;
 		conn_produced++;
@@ -270,11 +270,6 @@ void* generate_conn_flooding4(void *data) {
 		conn_produced++;
 		conn_total++;
 		conn_generated_count++;
-
-		char Request[]
-		 = "GET / HTTP/1.1\r\nHost: www.google.co.kr\r\n\r\n";
-		send(sock,Request,100,0);
-		//conn_dest_port++;
 
 		close(sock);
 		pthread_cond_signal(&conn_cond);

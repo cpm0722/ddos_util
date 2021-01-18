@@ -32,7 +32,7 @@ char *tcp_add_data(struct tcphdr tcph, void * data, int datasize);
 struct tcp_pseudo_header tcp_prepare_pseudo(struct iphdr ipv4h,struct tcphdr tcph, int add_datasize);
 struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph, void *data,int datasize);
 
-int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port);
+int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port, int type);
 
 int tcp_make_pseudo_connection(__u32 src_ip, __u32 dest_ip, int src_port, int dest_port);
 void tcp_send_syn(int sock,int seq,__u32 src_ip, __u32 dest_ip, int src_port, int dest_port);

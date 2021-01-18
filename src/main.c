@@ -131,10 +131,11 @@ int main(void) {
 		case 8:		//response buffering
 			break; 
 		case 9:		//Hash Dos
-			hash_dos_print_usage();
+			mode = choose_running_type();
+			hash_dos_print_usage(mode);
 			get_input();
 			make_tokens();
-			hash_dos_run(tokens);
+			hash_dos_run(tokens, mode);
 			break;
 		case 10:	//Ref Ref
 			break;

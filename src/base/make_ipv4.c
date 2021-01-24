@@ -58,7 +58,7 @@ char* packet_assemble(struct iphdr ip_head, void *data, __u32 data_size) {
 
 int make_socket(int PROTOCOL) {
 	int sock;
-	sock = socket(PF_INET, SOCK_RAW, PROTOCOL);
+	sock = socket(AF_INET, SOCK_RAW, PROTOCOL);
 	if (sock < 0) {
 		perror("socket() error");
 		exit(-1);

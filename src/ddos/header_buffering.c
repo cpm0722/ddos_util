@@ -60,6 +60,12 @@ void* generate_header_buffering1(void *data) {
 
 			headbuffer_sockets[headbuffer_current] = socket(AF_INET,
 					SOCK_STREAM, 0);
+
+			int sdbf = 2;
+
+			if((headbuffer_sockets[headbuffer_current],SOL_SOCKET,SO_SNDBUF,(const char*)&sdbf, sizeof(sdbf))==-1)
+						perror("setsockopt failure.\n");
+
 			if (headbuffer_sockets[headbuffer_current] == -1)
 				perror("sock creation failed\n");
 
@@ -88,9 +94,9 @@ void* generate_header_buffering1(void *data) {
 		int sent_size = -1;
 
 		if (headbuffer_sockets[headbuffer_current] >= 0) {
-			sent_size = send(headbuffer_sockets[headbuffer_current],
+			sent_size = write(headbuffer_sockets[headbuffer_current],
 					headbuffer_request
-							+ headbuffer_http_cursor[headbuffer_current], 0, 1);
+							+ headbuffer_http_cursor[headbuffer_current], 1);
 
 			printf("Sending From Socket[%d], wish:<%c>, sent size : %d\n",
 					headbuffer_sockets[headbuffer_current], *(headbuffer_request

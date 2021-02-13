@@ -7,7 +7,6 @@ unsigned int icmp_total;
 unsigned int icmp_produced;
 
 unsigned int icmp_per_second;
-unsigned int icmp_duration;
 char icmp_dest_ip[16];
 char icmp_src_ip[16];
 
@@ -123,17 +122,19 @@ void* generate_icmp_request2(void *data) {
 
 		pthread_mutex_lock(&icmp_mutex);
 
-		printf("From : %s --> To : %s \n", icmp_now_src_ip, icmp_now_dest_ip);
+		//printf("From : %s --> To : %s \n", icmp_now_src_ip, icmp_now_dest_ip);
 
 		masking_next_ip_addr(icmp_src_ip, icmp_now_src_ip, icmp_src_ip_mask);
 		masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
 
 		//0번 예외처리
-		if (icmp_now_dest_ip[strlen(icmp_now_dest_ip)] == '0'
+		/*if (icmp_now_dest_ip[strlen(icmp_now_dest_ip)] == '0'
 				&& icmp_now_dest_ip[strlen(icmp_now_dest_ip) - 1] == '.')
 			masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip,
 					icmp_dest_ip_mask);
+*/
 
+		//Conditions begin.
 		if (icmp_produced >= icmp_per_second) {
 			pthread_cond_wait(&icmp_cond, &icmp_mutex);
 		}
@@ -146,7 +147,7 @@ void* generate_icmp_request2(void *data) {
 		//If time > 1.0
 		if (icmp_elapsed_time >= 1.0) {
 
-			printf("HERE.\n");
+			printf("-.\n");
 			icmp_produced = 0;
 
 			clock_gettime(CLOCK_MONOTONIC, &icmp_time1);
@@ -158,7 +159,7 @@ void* generate_icmp_request2(void *data) {
 
 		icmp_produced++;
 		icmp_total++;
-
+		printf("%d icmp sent\n",icmp_produced);
 		pthread_mutex_unlock(&icmp_mutex);
 	}
 	close(sock);
@@ -179,7 +180,7 @@ void* icmp_time_check() {
 
 		//If time > 1.0
 		if (icmp_elapsed_time >= 1.0) {
-
+			printf("-.\n");
 			icmp_produced = 0;
 			clock_gettime(CLOCK_MONOTONIC, &icmp_time1);
 			pthread_cond_signal(&icmp_cond);
@@ -203,11 +204,14 @@ void icmp_flood_run(char *argv[], int mode) {
 		return;
 	}
 
+	//ip separtion IP/mask -> IP , mask
 	get_ip_from_ip_addr(argv[0], icmp_src_ip);
 	icmp_src_ip_mask = get_mask_from_ip_addr(argv[0]);
 	strcpy(icmp_now_src_ip, icmp_src_ip);
 
-	//strcpy(icmp_src_ip, argv[0]);
+	get_ip_from_ip_addr(argv[1], icmp_dest_ip);
+	icmp_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
+	strcpy(icmp_now_dest_ip, icmp_dest_ip);
 
 	icmp_produced = 0;
 
@@ -218,18 +222,11 @@ void icmp_flood_run(char *argv[], int mode) {
 		if (icmp_per_second == 0)
 			icmp_per_second = __UINT_MAXIMUM__;
 
-		if (icmp_duration == 0)
-			icmp_duration = __UINT_MAXIMUM__;
-
 		icmp_dest_port = atoi(argv[2]);
 
 	}
 
 	int num_threads = 10;
-
-	get_ip_from_ip_addr(argv[1], icmp_dest_ip);
-	icmp_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
-	strcpy(icmp_now_dest_ip, icmp_dest_ip);
 
 	printf("src>IP : %s\nsrc>mask : %d\n", icmp_src_ip, icmp_src_ip_mask);
 	printf("dest>IP : %s\ndest>mask : %d\n", icmp_dest_ip, icmp_dest_ip_mask);
@@ -262,7 +259,7 @@ void icmp_flood_run(char *argv[], int mode) {
 
 	pthread_create(&generate_thread[i], NULL, icmp_time_check, NULL);
 
-	for (i = 0; i < num_threads; i++) {
+	for (i = 0; i < num_threads+1; i++) {
 		void *status;
 		printf("called\n");
 		pthread_join(generate_thread[i], &status);

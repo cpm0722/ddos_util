@@ -14,7 +14,7 @@ struct udphdr {
 #endif
 
 void udp_flood_print_usage(void);
-void* generate_udp_request(void *);
+void *generate_udp_request(void *);
 void *udp_time_check(void *);
 void udp_flood_run(char *[]);
 

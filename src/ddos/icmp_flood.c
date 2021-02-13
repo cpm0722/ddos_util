@@ -8,7 +8,6 @@ unsigned int icmp_produced;
 
 unsigned int icmp_per_second;
 unsigned int icmp_duration;
-double icmp_elapsed_time;
 char icmp_dest_ip[16];
 char icmp_src_ip[16];
 
@@ -19,25 +18,17 @@ char icmp_now_src_ip[16];
 char icmp_now_dest_ip[16];
 
 int icmp_dest_port;
-short icmp_timed_finisher;
-
 
 pthread_mutex_t icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_cond_t icmp_cond;
 
-int icmp_generated_count;
-
-clock_t icmp_global_time;
-clock_t icmp_global_elapsed_time;
+struct timespec icmp_time1, icmp_time2;
 
 void icmp_flood_print_usage(int mode) {
-	if (mode == 1)
-		printf(
-				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# requests(0 for INF)] [Dest-Port] \n");
 	if (mode == 2)
 		printf(
-				"ICMP flood Usage : [Src-IP] [Dest-IP] [# thread] [# per seconds(0 for INF)] [icmp_duration (0 for INF)] [Dest-Port]\n");
+				"ICMP flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 }
 
 void* generate_icmp_request1(void *data) {
@@ -58,7 +49,6 @@ void* generate_icmp_request1(void *data) {
 
 		//modify icmp_src_ip, increment 1.
 
-
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_now_dest_ip));
 
 		p = (struct icmp*) buffer;
@@ -72,15 +62,16 @@ void* generate_icmp_request1(void *data) {
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct icmp));
 		char *packet = packet_assemble(ipv4_h, p, sizeof(struct icmp));
 
-
 		pthread_mutex_lock(&icmp_mutex);
 
 		masking_next_ip_addr(icmp_src_ip, icmp_now_src_ip, icmp_src_ip_mask);
 		masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
 
 		//0번 예외처리
-		if(icmp_now_dest_ip[strlen(icmp_now_dest_ip)]=='0' && icmp_now_dest_ip[strlen(icmp_now_dest_ip)-1]=='.' )
-			masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
+		if (icmp_now_dest_ip[strlen(icmp_now_dest_ip)] == '0'
+				&& icmp_now_dest_ip[strlen(icmp_now_dest_ip) - 1] == '.')
+			masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip,
+					icmp_dest_ip_mask);
 
 		if (icmp_produced >= icmp_total) {
 			pthread_mutex_unlock(&icmp_mutex);
@@ -88,8 +79,7 @@ void* generate_icmp_request1(void *data) {
 			return 0;
 		}
 
-		send_packet(sock, ipv4_h, packet,icmp_dest_port);
-		icmp_generated_count++;
+		send_packet(sock, ipv4_h, packet, icmp_dest_port);
 		free(packet);
 		icmp_produced++;
 
@@ -102,9 +92,9 @@ void* generate_icmp_request1(void *data) {
 void* generate_icmp_request2(void *data) {
 	//int mask = *((int*) data);
 	int sock = make_socket(IPPROTO_ICMP);
-	clock_t thread_clock;
 
 	while (1) {
+
 
 		struct icmp *p;
 		char buffer[sizeof(struct icmp)];
@@ -117,7 +107,6 @@ void* generate_icmp_request2(void *data) {
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(icmp_now_src_ip));
 
 		//modify icmp_src_ip, increment 1.
-
 
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(icmp_now_dest_ip));
 
@@ -134,32 +123,39 @@ void* generate_icmp_request2(void *data) {
 
 		pthread_mutex_lock(&icmp_mutex);
 
-		printf("From : %s --> To : %s \n",icmp_now_src_ip, icmp_now_dest_ip);
+		printf("From : %s --> To : %s \n", icmp_now_src_ip, icmp_now_dest_ip);
 
 		masking_next_ip_addr(icmp_src_ip, icmp_now_src_ip, icmp_src_ip_mask);
 		masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
 
 		//0번 예외처리
-		if(icmp_now_dest_ip[strlen(icmp_now_dest_ip)]=='0' && icmp_now_dest_ip[strlen(icmp_now_dest_ip)-1]=='.' )
-					masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip, icmp_dest_ip_mask);
+		if (icmp_now_dest_ip[strlen(icmp_now_dest_ip)] == '0'
+				&& icmp_now_dest_ip[strlen(icmp_now_dest_ip) - 1] == '.')
+			masking_next_ip_addr(icmp_dest_ip, icmp_now_dest_ip,
+					icmp_dest_ip_mask);
 
-		thread_clock = clock();
-		icmp_elapsed_time = ((double) (thread_clock - icmp_global_elapsed_time))
-										/ CLOCKS_PER_SEC;
-
-		if (icmp_elapsed_time >= icmp_duration) {
-			pthread_mutex_unlock(&icmp_mutex);
-			pthread_cond_broadcast(&icmp_cond);
-			icmp_timed_finisher=1;
-			return 0;
-		}
-
-		if (icmp_produced == icmp_per_second) {
+		if (icmp_produced >= icmp_per_second) {
 			pthread_cond_wait(&icmp_cond, &icmp_mutex);
 		}
+
+		//Get Time
+		clock_gettime(CLOCK_MONOTONIC, &icmp_time2);
+		double icmp_elapsed_time = (icmp_time2.tv_sec - icmp_time1.tv_sec)
+				+ ((icmp_time2.tv_nsec - icmp_time1.tv_nsec) / 1000000000.0);
+
+		//If time > 1.0
+		if (icmp_elapsed_time >= 1.0) {
+
+			printf("HERE.\n");
+			icmp_produced = 0;
+
+			clock_gettime(CLOCK_MONOTONIC, &icmp_time1);
+			pthread_cond_signal(&icmp_cond);
+		}
+
 		send_packet(sock, ipv4_h, packet, icmp_dest_port);
-		icmp_generated_count++;
 		free(packet);
+
 		icmp_produced++;
 		icmp_total++;
 
@@ -169,99 +165,74 @@ void* generate_icmp_request2(void *data) {
 	return 0;
 }
 
-void* icmp_time_check(void *data) {
-	int thread_id = *((int*) data);
-	clock_t t1;
-	t1 = clock();
-	icmp_global_elapsed_time = clock();
-	double time_taken;
+//To unfreeze upper threads.
 
+void* icmp_time_check() {
 	while (1) {
+
 		pthread_mutex_lock(&icmp_mutex);
 
+		//Get Time
+		clock_gettime(CLOCK_MONOTONIC, &icmp_time2);
+		double icmp_elapsed_time = (icmp_time2.tv_sec - icmp_time1.tv_sec)
+				+ ((icmp_time2.tv_nsec - icmp_time1.tv_nsec) / 1000000000.0);
 
-		icmp_global_time = clock();
-		icmp_elapsed_time = ((double) (icmp_global_time - icmp_elapsed_time)) / CLOCKS_PER_SEC;
+		//If time > 1.0
+		if (icmp_elapsed_time >= 1.0) {
 
-		if(icmp_timed_finisher==1) return 0;
-		time_taken = ((double) (icmp_global_time - t1)) / CLOCKS_PER_SEC;
-
-
-		if (time_taken >= 1.0) {
 			icmp_produced = 0;
-			t1 = clock();
-			time_taken = 0;
-
+			clock_gettime(CLOCK_MONOTONIC, &icmp_time1);
 			pthread_cond_signal(&icmp_cond);
 		}
 
-
 		pthread_mutex_unlock(&icmp_mutex);
 	}
+
 }
 
 void icmp_flood_run(char *argv[], int mode) {
 
 	int argc = 0;
-	icmp_generated_count=0;
-	icmp_timed_finisher=0;
-
-
-
 
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 
-	if (mode == 1 && argc != 5) {
-		icmp_flood_print_usage(mode);
-		return;
-	} else if (mode == 2 && argc != 6) {
+	if (mode == 2 && argc != 4) {
 		icmp_flood_print_usage(mode);
 		return;
 	}
 
-	get_ip_from_ip_addr(argv[0],icmp_src_ip);
+	get_ip_from_ip_addr(argv[0], icmp_src_ip);
 	icmp_src_ip_mask = get_mask_from_ip_addr(argv[0]);
-	strcpy(icmp_now_src_ip,icmp_src_ip);
-
+	strcpy(icmp_now_src_ip, icmp_src_ip);
 
 	//strcpy(icmp_src_ip, argv[0]);
 
 	icmp_produced = 0;
-	if (mode == 1)
-	{
-		icmp_total = atoi(argv[3]);
-		icmp_dest_port = atoi(argv[4]);
-		if(icmp_total==0)
-			icmp_total = __UINT_MAXIMUM__;
-
-	}
-
 
 	if (mode == 2) {
 		icmp_total = 0;
 		icmp_per_second = atoi(argv[3]);
-		icmp_duration = atoi(argv[4]);
 
-		if(icmp_per_second == 0)
+		if (icmp_per_second == 0)
 			icmp_per_second = __UINT_MAXIMUM__;
 
 		if (icmp_duration == 0)
 			icmp_duration = __UINT_MAXIMUM__;
 
-		icmp_dest_port = atoi(argv[5]);
+		icmp_dest_port = atoi(argv[2]);
 
 	}
 
-	int num_threads = atoi(argv[2]);
+	int num_threads = 10;
 
-	get_ip_from_ip_addr(argv[1],icmp_dest_ip);
+	get_ip_from_ip_addr(argv[1], icmp_dest_ip);
 	icmp_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
-	strcpy(icmp_now_dest_ip,icmp_dest_ip);
+	strcpy(icmp_now_dest_ip, icmp_dest_ip);
 
-	printf("src>IP : %s\nsrc>mask : %d\n",icmp_src_ip,icmp_src_ip_mask);
-	printf("dest>IP : %s\ndest>mask : %d\n",icmp_dest_ip,icmp_dest_ip_mask);
+	printf("src>IP : %s\nsrc>mask : %d\n", icmp_src_ip, icmp_src_ip_mask);
+	printf("dest>IP : %s\ndest>mask : %d\n", icmp_dest_ip, icmp_dest_ip_mask);
 
 	int *generate_thread_id;
 	pthread_t *generate_thread;
@@ -277,6 +248,9 @@ void icmp_flood_run(char *argv[], int mode) {
 	for (i = 0; i < num_threads; i++)
 		generate_thread_id[i] = i;
 
+	//This is where clock starts;
+
+	clock_gettime(CLOCK_MONOTONIC, &icmp_time1);
 	for (i = 0; i < num_threads; i++) {
 		if (mode == 1)
 			pthread_create(&generate_thread[i], NULL, generate_icmp_request1,
@@ -286,11 +260,7 @@ void icmp_flood_run(char *argv[], int mode) {
 					(void*) &generate_thread_id[i]);
 	}
 
-	if (mode == 2) {
-		pthread_create(&generate_thread[i], NULL, icmp_time_check,
-				(void*) &generate_thread_id[i]);
-		num_threads++;
-	}
+	pthread_create(&generate_thread[i], NULL, icmp_time_check, NULL);
 
 	for (i = 0; i < num_threads; i++) {
 		void *status;
@@ -299,14 +269,13 @@ void icmp_flood_run(char *argv[], int mode) {
 		printf("thread %d joined\n", i);
 	}
 
-	printf("ICMP flood Finished\nTotal %d packets sent.\n",icmp_generated_count);
+	printf("ICMP flood Finished\nTotal %d packets sent.\n", icmp_total);
 
 	pthread_mutex_destroy(&icmp_mutex);
 	pthread_exit(NULL);
 
 	free(generate_thread_id);
 	free(generate_thread);
-
 
 	return;
 }

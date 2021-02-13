@@ -68,7 +68,7 @@ void *generate_udp_request(void *data)
 			return 0;
 		}
 		// make and send packet
-		char *packet = packet_assemble(ipv4_h, p, sizeof(struct udphdr));
+		char *packet = packet_assemble(ipv4_h, udp_h_ptr, sizeof(struct udphdr));
 		send_packet(sock, ipv4_h, packet, g_udp_now_port);
 		free(packet);
 		g_udp_produced++;
@@ -89,33 +89,36 @@ void udp_flood_run(char *argv[])
 		udp_flood_print_usage();
 		return;
 	}
-	split_ip_mask_port(argv, g_udp_src_ip, g_udp_dest_ip, &g_udp_src_mask, &g_udp_dest_mask, &g_udp_dest_port_start, &g_udp_dest_port);
+	// get ip address, mask, port
+	split_ip_mask_port(argv,
+										g_udp_src_ip,
+										g_udp_dest_ip,
+										&g_udp_src_mask,
+										&g_udp_dest_mask,
+										&g_udp_dest_port_start,
+										&g_udp_dest_port);
 	g_udp_produced = 0;
-
-	if(argc == 4) g_udp_total = atoi(argv[3]);
-	else g_udp_total = (unsigned long)pow(2, 32-g_udp_src_mask) * (unsigned long)pow(2, 32-g_udp_dest_mask) * (g_udp_dest_port-g_udp_dest_port_start+1);
-
+	// calculate g_udp_total
+	if (argc == 4) {
+		g_udp_total = atoi(argv[3]);
+	}
+	else {
+		g_udp_total = (unsigned long)pow(2, 32-g_udp_src_mask) *
+									(unsigned long)pow(2, 32-g_udp_dest_mask) *
+									(g_udp_dest_port - g_udp_dest_port_start + 1);
+	}
 	int num_threads = g_udp_total / REQUEST_PER_THREAD;
-
-	int *generate_thread_id;
-	pthread_t generate_thread[9999];
-
-	int i;
-
-
+	pthread_t threads[9999];
 	printf("Sending UDP requests to %s using %d threads\n",argv[1], num_threads);
-
-	for (i = 0; i < num_threads; i++) 
-		pthread_create(&generate_thread[i], NULL, generate_udp_request, NULL);
-
-	for (i = 0; i < num_threads; i++) {
-		void *status;
-		pthread_join(generate_thread[i], NULL);
+	for (int i = 0; i < num_threads; i++) {
+		pthread_create(&threads[i], NULL, generate_udp_request, NULL);
+	}
+	for (int i = 0; i < num_threads; i++) {
+		pthread_join(threads[i], NULL);
 		printf("thread %d joined\n", i);
 	}
-
 	pthread_mutex_destroy(&g_udp_mutex);
 	pthread_exit(NULL);
-
-	printf("UDP flood finished\nTotal %lu packets sent.\n",g_udp_produced);
+	printf("UDP flood finished\nTotal %lu packets sent.\n", g_udp_produced);
+	return;
 }

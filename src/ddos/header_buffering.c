@@ -2,6 +2,7 @@
 #include "../base/make_ipv4.h"
 #include "../base/make_tcp.h"
 #include "../base/receiver.h"
+#include "../base/subnet_mask.h"
 #include "../ddos/header_buffering.h"
 
 unsigned int headbuffer_total;

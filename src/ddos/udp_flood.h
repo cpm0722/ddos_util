@@ -10,7 +10,8 @@
 	@date 2021/02/13
 	@author 김한수(cpm0722@gmail.com)
 */
-struct udphdr {
+struct udphdr
+{
 	u_short src_port;   /// source port (0)
 	u_short dest_port;  /// destination port
 	u_short len;        /// data length
@@ -36,7 +37,7 @@ void udp_flood_print_usage(void);
 	@param void * NULL
 	@return void * data NULL
 */
-void *generate_udp_request(void *);
+void *generate_udp_request(void *data);
 /**
 	@fn void *udp_time_check(void *);
 	@brief function: udp time check thread
@@ -45,7 +46,7 @@ void *generate_udp_request(void *);
 	@param void * NULL
 	@return void * data NULL
 */
-void *udp_time_check(void *);
+void *udp_time_check(void *data);
 /**
 	@fn void *udp_flood_main(char *argv[]);
 	@brief function: udp main function

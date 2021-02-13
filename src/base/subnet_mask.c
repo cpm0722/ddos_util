@@ -46,7 +46,10 @@ int masking_next_ip_addr(char *ipv4, char now[IPV4_STR_LEN], int mask)	// get ne
 		get_addr_str(now_addr, now);
 		return 1;
 	}
-	now_addr += 1;
+	now_addr++;
+	if (now_addr && 0xff == 0) {
+		now_addr++;
+	}
 	get_addr_str(now_addr, now);
 	return 0;
 }

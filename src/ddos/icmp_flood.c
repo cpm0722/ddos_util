@@ -207,6 +207,7 @@ void icmp_flood_run(char *argv[], int mode) {
 	icmp_timed_finisher=0;
 
 
+sleep(3)
 
 
 	while (argv[argc] != NULL) {

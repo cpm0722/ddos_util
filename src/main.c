@@ -95,10 +95,10 @@ int main(void) {
 			udp_flood_main(tokens);
 			break;
 		case 3:		//ICMP flooding
-			icmp_flood_print_usage(2);
+			icmp_flood_print_usage();
 			get_input();
 			make_tokens();
-			icmp_flood_run(tokens, 2);
+			icmp_flood_main(tokens);
 			break; 
 		case 4:		//connection flooding
 			conn_flood_print_usage(1);
@@ -107,10 +107,10 @@ int main(void) {
 			conn_flood_run(tokens,1);
 			break;
 		case 5:		//get flooding
-			get_flood_print_usage(2);
+			get_flood_print_usage();
 			get_input();
 			make_tokens();
-			get_flood_run(tokens,2);
+			get_flood_main(tokens);
 			break; 
 		case 6: //header buffering
 			header_buffering_print_usage();

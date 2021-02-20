@@ -22,7 +22,7 @@ unsigned int g_headbuf_request_per_sec;
 // for masking next ip address
 char g_headbuf_now_src_ip[16] = { 0, };
 char g_headbuf_now_dest_ip[16] = { 0, };
-int g_headbuf_now_dest_port = 0;
+unsigned int g_headbuf_now_dest_port;
 // thread
 pthread_mutex_t g_headbuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_headbuf_cond = PTHREAD_COND_INITIALIZER;
@@ -80,14 +80,14 @@ void *generate_header_buffering(void *data)
 		int sent_size = -1;
 		if (g_headbuf_sockets[g_headbuf_current_idx] >= 0) {
 			sent_size = write(g_headbuf_sockets[g_headbuf_current_idx],
-												g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx], 1);
+					g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx], 1);
 			g_headbuf_num_generated_in_sec++;
 			g_headbuf_num_total++;
-			printf("%lu Socket[%d] send %c : %d\n", g_headbuf_num_generated_in_sec,
-																							g_headbuf_sockets[g_headbuf_current_idx],
-																							*(g_headbuf_request_msg
-																								+ g_headbuf_http_cursor[g_headbuf_current_idx]),
-																							sent_size);
+			printf("%lu Socket[%d] send %c : %d\n",
+					g_headbuf_num_generated_in_sec,
+					g_headbuf_sockets[g_headbuf_current_idx],
+					*(g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx]),
+					sent_size);
 			g_headbuf_http_cursor[g_headbuf_current_idx] += 1;
 			if (g_headbuf_http_cursor[g_headbuf_current_idx] >= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
 				close(g_headbuf_sockets[g_headbuf_current_idx]);
@@ -127,16 +127,17 @@ void header_buffering_main(char *argv[])
 		return;
 	}
 	split_ip_mask_port(argv,
-										 g_headbuf_src_ip,
-										 g_headbuf_dest_ip,
-										 &g_headbuf_src_mask,
-										 &g_headbuf_dest_mask,
-										 &g_headbuf_dest_port_start,
-										 &g_headbuf_dest_port_end);
+			g_headbuf_src_ip,
+			g_headbuf_dest_ip,
+			&g_headbuf_src_mask,
+			&g_headbuf_dest_mask,
+			&g_headbuf_dest_port_start,
+			&g_headbuf_dest_port_end);
 	g_headbuf_num_generated_in_sec = 0;
 	g_headbuf_num_total = 0;
 	memset(&g_headbuf_before_time, 0, sizeof(struct timespec));
 	memset(&g_headbuf_now_time, 0, sizeof(struct timespec));
+	g_headbuf_request_per_sec = atoi(argv[3]);
 	/***tmp***/
 	//socket preparation & clock preparation
 	g_headbuf_sockets = (int*) malloc(sizeof(int) * g_headbuf_maximum);

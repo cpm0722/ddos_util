@@ -20,7 +20,7 @@ unsigned int g_udp_request_per_sec;
 // for masking next ip address
 char g_udp_now_src_ip[16] = { 0, };
 char g_udp_now_dest_ip[16] = { 0, };
-int g_udp_now_dest_port = 0;
+unsigned int g_udp_now_dest_port;
 // thread
 pthread_mutex_t g_udp_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_udp_cond;
@@ -42,14 +42,14 @@ void *generate_udp_flood(void *data)
 		pthread_mutex_lock(&g_udp_mutex);
 		// get now resource
 		generator(g_udp_src_ip,
-		          g_udp_dest_ip,
-							g_udp_src_mask,
-							g_udp_dest_mask,
-							g_udp_dest_port_start,
-							g_udp_dest_port_end,
-							g_udp_now_src_ip,
-							g_udp_now_dest_ip,
-							&g_udp_now_dest_port);
+				g_udp_dest_ip,
+				g_udp_src_mask,
+				g_udp_dest_mask,
+				g_udp_dest_port_start,
+				g_udp_dest_port_end,
+				g_udp_now_src_ip,
+				g_udp_now_dest_ip,
+				&g_udp_now_dest_port);
 		// make ipv4 header
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
@@ -108,12 +108,12 @@ void udp_flood_main(char *argv[])
 	}
 	// get ip address, mask, port
 	split_ip_mask_port(argv,
-										g_udp_src_ip,
-										g_udp_dest_ip,
-										&g_udp_src_mask,
-										&g_udp_dest_mask,
-										&g_udp_dest_port_start,
-										&g_udp_dest_port_end);
+			g_udp_src_ip,
+			g_udp_dest_ip,
+			&g_udp_src_mask,
+			&g_udp_dest_mask,
+			&g_udp_dest_port_start,
+			&g_udp_dest_port_end);
 	g_udp_num_generated_in_sec = 0;
 	g_udp_num_total = 0;
 	memset(&g_udp_before_time, 0, sizeof(struct timespec));
@@ -125,7 +125,7 @@ void udp_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending UDP requests to %s using %d threads\n", g_udp_dest_ip, num_threads);
+	printf("Sending UDP requests to %s using %d threads %u per sec\n", g_udp_dest_ip, num_threads, g_udp_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(&threads[i], NULL, generate_udp_flood, (void *)&thread_ids[i]);
@@ -136,7 +136,7 @@ void udp_flood_main(char *argv[])
 		printf("thread %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_udp_mutex);
-	pthread_exit(NULL);
 	printf("UDP flood finished\nTotal %lu packets sent.\n", g_udp_num_total);
+	pthread_exit(NULL);
 	return;
 }

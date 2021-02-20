@@ -4,8 +4,7 @@
 #include "../base/receiver.h"
 #include "../base/subnet_mask.h"
 #include "../base/time_check.h"
-#include "../ddos/body_buffering.h"
-
+#include "../ddos/body_buffering.h" 
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 #define BODY_BUFFERING_CNT 20
 
@@ -23,7 +22,7 @@ unsigned int g_bodybuf_request_per_sec;
 // for masking next ip address
 char g_bodybuf_now_src_ip[16] = { 0, };
 char g_bodybuf_now_dest_ip[16] = { 0, };
-int g_bodybuf_now_dest_port = 0;
+unsigned int g_bodybuf_now_dest_port;
 // thread
 pthread_mutex_t g_bodybuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;
@@ -105,16 +104,17 @@ void body_buffering_main(char *argv[])
 		return;
 	}
 	split_ip_mask_port(argv,
-										g_bodybuf_src_ip,
-										g_bodybuf_dest_ip,
-										&g_bodybuf_src_mask,
-										&g_bodybuf_dest_mask,
-										&g_bodybuf_dest_port_start,
-										&g_bodybuf_dest_port_end);
+			g_bodybuf_src_ip,
+			g_bodybuf_dest_ip,
+			&g_bodybuf_src_mask,
+			&g_bodybuf_dest_mask,
+			&g_bodybuf_dest_port_start,
+			&g_bodybuf_dest_port_end);
 	g_bodybuf_num_generated_in_sec = 0;
 	g_bodybuf_num_total = 0;
 	memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
 	memset(&g_bodybuf_now_time, 0, sizeof(struct timespec));
+	g_bodybuf_request_per_sec = atoi(argv[3]);
 	const int num_threads = 10;
 	pthread_t threads[9999];
 	int thread_ids[9999];

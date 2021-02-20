@@ -138,8 +138,7 @@ void header_buffering_main(char *argv[])
 	memset(&g_headbuf_before_time, 0, sizeof(struct timespec));
 	memset(&g_headbuf_now_time, 0, sizeof(struct timespec));
 	g_headbuf_request_per_sec = atoi(argv[3]);
-	/***tmp***/
-	//socket preparation & clock preparation
+	//socket preparation
 	g_headbuf_sockets = (int*) malloc(sizeof(int) * g_headbuf_maximum);
 	g_headbuf_http_cursor = (int*) malloc(sizeof(int) * g_headbuf_maximum);
 	g_headbuf_current_idx = 0;
@@ -148,7 +147,6 @@ void header_buffering_main(char *argv[])
 		g_headbuf_sockets[tmp] = -2;
 		g_headbuf_http_cursor[tmp] = 0;
 	}
-	/***tmp***/
 	const int num_threads = 10;
 	pthread_t threads[9999];
 	int thread_ids[9999];

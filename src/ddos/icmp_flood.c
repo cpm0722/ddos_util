@@ -183,6 +183,8 @@ void icmp_flood_run(char *argv[], int mode) {
 			icmp_per_second = __UINT_MAXIMUM__;
 
 		icmp_dest_port = atoi(argv[2]);
+		icmp_dest_port_start = icmp_dest_port;
+
 	}
 
 	int num_threads = 10;

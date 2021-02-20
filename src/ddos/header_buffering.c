@@ -15,6 +15,9 @@ char headbuffer_dest_ip[16];
 char headbuffer_src_ip[16];
 
 int headbuffer_dest_port;
+int headbuffer_dest_port_start;
+int headbuffer_now_port;
+
 
 int headbuffer_src_ip_mask;
 int headbuffer_dest_ip_mask;
@@ -50,6 +53,21 @@ void* generate_header_buffering1(void *data) {
 	while (1) {
 
 		pthread_mutex_lock(&headbuffer_mutex);
+
+
+		/*
+		 * generator(headbuffer_src_ip,
+				headbuffer_dest_ip,
+				headbuffer_src_ip_mask,
+				headbuffer_dest_ip_mask,
+				headbuffer_dest_port_start,
+				headbuffer_dest_port,
+				headbuffer_now_src_ip,
+				headbuffer_now_dest_ip,
+			&headbuffer_now_port);
+		*
+		* */
+
 		//printf("Log[%d] : T<%d>, S<%d>\n", debug_log++, headbuffer_current,
 		//	headbuffer_sockets[headbuffer_current]);
 

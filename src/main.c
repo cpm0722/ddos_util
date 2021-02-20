@@ -113,16 +113,16 @@ int main(void) {
 			get_flood_run(tokens,2);
 			break; 
 		case 6: //header buffering
-			header_buffering_print_usage(1);
+			header_buffering_print_usage();
 			get_input();
 			make_tokens();
-			header_buffering_run(tokens,1);
+			header_buffering_main(tokens);
 			break;
 		case 7:		//body buffering
-			body_buffering_print_usage(1);
+			body_buffering_print_usage();
 			get_input();
 			make_tokens();
-			body_buffering_run(tokens,1);
+			body_buffering_main(tokens);
 			break;
 		case 8:		//response buffering
 			response_buffering_print_usage(2);

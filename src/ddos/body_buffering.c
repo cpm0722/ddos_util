@@ -33,7 +33,7 @@ struct timespec g_bodybuf_now_time;
 
 void body_buffering_print_usage(void)
 {
-	printf("header buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
+	printf("body buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
 	return;
 }
 
@@ -84,7 +84,7 @@ void* generate_body_buffering(void *data)
 	return NULL;
 }
 
-void* bodybuf_time_check(void *data)
+void* body_buffering_time_check(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_bodybuf_mutex);
@@ -115,7 +115,7 @@ void body_buffering_main(char *argv[])
 	g_bodybuf_num_total = 0;
 	memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
 	memset(&g_bodybuf_now_time, 0, sizeof(struct timespec));
-	int num_threads = 10;
+	const int num_threads = 10;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	for (int i = 0; i < num_threads; i++) {
@@ -126,7 +126,7 @@ void body_buffering_main(char *argv[])
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(&threads[i], NULL, generate_body_buffering, (void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, bodybuf_time_check, NULL);
+	pthread_create(&threads[i], NULL, body_buffering_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("threads %d joined\n", i);

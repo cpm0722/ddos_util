@@ -83,11 +83,11 @@ void *generate_header_buffering(void *data)
 					g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx], 1);
 			g_headbuf_num_generated_in_sec++;
 			g_headbuf_num_total++;
-			//printf("%lu Socket[%d] send %c : %d\n",
+			/*printf("%lu Socket[%d] send %c : %d\n",
 					g_headbuf_num_generated_in_sec,
 					g_headbuf_sockets[g_headbuf_current_idx],
 					*(g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx]),
-					sent_size);
+					sent_size);*/
 			g_headbuf_http_cursor[g_headbuf_current_idx] += 1;
 			if (g_headbuf_http_cursor[g_headbuf_current_idx] >= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
 				close(g_headbuf_sockets[g_headbuf_current_idx]);

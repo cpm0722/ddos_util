@@ -66,7 +66,7 @@ void *generate_get_flood(void *data)
 		send(sock, g_get_request_msg, strlen(g_get_request_msg), 0);
 		g_get_num_generated_in_sec++;
 		g_get_num_total++;
-		printf("%lu Get msg sent\n", g_get_num_generated_in_sec);
+		//printf("%lu Get msg sent\n", g_get_num_generated_in_sec);
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_get_mutex);
 	}

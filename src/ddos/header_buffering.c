@@ -68,7 +68,7 @@ void *generate_header_buffering(void *data)
 						(struct sockaddr*) &servaddr, sizeof(servaddr)) != 0) {
 				perror("connect failed\n");
 			}
-			printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
+			//printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
 		}
 		// wait a second
 		if (g_headbuf_num_generated_in_sec >= g_headbuf_request_per_sec) {
@@ -83,7 +83,7 @@ void *generate_header_buffering(void *data)
 					g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx], 1);
 			g_headbuf_num_generated_in_sec++;
 			g_headbuf_num_total++;
-			printf("%lu Socket[%d] send %c : %d\n",
+			//printf("%lu Socket[%d] send %c : %d\n",
 					g_headbuf_num_generated_in_sec,
 					g_headbuf_sockets[g_headbuf_current_idx],
 					*(g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx]),

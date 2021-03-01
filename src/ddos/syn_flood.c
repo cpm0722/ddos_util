@@ -63,7 +63,7 @@ void* generate_syn_request1(void *data) {
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 
-		printf("%d\n", ((struct iphdr*) packet)->tot_len);
+		//printf("%d\n", ((struct iphdr*) packet)->tot_len);
 
 		pthread_mutex_lock(&tcpsyn_mutex);
 
@@ -129,7 +129,7 @@ void* generate_syn_request2(void *data) {
 		//If time > 1.0
 		if (tcpsyn_elapsed_time >= 1.0) {
 
-			printf("-.\n");
+		//	printf("-.\n");
 			tcpsyn_produced = 0;
 
 			clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time1);
@@ -140,7 +140,7 @@ void* generate_syn_request2(void *data) {
 		free(packet);
 
 		tcpsyn_produced++;
-		printf("%d syn packet sent\n",tcpsyn_produced);
+	//	printf("%d syn packet sent\n",tcpsyn_produced);
 
 		tcpsyn_total++;
 
@@ -162,7 +162,7 @@ void* syn_time_check(void *data) {
 
 		//If time > 1.0
 		if (tcpsyn_elapsed_time >= 1.0) {
-			printf("-.\n");
+		//	printf("-.\n");
 			tcpsyn_produced = 0;
 			clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time1);
 			pthread_cond_signal(&tcpsyn_cond);

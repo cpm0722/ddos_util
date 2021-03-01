@@ -79,7 +79,7 @@ void *generate_icmp_flood(void *data)
 		free(packet);
 		g_icmp_num_generated_in_sec++;
 		g_icmp_num_total++;
-		printf("%lu icmp sent\n", g_icmp_num_generated_in_sec);
+		//printf("%lu icmp sent\n", g_icmp_num_generated_in_sec);
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_icmp_mutex);
 	}

@@ -115,7 +115,7 @@ void* generate_conn_flooding2(void *data) {
 		//If time > 1.0
 		if (conn_elapsed_time >= 1.0) {
 
-			printf("-.\n");
+			//printf("-.\n");
 			conn_produced = 0;
 
 			clock_gettime(CLOCK_MONOTONIC, &conn_time1);
@@ -136,7 +136,7 @@ void* generate_conn_flooding2(void *data) {
 
 		conn_produced++;
 		conn_total++;
-		printf("%d connected\n",conn_produced);
+		//printf("%d connected\n",conn_produced);
 
 		pthread_mutex_unlock(&conn_mutex);
 	}
@@ -155,7 +155,7 @@ void* conn_time_check(void *data) {
 		//If time > 1.0
 		if (conn_elapsed_time >= 1.0) {
 
-			printf("-.\n");
+			//printf("-.\n");
 			conn_produced = 0;
 
 			clock_gettime(CLOCK_MONOTONIC, &conn_time1);

@@ -72,7 +72,7 @@ void* generate_body_buffering(void *data)
 		// send one character
 		char data[] = "a\r\n";
 		int sent_size = write(sock, &data, strlen(data));
-		printf("sent size: %d\n", sent_size);
+		//printf("sent size: %d\n", sent_size);
 		g_bodybuf_num_generated_in_sec++;
 		g_bodybuf_num_total++;
 		// *** end of critical section ***

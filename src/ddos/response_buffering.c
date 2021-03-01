@@ -85,7 +85,7 @@ void* generate_response_buffering1(void *data) {
 			if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
 				perror("get send err\n");
 			}
-			printf("Get Sent\n");
+			//printf("Get Sent\n");
 
 			first_run = 0;
 		}
@@ -107,7 +107,7 @@ void* generate_response_buffering1(void *data) {
 
 		//If time > 1.0
 		if (respbuffer_elapsed_time >= 1.0) {
-			printf("-.\n");
+		//	printf("-.\n");
 			respbuffer_produced = 0;
 			clock_gettime(CLOCK_MONOTONIC, &respbuffer_time1);
 			pthread_cond_signal(&respbuffer_cond);
@@ -120,7 +120,7 @@ void* generate_response_buffering1(void *data) {
 		respbuffer_produced++;
 		respbuffer_total++;
 
-		printf("%d recv :[%c]\n",respbuffer_produced, buffer[0]);
+	//	printf("%d recv :[%c]\n",respbuffer_produced, buffer[0]);
 
 		pthread_mutex_unlock(&respbuffer_mutex);
 
@@ -188,7 +188,7 @@ void* respbuffer_time_check(void *data) {
 
 		//If time > 1.0
 		if (respbuffer_elapsed_time >= 1.0) {
-			printf("-.\n");
+			//printf("-.\n");
 			respbuffer_produced = 0;
 			clock_gettime(CLOCK_MONOTONIC, &respbuffer_time1);
 			pthread_cond_signal(&respbuffer_cond);

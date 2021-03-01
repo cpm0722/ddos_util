@@ -13,8 +13,8 @@
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
 
-char input[__SIZE_OF_INPUT__];
-char *tokens[__MAX_TOKEN_NUM__];
+char input[__SIZE_OF_INPUT__ ];
+char *tokens[__MAX_TOKEN_NUM__ ];
 
 void get_input() {
 	printf("$ ");
@@ -51,7 +51,6 @@ int choose_running_type() {
 }
 
 int type_choose_menu() {
-	printf("- = D D O S = -\n");
 	printf("1. SYN flooding\n"
 			"2. UDP flooding\n"
 			"3. ICMP flooding\n"
@@ -75,8 +74,86 @@ int type_choose_menu() {
 
 }
 
+#define DRAW_HEIGHT 7
+#define DRAW_WIDTHB 8
+#define DRAW_WIDTHS 6
+void print_main() {
+
+	char num[11];  //here too one extra room is needed for the '\0'
+	char c;  //for option
+	int i, j, k;
+	//declaring char 2D arrays and initializing with hash-printed digits
+	char bigD[DRAW_HEIGHT][DRAW_WIDTHB] = { " ####  ", //H=0
+			" #   # ", //H=1
+			" #   # ", //H=2
+			" #   # ", //H=3
+			" #   # ", //H=4
+			" #   # ", //H=5
+			" ####  " }, //H=6
+
+			litO[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "       ",
+					" ##### ", " #   # ", " #   # ", " ##### " },
+
+			bigS[DRAW_HEIGHT][DRAW_WIDTHB] = { " ##### ", " #     ", " #     ",
+					" ##### ", "     # ", "     # ", " ##### " },
+
+			bigU[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", " #   # ", " #   # ",
+					" #   # ", " #   # ", " #   # ", " ##### " },
+
+			litT[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "   #   ",
+					" ##### ", "   #   ", "   #   ", "   ### " },
+
+			litI[DRAW_HEIGHT][DRAW_WIDTHS] = { "     ", "     ", "  #  ",
+					"     ", "  #  ", "  #  ", "  #  " },
+
+			litL[DRAW_HEIGHT][DRAW_WIDTHS] = { "     ", "  #  ", "  #  ",
+					"  #  ", "  #  ", "  #  ", "  #  " };
+
+	printf("-----------------------------\n");
+
+	for (i = 0; i < DRAW_HEIGHT; i++) {
+		printf("|");
+		for (j = 0; j < DRAW_WIDTHB; j++)
+			printf("%c", bigD[i][j]);
+
+		for (j = 0; j < DRAW_WIDTHB; j++)
+			printf("%c", bigD[i][j]);
+
+		for (j = 0; j < DRAW_WIDTHB; j++)
+			printf("%c", litO[i][j]);
+
+		for (j = 0; j < DRAW_WIDTHB; j++)
+			printf("%c", bigS[i][j]);
+		printf("|");
+		printf("\n");
+	}
+
+
+	for (i = 0; i < DRAW_HEIGHT; i++) {
+		printf("|");
+		for (j = 0; j < DRAW_WIDTHB; j++)
+			printf("%c", bigU[i][j]);
+
+		for (j = 0; j < DRAW_WIDTHB; j++)
+			printf("%c", litT[i][j]);
+
+		for (j = 0; j < DRAW_WIDTHS; j++)
+			printf("%c", litI[i][j]);
+
+		for (j = 0; j < DRAW_WIDTHS; j++)
+			printf("%c", litL[i][j]);
+
+		printf("    |");
+		printf("\n");
+	}
+	printf("-----------------------------\n");
+
+}
+
 int main(void) {
 	int mode;
+
+	print_main();
 
 	while (1) {
 		int type = type_choose_menu();
@@ -99,19 +176,19 @@ int main(void) {
 			get_input();
 			make_tokens();
 			icmp_flood_main(tokens);
-			break; 
+			break;
 		case 4:		//connection flooding
 			conn_flood_print_usage(1);
 			get_input();
 			make_tokens();
-			conn_flood_run(tokens,1);
+			conn_flood_run(tokens, 1);
 			break;
 		case 5:		//get flooding
 			get_flood_print_usage();
 			get_input();
 			make_tokens();
 			get_flood_main(tokens);
-			break; 
+			break;
 		case 6: //header buffering
 			header_buffering_print_usage();
 			get_input();
@@ -128,8 +205,8 @@ int main(void) {
 			response_buffering_print_usage(2);
 			get_input();
 			make_tokens();
-			response_buffering_run(tokens,2);
-			break; 
+			response_buffering_run(tokens, 2);
+			break;
 		case 9:		//Hash Dos
 			mode = choose_running_type();
 			hash_dos_print_usage(mode);

@@ -89,29 +89,35 @@ void* generate_syn_request2(void *data) {
 	clock_t thread_clock;
 
 	while (1) {
+		//make pseudo ip header.
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
 
 		//modify tcpsyn_src_ip, increment 1.
 		//next_ip_addr(tcpsyn_src_ip, 1);
 
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
-
+		//make pseudo tcp header.
 		struct tcphdr tcp_h;
 		tcp_h = prepare_empty_tcp();
-		//Lucky 7777 SRC PORT NUMBER;
-				tcp_h = tcp_set_source(tcp_h, 7777);
+		//set src port number random assigned 7777
+
+		tcp_h = tcp_set_source(tcp_h, 7777);
 		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
 		tcp_h = tcp_set_seq(tcp_h, tcpsyn_total);
+
+		/***For SYN TCP request, ACK seq should not be provided.***/
 		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
 
 		tcp_h = tcp_set_syn_flag(tcp_h);
 
 		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
 
+		//modify ipv4 after tcp part is added.
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
+		//assemble ip part with tcp part.
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 
 		pthread_mutex_lock(&tcpsyn_mutex);

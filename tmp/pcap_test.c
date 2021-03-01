@@ -1,10 +1,22 @@
 #include "../src/header.h"
+#include "../src/base/make_ipv4.h"
+#include "../src/base/make_tcp.h"
 #include <pcap.h>
 #include <netinet/in.h>
 
 #define BUFFER_SIZE 8192
 #define SIZE_ETHERNET 14
 #define ETHER_ADDR_LEN  6
+#define PACKET_NUM_MAXIMUM 1024
+
+struct sudo_packet_data {
+	__u8 sport;
+	__u8 dport;
+	char src_ip[16];
+	char dest_ip[16];
+	char *payload;
+	__u16 payload_size;
+};
 
 struct pcap_hdr {
 	__u32 magic_number;
@@ -47,7 +59,6 @@ struct sniff_ip {
 #define IP_HL(ip)       (((ip)->ip_vhl) & 0x0f)
 #define IP_V(ip)        (((ip)->ip_vhl) >> 4)
 
-
 struct sniff_tcp {
 	u_short th_sport; /* source port */
 	u_short th_dport; /* destination port */
@@ -74,126 +85,154 @@ int main(int argc, char *argv[]) {
 
 	printf("--- Packet Parse Start ---\n");
 
+	//pointer to save packet data;
+	struct sudo_packet_data packets[PACKET_NUM_MAXIMUM];
+
 	//get file
-	char *filename= argv[1];
+	char *filename = argv[1];
 
 	//errbuff used like stderr in pcap.h
 	char errbuff[PCAP_ERRBUF_SIZE];
 
 	//open .pcap/.pcapng file
-	pcap_t * handler = pcap_open_offline(filename, errbuff);
-
+	pcap_t *handler = pcap_open_offline(filename, errbuff);
 
 	//to parse header;
 	struct pcap_pkthdr *header;
 
-
 	//actual packet;
 	const u_char *packet;
+	u_char *new_packets[PACKET_NUM_MAXIMUM];
+	int new_packets_size[PACKET_NUM_MAXIMUM];
 
 	const char *tcp_payload;
-
 
 	int packetCount = 0;
 	int i;
 
 	//to save result...
-	FILE *fp = fopen( "result.txt","wb+");
+	FILE *fp = fopen("result.txt", "wb+");
 
 	//actually sniff ethernet, ip, tcp part.
-	const struct sniff_ethernet *ethernet;
-	const struct sniff_ip *ip;
-	const struct sniff_tcp *tcp;
+	struct sniff_ethernet *ethernet;
+	struct sniff_ip *ip;
+	struct sniff_tcp *tcp;
 
 	//size ip, tcp.
 	u_int size_ip;
 	u_int size_tcp;
 
-	//get next pcap(packet).
-	while(pcap_next_ex(handler, &header, &packet) >= 0)
-	{
-		printf("Packet # %i\n", ++packetCount);
-		printf("Packet size : %d bytes\n",header->len);
+	//to be modified to below IPs and ports;
+	char new_src_ip[16];
+	strcpy(new_src_ip, "192.168.56.3");
+	char new_dst_ip[16];
+	strcpy(new_dst_ip, "192.168.56.1");
+	int new_sport = 12345;
+	int new_dport = 55555;
 
-			//warning when capture size != packet size
-		if(header->len != header->caplen)
+	//get next pcap(packet).
+	while (pcap_next_ex(handler, &header, &packet) >= 0) {
+		printf("Packet # %i\n", ++packetCount);
+		printf("Packet size : %d bytes\n", header->len);
+
+		//warning when capture size != packet size
+		if (header->len != header->caplen)
 			printf("Warning! Capture size != packet size\n");
 
-		//printf("Epoch Time: %ld:%ld seconds\n",header->ts.tv_sec, header->ts.tv_usec);
+		new_packets[packetCount - 1] = malloc(
+				header->len - sizeof(struct sniff_ethernet));
+		memcpy(new_packets[packetCount - 1],
+				packet + sizeof(struct sniff_ethernet),
+				header->len - sizeof(struct sniff_ethernet));
+		new_packets_size[packetCount - 1] = header->len
+				- sizeof(struct sniff_ethernet);
 
 		//point to packet(ethernet = beginning).
-		ethernet = (struct sniff_ethernet*)(packet);
+		ethernet = (struct sniff_ethernet*) (packet);
 
 		//poitn to packet ip part.
-		ip = (struct sniff_ip *)(packet + 	sizeof(struct sniff_ethernet));
-		size_ip = IP_HL(ip)*4;
+		ip = (struct sniff_ip*) (packet + sizeof(struct sniff_ethernet));
+		size_ip = IP_HL(ip) * 4;
 
-		if(size_ip < 20){
+		if (size_ip < 20) {
 			printf("   * Invalid IP header length : %u bytes\n", size_ip);
 			exit(1);
 		}
 
 		//point to tcp part.
-		tcp = (struct sniff_tcp*)(packet + 	sizeof(struct sniff_ethernet) + size_ip);
+		tcp = (struct sniff_tcp*) (packet + sizeof(struct sniff_ethernet)
+				+ size_ip);
+		packets[packetCount - 1].sport = ntohs(tcp->th_sport);
+		packets[packetCount - 1].dport = ntohs(tcp->th_dport);
 
-		printf("src port: %u dest port: %u \n", ntohs(tcp->th_sport), ntohs(tcp->th_dport));
+		printf("src port: %u dest port: %u \n", packets[packetCount - 1].sport,
+				packets[packetCount - 1].dport);
 
-		printf("src address: %s",  inet_ntoa(ip->ip_src));
-		printf(" dest address: %s \n",  inet_ntoa(ip->ip_dst));
+		strcpy(packets[packetCount - 1].src_ip, inet_ntoa(ip->ip_src));
+		strcpy(packets[packetCount - 1].dest_ip, inet_ntoa(ip->ip_dst));
 
-		/*
-		tcp_payload = (char *)(packet + sizeof(struct sniff_ethernet) + size_ip + sizeof(struct sniff_tcp));
+		printf("src address: %s", packets[packetCount - 1].src_ip);
+		printf(" dest address: %s \n", packets[packetCount - 1].dest_ip);
+
+		tcp_payload = (char*) (packet
+				+ (sizeof(struct sniff_ethernet) + size_ip
+						+ sizeof(struct sniff_tcp)));
+
+		packets[packetCount - 1].payload_size = header->len
+				- (sizeof(struct sniff_ethernet) + size_ip
+						+ sizeof(struct sniff_tcp));
+
+		packets[packetCount - 1].payload = (char*) malloc(
+				1 * packets[packetCount - 1].payload_size);
+
+		memcpy(packets[packetCount - 1].payload, tcp_payload,
+				packets[packetCount - 1].payload_size);
 
 		int i;
 		printf("data :\n");
-		for(i=sizeof(struct sniff_ethernet) + size_ip + sizeof(struct sniff_tcp) ; i< (header->len) ;i++)
-			printf("%c",tcp_payload[i]);
-*/
+		for (i = 0; i < packets[packetCount - 1].payload_size; i++)
+			printf("%x ", packets[packetCount - 1].payload[i] & 0xff);
+
 		printf("\n");
 		printf("\n");
 	}
-	/*
-	FILE *fp;
 
-	int p = 0 ;
-	//error buffer
-	char buffer[BUFFER_SIZE];
+	//make socket for new data send;
+	int sock = make_socket(IPPROTO_TCP);
+	struct sockaddr_in dest;
+	dest.sin_family = AF_INET;
 
-	fp = fopen(filename, "rb");
-	if(fp==NULL)
-		perror("no such file exists\n");
+	dest.sin_port = htons(new_dport);
 
-	fread(buffer,BUFFER_SIZE,1,fp);
+	dest.sin_addr.s_addr = inet_addr(new_dst_ip);
 
-	struct pcap_hdr pcap_header;
-	struct pcaprec_hdr record_header;
-	struct sniff_ip ip;
-	struct sniff_tcp tcp;
+	for (i = 0; i < packetCount; i++) {
+		ip = (struct sniff_ip*) (new_packets[i]);
+		size_ip = IP_HL(ip) * 4;
+		ip->ip_src.s_addr = inet_addr(new_src_ip);
+		ip->ip_dst.s_addr = inet_addr(new_dst_ip);
 
+		tcp = (struct sniff_tcp*) (packet + +size_ip);
 
-	printf("size of pcap_hdr = %d\n",sizeof(struct pcap_hdr));
-	memcpy(&pcap_header,(buffer+p),sizeof(struct pcap_hdr));
+		tcp->th_sport = htons(new_sport);
+		tcp->th_dport = htons(new_dport);
 
-	//printing pcap_hdr data
+		if (sendto(sock, (void*) new_packets[i], new_packets_size[i], 0,
+				(struct sockaddr*) &dest, sizeof(dest)) < 0) {
+			perror("sendto() error");
+			exit(-1);
+		}
 
-	printf("magic number : %u\n",pcap_header.magic_number);
-	printf("version_major : %u\n",pcap_header.version_major);
-	printf("version_minor : %u\n",pcap_header.version_minor);
-	printf("thiszone : %d\n",pcap_header.thiszone);
-	printf("sigfigs : %u\n",pcap_header.sigfigs);
-	printf("snaplen : %u\n",pcap_header.snaplen);
-	printf("network : %u\n",pcap_header.network);
+		//print sent data.
+		printf("New Packet # %d\n", i + 1);
+		printf("src port: %u dest port: %u \n", ntohs(tcp->th_sport),
+				ntohs(tcp->th_dport));
 
-	p += sizeof(struct pcap_hdr);
+		printf("src address: %s", inet_ntoa(ip->ip_src));
+		printf(" dest address: %s \n", inet_ntoa(ip->ip_dst));
 
-	memcpy(&record_header, (buffer+p), sizeof(struct pcaprec_hdr));
+		printf("\n");
 
-	p += sizeof(struct pcaprec_hdr);
-
-	printf("\nts_sec : %d\n",record_header.ts_sec);
-	printf("ts_usec : %d\n",record_header.ts_usec);
-	printf("incl_len : %d\n",record_header.incl_len);
-	printf("orig_len : %d\n",record_header.orig_len);
-*/
+	}
 
 }

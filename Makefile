@@ -1,6 +1,6 @@
 ##########
 CC = gcc
-CCOPTS = -c
+CCOPTS = -c -g
 DEBUG = -g
 RENAME = -o
 LINKOPTS = -lpthread -lm $(DEBUG)

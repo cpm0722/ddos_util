@@ -9,6 +9,14 @@
 #define ETHER_ADDR_LEN  6
 #define PACKET_NUM_MAXIMUM 1024
 
+#define PREMADE_SIZE 12
+
+struct ip_port_pair
+{
+	char ip1[16];
+	char ip2[16];
+};
+
 struct sudo_packet_data {
 	__u8 sport;
 	__u8 dport;
@@ -81,6 +89,11 @@ struct sniff_tcp {
 	u_short th_urp; /* urgent pointer */
 };
 
+//Function prototypes
+int ip_pair_match_check(struct ip_port_pair pair1, struct ip_port_pair pair2);
+int ip_pair_exist_check(struct ip_port_pair *pairs,struct ip_port_pair new_pair, int count);
+int ip_table_check(struct ip_port_pair *table, char ip[16], int size);
+
 int main(int argc, char *argv[]) {
 
 	printf("--- Packet Parse Start ---\n");
@@ -123,13 +136,30 @@ int main(int argc, char *argv[]) {
 	u_int size_tcp;
 
 	//to be modified to below IPs and ports;
-	char new_src_ip[16];
-	strcpy(new_src_ip, "192.168.56.3");
-	char new_dst_ip[16];
-	strcpy(new_dst_ip, "192.168.56.1");
+	char new_ips[PREMADE_SIZE*2][16];
+	char new_ip_list[16] = "1.1.1.1";
+
+
+	for(i=0;i<PREMADE_SIZE*2;i++)
+	{
+		strcpy(new_ips[i],new_ip_list);
+		next_ip_addr(new_ip_list,1);
+
+	//	printf("%s\n",new_ips[i]);
+	}
+
+	//prepare data for change
+	int pair_count=0, table_size=0;
+	struct ip_port_pair pairs[PREMADE_SIZE];
+	struct ip_port_pair new_pairs[PREMADE_SIZE];
+	struct ip_port_pair ip_table[PREMADE_SIZE * 2];
+
+	char ip1[16], ip2[16];
+
 	int new_sport = 12345;
 	int new_dport = 55555;
 
+	i=0;
 	//get next pcap(packet).
 	while (pcap_next_ex(handler, &header, &packet) >= 0) {
 		printf("Packet # %i\n", ++packetCount);
@@ -162,6 +192,7 @@ int main(int argc, char *argv[]) {
 		//point to tcp part.
 		tcp = (struct sniff_tcp*) (packet + sizeof(struct sniff_ethernet)
 				+ size_ip);
+
 		packets[packetCount - 1].sport = ntohs(tcp->th_sport);
 		packets[packetCount - 1].dport = ntohs(tcp->th_dport);
 
@@ -170,6 +201,9 @@ int main(int argc, char *argv[]) {
 
 		strcpy(packets[packetCount - 1].src_ip, inet_ntoa(ip->ip_src));
 		strcpy(packets[packetCount - 1].dest_ip, inet_ntoa(ip->ip_dst));
+
+		//pair check;
+
 
 		printf("src address: %s", packets[packetCount - 1].src_ip);
 		printf(" dest address: %s \n", packets[packetCount - 1].dest_ip);
@@ -193,9 +227,41 @@ int main(int argc, char *argv[]) {
 		for (i = 0; i < packets[packetCount - 1].payload_size; i++)
 			printf("%x ", packets[packetCount - 1].payload[i] & 0xff);
 
+		//configure ip pairs
+		struct ip_port_pair tmp_pair;
+
+		strcpy(tmp_pair.ip1,packets[packetCount - 1].src_ip);
+		strcpy(tmp_pair.ip2,packets[packetCount -1].dest_ip);
+
+		if(ip_table_check(ip_table,tmp_pair.ip1,table_size)==-1)
+		{
+			strcpy(ip_table[table_size].ip1,tmp_pair.ip1);
+			strcpy(ip_table[table_size].ip2,new_ips[table_size]);
+			table_size++;
+		}
+
+		if(ip_table_check(ip_table,tmp_pair.ip2,table_size)==-1)
+		{
+			strcpy(ip_table[table_size].ip1,tmp_pair.ip2);
+			strcpy(ip_table[table_size].ip2,new_ips[table_size]);
+			table_size++;
+		}
+
+		if(ip_pair_exist_check(pairs,tmp_pair,pair_count)==-1)
+		{
+
+			strcpy(pairs[pair_count].ip1,tmp_pair.ip1);
+			strcpy(pairs[pair_count].ip2,tmp_pair.ip2);
+
+			pair_count++;
+		}
+
+
 		printf("\n");
 		printf("\n");
 	}
+
+
 
 	//make socket for new data send;
 	int sock = make_socket(IPPROTO_TCP);
@@ -204,18 +270,37 @@ int main(int argc, char *argv[]) {
 
 	dest.sin_port = htons(new_dport);
 
-	dest.sin_addr.s_addr = inet_addr(new_dst_ip);
+	dest.sin_addr.s_addr = inet_addr("192.168.56.1");
 
 	for (i = 0; i < packetCount; i++) {
 		ip = (struct sniff_ip*) (new_packets[i]);
 		size_ip = IP_HL(ip) * 4;
-		ip->ip_src.s_addr = inet_addr(new_src_ip);
-		ip->ip_dst.s_addr = inet_addr(new_dst_ip);
+
+		//modify ips
+		struct ip_port_pair tmp_pair;
+		strcpy(tmp_pair.ip1,packets[i].src_ip);
+		strcpy(tmp_pair.ip2,packets[i].dest_ip);
+
+		int loc = ip_pair_exist_check(pairs,tmp_pair,pair_count);
+		if(ip_pair_match_check(pairs[loc],tmp_pair)==1)
+		{
+			ip_table[ip_table_check(ip_table,pairs[loc].ip1,table_size)];
+
+			ip->ip_src.s_addr = inet_addr(ip_table[ip_table_check(ip_table,pairs[loc].ip1,table_size)].ip2);
+			ip->ip_dst.s_addr = inet_addr(ip_table[ip_table_check(ip_table,pairs[loc].ip2,table_size)].ip2);
+		}
+		else
+		{
+			ip->ip_src.s_addr = inet_addr(ip_table[ip_table_check(ip_table,pairs[loc].ip2,table_size)].ip2);
+			ip->ip_dst.s_addr = inet_addr(ip_table[ip_table_check(ip_table,pairs[loc].ip1,table_size)].ip2);
+		}
 
 		tcp = (struct sniff_tcp*) (packet + +size_ip);
 
 		tcp->th_sport = htons(new_sport);
 		tcp->th_dport = htons(new_dport);
+
+
 
 		if (sendto(sock, (void*) new_packets[i], new_packets_size[i], 0,
 				(struct sockaddr*) &dest, sizeof(dest)) < 0) {
@@ -236,3 +321,51 @@ int main(int argc, char *argv[]) {
 	}
 
 }
+
+//0 no match, 1 in right order, 2 in reverse order.
+int ip_pair_match_check(struct ip_port_pair pair1, struct ip_port_pair pair2)
+{
+	//right order check;
+	if(!strcmp(pair1.ip1, pair2.ip1))
+		if(!strcmp(pair1.ip2,pair2.ip2))
+			return 1;
+		else
+			return 0;
+
+	//reverse order check;
+	if(!strcmp(pair1.ip1, pair2.ip2))
+		if(!strcmp(pair1.ip2,pair2.ip1))
+			return 2;
+		else
+			return 0;
+}
+
+//0 not exist -1 , else # = already exists;
+int ip_pair_exist_check(struct ip_port_pair *pairs,struct ip_port_pair new_pair, int count)
+{
+	int i=0;
+	while(i<count)
+	{
+
+		if(ip_pair_match_check(pairs[i],new_pair)>0)
+			return i;
+
+		i++;
+	}
+	return -1;
+}
+
+int ip_table_check(struct ip_port_pair *table, char ip[16], int size)
+{
+	int i=0;
+	while(i<size)
+	{
+		if(!strcmp(table[i].ip1, ip))
+			return i;
+
+		i++;
+	}
+
+	return -1;
+}
+

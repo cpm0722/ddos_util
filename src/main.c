@@ -178,10 +178,10 @@ int main(void) {
 			icmp_flood_main(tokens);
 			break;
 		case 4:		//connection flooding
-			conn_flood_print_usage(1);
+			conn_flood_print_usage();
 			get_input();
 			make_tokens();
-			conn_flood_run(tokens, 1);
+			conn_flood_main(tokens);
 			break;
 		case 5:		//get flooding
 			get_flood_print_usage();

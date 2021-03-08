@@ -139,6 +139,8 @@ void* generate_conn_flooding2(void *data) {
 		//printf("%d connected\n",conn_produced);
 
 		pthread_mutex_unlock(&conn_mutex);
+
+
 	}
 
 	return 0;

@@ -96,7 +96,7 @@ int ip_table_check(struct ip_port_pair *table, char ip[16], int size);
 
 int main(int argc, char *argv[]) {
 
-	printf("--- Packet Parse Start ---\n");
+
 
 	//pointer to save packet data;
 	struct sudo_packet_data packets[PACKET_NUM_MAXIMUM];
@@ -159,7 +159,34 @@ int main(int argc, char *argv[]) {
 	int new_sport = 12345;
 	int new_dport = 55555;
 
+
+	//input test
+	char ipA[16];
+	char ipB[16];
+
+	while(1)
+	{
+		printf("MODIFY IP\nIP -> IP(c for exit)\nEnter Orig IP(#.#.#.#) :");
+		scanf("%s",ipA);
+		if(!strcmp(ipA,"c"))
+			break;
+
+		printf("Enter New IP(#.#.#.#) :");
+		scanf("%s",ipB);
+
+		if(ip_table_check(ip_table,ipA,table_size)==-1)
+		{
+			strcpy(ip_table[table_size].ip1,ipA);
+			strcpy(ip_table[table_size].ip2,ipB);
+			table_size++;
+		}
+
+
+	}
+
 	i=0;
+	printf("--- Packet Parse Start ---\n");
+
 	//get next pcap(packet).
 	while (pcap_next_ex(handler, &header, &packet) >= 0) {
 		printf("Packet # %i\n", ++packetCount);

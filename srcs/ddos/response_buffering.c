@@ -1,10 +1,10 @@
-#include "../header.h"
-#include "../base/make_ipv4.h"
-#include "../base/make_tcp.h"
-#include "../base/receiver.h"
-#include "../base/time_check.h"
-#include "../ddos/body_buffering.h"
-#include "../base/subnet_mask.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "base/make_tcp.h"
+#include "base/receiver.h"
+#include "base/subnet_mask.h"
+#include "base/time_check.h"
+#include "ddos/body_buffering.h"
 
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 #define RESPONSE_BUFFERING_CNT 20

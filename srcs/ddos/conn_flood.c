@@ -1,10 +1,10 @@
-#include "../header.h"
-#include "../base/make_ipv4.h"
-#include "../base/make_tcp.h"
-#include "../base/receiver.h"
-#include "../base/subnet_mask.h"
-#include "../base/time_check.h"
-#include "../ddos/conn_flood.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "base/make_tcp.h"
+#include "base/receiver.h"
+#include "base/subnet_mask.h"
+#include "base/time_check.h"
+#include "ddos/conn_flood.h"
 
 // session counting
 unsigned long g_conn_num_total;

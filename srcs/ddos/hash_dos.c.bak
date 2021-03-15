@@ -1,6 +1,6 @@
-#include "../header.h"
-#include "../base/make_ipv4.h"
-#include "../ddos/hash_dos.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "ddos/hash_dos.h"
 
 unsigned int hash_dos_total;
 unsigned int hash_dos_produced;

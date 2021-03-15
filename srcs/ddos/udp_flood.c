@@ -1,8 +1,8 @@
-#include "../header.h"
-#include "../base/make_ipv4.h"
-#include "../base/subnet_mask.h"
-#include "../base/time_check.h"
-#include "../ddos/udp_flood.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "base/subnet_mask.h"
+#include "base/time_check.h"
+#include "ddos/udp_flood.h"
 
 #define DATA "Hello, This is Data!"
 

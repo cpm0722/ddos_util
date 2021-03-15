@@ -1,4 +1,5 @@
-#include "../header.h"
+#include "header.h"
+
 #define NANO_PER_SEC 1000000000.0
 
 void time_check(pthread_mutex_t *mutex_p,

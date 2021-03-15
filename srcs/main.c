@@ -209,10 +209,10 @@ int main(void) {
 			break;
 		case 9:		//Hash Dos
 			mode = choose_running_type();
-			hash_dos_print_usage(mode);
+			hash_dos_print_usage();
 			get_input();
 			make_tokens();
-			hash_dos_run(tokens, mode);
+			hash_dos_main(tokens);
 			break;
 		case 10:	//Ref Ref
 			break;

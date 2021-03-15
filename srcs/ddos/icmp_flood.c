@@ -1,8 +1,8 @@
-#include "../header.h"
-#include "../base/make_ipv4.h"
-#include "../base/subnet_mask.h"
-#include "../base/time_check.h"
-#include "../ddos/icmp_flood.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "base/subnet_mask.h"
+#include "base/time_check.h"
+#include "ddos/icmp_flood.h"
 
 // session counting
 unsigned long g_icmp_num_total;

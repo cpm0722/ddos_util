@@ -1,5 +1,5 @@
-#include "../header.h"
-#include "../base/make_http.h"
+#include "header.h"
+#include "base/make_http.h"
 
 char *http_prepare_empty_request(int SIZE)
 {

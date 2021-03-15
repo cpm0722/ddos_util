@@ -1,9 +1,9 @@
-#include "../header.h"
-#include "../base/make_ipv4.h"
-#include "../base/make_tcp.h"
-#include "../base/subnet_mask.h"
-#include "../base/time_check.h"
-#include "../ddos/syn_flood.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "base/make_tcp.h"
+#include "base/subnet_mask.h"
+#include "base/time_check.h"
+#include "ddos/syn_flood.h"
 
 // session counting
 unsigned int g_syn_num_total;

@@ -208,7 +208,6 @@ int main(void) {
 			response_buffering_main(tokens);
 			break;
 		case 9:		//Hash Dos
-			mode = choose_running_type();
 			hash_dos_print_usage();
 			get_input();
 			make_tokens();

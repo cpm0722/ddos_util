@@ -21,7 +21,7 @@ char g_icmp_now_dest_ip[16] = { 0, };
 unsigned int g_icmp_now_port;
 // thread
 pthread_mutex_t g_icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t g_icmp_cond;
+pthread_cond_t g_icmp_cond = PTHREAD_COND_INITIALIZER;
 // time checking
 struct timespec g_icmp_before_time;
 struct timespec g_icmp_now_time;

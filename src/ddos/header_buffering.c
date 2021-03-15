@@ -19,10 +19,6 @@ unsigned int g_headbuf_dest_mask;
 unsigned int g_headbuf_dest_port_start;
 unsigned int g_headbuf_dest_port_end;
 unsigned int g_headbuf_request_per_sec;
-// for masking next ip address
-char g_headbuf_now_src_ip[16] = { 0, };
-char g_headbuf_now_dest_ip[16] = { 0, };
-unsigned int g_headbuf_now_dest_port;
 // thread
 pthread_mutex_t g_headbuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_headbuf_cond = PTHREAD_COND_INITIALIZER;

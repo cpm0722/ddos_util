@@ -19,10 +19,6 @@ unsigned int g_bodybuf_dest_mask;
 unsigned int g_bodybuf_dest_port_start;
 unsigned int g_bodybuf_dest_port_end;
 unsigned int g_bodybuf_request_per_sec;
-// for masking next ip address
-char g_bodybuf_now_src_ip[16] = { 0, };
-char g_bodybuf_now_dest_ip[16] = { 0, };
-unsigned int g_bodybuf_now_dest_port;
 // thread
 pthread_mutex_t g_bodybuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;
@@ -75,11 +71,12 @@ void* generate_body_buffering(void *data)
 		//printf("sent size: %d\n", sent_size);
 		g_bodybuf_num_generated_in_sec++;
 		g_bodybuf_num_total++;
-		// *** end of critical section ***
 		body_buffering_cnt++;
 		pthread_cond_signal(&g_bodybuf_cond);
+		// *** end of critical section ***
 		pthread_mutex_unlock(&g_bodybuf_mutex);
 	}
+	close(sock);
 	return NULL;
 }
 

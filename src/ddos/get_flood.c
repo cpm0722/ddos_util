@@ -19,10 +19,6 @@ unsigned int g_get_dest_mask;
 unsigned int g_get_dest_port_start;
 unsigned int g_get_dest_port_end;
 unsigned int g_get_request_per_sec;
-// for masking next ip address
-char g_get_now_src_ip[16] = { 0, };
-char g_get_now_dest_ip[16] = { 0, };
-unsigned int g_get_now_dest_port;
 // thread
 pthread_mutex_t g_get_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_get_cond = PTHREAD_COND_INITIALIZER;
@@ -131,7 +127,7 @@ void get_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending GET requests to %s using %d threads %u per sec\n", g_get_now_dest_ip, num_threads, g_get_request_per_sec);
+	printf("Sending GET requests to %s using %d threads %u per sec\n", g_get_dest_ip, num_threads, g_get_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(&threads[i], NULL, generate_get_flood, (void *)&thread_ids[i]);

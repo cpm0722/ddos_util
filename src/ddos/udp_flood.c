@@ -23,7 +23,7 @@ char g_udp_now_dest_ip[16] = { 0, };
 unsigned int g_udp_now_dest_port;
 // thread
 pthread_mutex_t g_udp_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t g_udp_cond;
+pthread_cond_t g_udp_cond = PTHREAD_COND_INITIALIZER;
 // time checking
 struct timespec g_udp_before_time;
 struct timespec g_udp_now_time;
@@ -31,6 +31,7 @@ struct timespec g_udp_now_time;
 void udp_flood_print_usage(void)
 {
 	printf("UDP flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
+	return;
 }
 
 void *generate_udp_flood(void *data)

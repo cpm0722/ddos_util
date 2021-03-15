@@ -29,7 +29,7 @@ struct udphdr
 void udp_flood_print_usage(void);
 
 /**
-	@fn void *generate_udp_request(void *);
+	@fn void *generate_udp_flood(void *);
 	@brief function: udp_flooding generate thread
 	@date 2021/02/13
 	@param void *data NULL

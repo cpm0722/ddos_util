@@ -202,10 +202,10 @@ int main(void) {
 			body_buffering_main(tokens);
 			break;
 		case 8:		//response buffering
-			response_buffering_print_usage(2);
+			response_buffering_print_usage();
 			get_input();
 			make_tokens();
-			response_buffering_run(tokens, 2);
+			response_buffering_main(tokens);
 			break;
 		case 9:		//Hash Dos
 			mode = choose_running_type();

@@ -109,51 +109,82 @@ struct tcphdr tcp_get_checksum(struct iphdr ipv4h, struct tcphdr tcph,
 	return tcph;
 }
 
-//3way handshake completed socket
-int tcp_make_connection(__u32 src_ip, __u32 dest_ip, int src_port,
-		int dest_port, int type) {
-	int sock;
-	struct sockaddr_in local_addr, remote_addr;
+//3way handshake completed socket, returns socket;
+int tcp_make_connection(__u32 src_ip, __u32 dest_ip,
+		int *src_port_copy,int dest_port) {
 
+	//srand(time(NULL));
 
-	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-	{
-		perror("sock create error\n");
-		exit(1);
-	}
+	int sock = make_socket(IPPROTO_TCP);
+	struct iphdr ipv4_h;
+	ipv4_h = prepare_empty_ipv4();
+	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
+	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
+	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
+	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
+	// make tcp header.
+	struct tcphdr tcp_h;
+	tcp_h = prepare_empty_tcp();
+	// set src port number random
+	int src_port = rand() % 63535 + 1500;
+	*(src_port_copy) = src_port;
+	tcp_h = tcp_set_source(tcp_h, src_port);
+	tcp_h = tcp_set_dest(tcp_h,dest_port);
+	int seq = rand() % 10000000;
+	tcp_h = tcp_set_seq(tcp_h, seq);
+	seq++;
+	// ***For SYN TCP request, ACK seq should not be provided
+	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
+	tcp_h = tcp_set_syn_flag(tcp_h);
+	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
 
-	/*local_addr.sin_family = AF_INET;
-	local_addr.sin_port = htons(src_port);
-	local_addr.sin_addr.s_addr = src_ip;
+	char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
+			send_packet(sock, ipv4_h, packet,dest_port);
+			free(packet);
 
-	if (bind(sock, (struct sockaddr*) &local_addr, sizeof(struct sockaddr))
-			== -1) {
-		perror("bind failed\n");
-		exit(1);
-	}
+	unsigned char buffer[1000];
+	int recv_size = 0;
 
-	int optval = 1;
-	if (setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval))
-			== -1) {
-		perror("sock opt err\n");
-		exit(1);
-	}
-*/
-	remote_addr.sin_family = AF_INET;
-	remote_addr.sin_addr.s_addr = dest_ip;
-	remote_addr.sin_port = htons(dest_port);
-	int connecting_v = -1;
-	if ( (connecting_v = connect(sock, (struct sockaddr*) &remote_addr, sizeof(remote_addr)))
-			!= 0) {
-		perror("connect failed\n");
-		exit(1);
-	}
-	printf("Connecting ");
-	while(connecting_v!=0)
-		printf(".");
-	printf(" Connected!\n");
+	recv_size = recv(sock, buffer,1000,0);
 
-	return 0;
+	printf("recvd : %d\n",recv_size);
+	int i;
+	for(i=20;i<recv_size;i++)
+		printf("%x ",buffer[i]);
+	printf("\n");
+
+	unsigned long req_seq;
+	memcpy(&req_seq,buffer+24,4);
+
+	req_seq = ntohl(req_seq);
+	printf("port : %lu",req_seq);
+
+	printf("\n\n");
+
+	ipv4_h = prepare_empty_ipv4();
+	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
+	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
+	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
+	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
+	// make tcp header.
+
+	tcp_h = prepare_empty_tcp();
+	// set src port number random
+	tcp_h = tcp_set_source(tcp_h, src_port);
+	tcp_h = tcp_set_dest(tcp_h,dest_port);
+
+	tcp_h = tcp_set_seq(tcp_h, seq);
+	tcp_h = tcp_set_ack_seq(tcp_h,req_seq+1);
+
+	// ***For SYN TCP request, ACK seq should not be provided
+	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
+	tcp_h = tcp_set_ack_flag(tcp_h);
+	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
+
+	 packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
+			send_packet(sock, ipv4_h, packet,dest_port);
+			free(packet);
+
 }
 
 void tcp_send_syn(int sock, int seq, __u32 src_ip, __u32 dest_ip, int src_port,

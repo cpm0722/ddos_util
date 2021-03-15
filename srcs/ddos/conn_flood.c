@@ -28,48 +28,53 @@ pthread_cond_t g_conn_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_conn_before_time;
 struct timespec g_conn_now_time;
 
-void conn_flood_print_usage(void)
-{
-	printf("CONN flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
+//temp vals
+int temp_port = 7000;
+
+void conn_flood_print_usage(void) {
+	printf(
+			"CONN flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 	return;
 }
-
-void *generate_conn_flood(void *data)
-{
+/*
+void* generate_conn_flood(void *data) {
 	int thread_id = *((int*) data);
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_conn_mutex);
 		// get now resource
-		generator(g_conn_src_ip,
-				g_conn_dest_ip,
-				g_conn_src_mask,
-				g_conn_dest_mask,
-				g_conn_dest_port_start,
-				g_conn_dest_port_end,
-				g_conn_now_src_ip,
-				g_conn_now_dest_ip,
-				&g_conn_now_dest_port);
+		generator(g_conn_src_ip, g_conn_dest_ip, g_conn_src_mask,
+				g_conn_dest_mask, g_conn_dest_port_start, g_conn_dest_port_end,
+				g_conn_now_src_ip, g_conn_now_dest_ip, &g_conn_now_dest_port);
 		// wait a second
 		if (g_conn_num_generated_in_sec >= g_conn_request_per_sec) {
 			pthread_cond_wait(&g_conn_cond, &g_conn_mutex);
 		}
 		// time checking
-		time_check(&g_conn_mutex, &g_conn_cond, &g_conn_before_time, &g_conn_now_time, &g_conn_num_generated_in_sec);
+		time_check(&g_conn_mutex, &g_conn_cond, &g_conn_before_time,
+				&g_conn_now_time, &g_conn_num_generated_in_sec);
+
 		// make socket
 		int sock = socket(AF_INET, SOCK_STREAM, 0);
-		if (sock == -1)
-		{
+		if (sock == -1) {
 			perror("sock creation failed\n");
 			continue;
 		}
+
+		//socket bind x, new way.
+		struct sockaddr_in localaddr;
+		localaddr.sin_family = AF_INET;
+		localaddr.sin_addr.s_addr = inet_addr(g_conn_now_src_ip);
+		localaddr.sin_port = htons(temp_port++);  // Any local port will do
+		bind(sock, (struct sockaddr*) &localaddr, sizeof(localaddr));
+
 		// connecting
 		struct sockaddr_in servaddr;
 		servaddr.sin_family = AF_INET;
-		servaddr.sin_addr.s_addr = inet_addr(g_conn_dest_ip);
+		servaddr.sin_addr.s_addr = inet_addr(g_conn_now_dest_ip);
 		servaddr.sin_port = htons(g_conn_now_dest_port);
-		if (connect(sock, (struct sockaddr*) &servaddr, sizeof(servaddr)) != 0)
-		{
+		if (connect(sock, (struct sockaddr*) &servaddr, sizeof(servaddr))
+				!= 0) {
 			perror("connect failed\n");
 			continue;
 		}
@@ -81,20 +86,61 @@ void *generate_conn_flood(void *data)
 	}
 	return 0;
 }
+*/
+void* generate_conn_flood(void *data) {
+	srand(time(NULL));
+	int thread_id = *((int*) data);
 
-void *conn_flood_time_check(void *data)
-{
+	clock_t thread_clock;
+	while (1) {
+		// *** begin of critical section ***
+		pthread_mutex_lock(&g_conn_mutex);
+
+		// wait a second
+		if (g_conn_num_generated_in_sec >= g_conn_request_per_sec) {
+			pthread_cond_wait(&g_conn_cond, &g_conn_mutex);
+		}
+
+		// get now resource
+		generator(g_conn_src_ip, g_conn_dest_ip, g_conn_src_mask,
+				g_conn_dest_mask, g_conn_dest_port_start, g_conn_dest_port_end,
+				g_conn_now_src_ip, g_conn_now_dest_ip, &g_conn_now_dest_port);
+
+		// make and do tcp connection via raw socket
+		int src_port;
+		int sock = tcp_make_connection(inet_addr(g_conn_now_src_ip),
+				inet_addr(g_conn_now_dest_ip),&src_port,
+				g_conn_now_dest_port);
+
+		// time checking
+		time_check(&g_conn_mutex, &g_conn_cond, &g_conn_before_time,
+				&g_conn_now_time, &g_conn_num_generated_in_sec);
+
+		g_conn_num_generated_in_sec++;
+		g_conn_num_total++;
+
+		close(sock);
+
+		// *** end of critical section ***
+		pthread_mutex_unlock(&g_conn_mutex);
+	}
+
+	return 0;
+}
+
+void* conn_flood_time_check(void *data) {
 
 	while (1) {
 		pthread_mutex_lock(&g_conn_mutex);
-		time_check(&g_conn_mutex, &g_conn_cond, &g_conn_before_time, &g_conn_now_time, &g_conn_num_generated_in_sec);
+		time_check(&g_conn_mutex, &g_conn_cond, &g_conn_before_time,
+				&g_conn_now_time, &g_conn_num_generated_in_sec);
 		pthread_mutex_unlock(&g_conn_mutex);
 	}
 }
 
-void conn_flood_main(char *argv[])
-{
+void conn_flood_main(char *argv[]) {
 	int argc = 0;
+	srand(time(NULL));
 	while (argv[argc] != NULL) {
 		argc++;
 	}
@@ -102,13 +148,8 @@ void conn_flood_main(char *argv[])
 		conn_flood_print_usage();
 		return;
 	}
-	split_ip_mask_port(argv,
-			g_conn_src_ip,
-			g_conn_dest_ip,
-			&g_conn_src_mask,
-			&g_conn_dest_mask,
-			&g_conn_dest_port_start,
-			&g_conn_dest_port_end);
+	split_ip_mask_port(argv, g_conn_src_ip, g_conn_dest_ip, &g_conn_src_mask,
+			&g_conn_dest_mask, &g_conn_dest_port_start, &g_conn_dest_port_end);
 	g_conn_num_generated_in_sec = 0;
 	g_conn_num_total = 0;
 	memset(&g_conn_before_time, 0, sizeof(struct timespec));
@@ -120,10 +161,12 @@ void conn_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending CONN requests to %s using %d threads\n", g_conn_dest_ip, num_threads);
+	printf("Sending CONN requests to %s using %d threads\n", g_conn_dest_ip,
+			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
-		pthread_create(&threads[i], NULL, generate_conn_flood, (void *)&thread_ids[i]);
+		pthread_create(&threads[i], NULL, generate_conn_flood,
+				(void*) &thread_ids[i]);
 	}
 	pthread_create(&threads[i], NULL, conn_flood_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {

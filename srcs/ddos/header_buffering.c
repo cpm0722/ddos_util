@@ -63,22 +63,15 @@ void* generate_header_buffering(void *data) {
 
 			g_headbuf_sockets[g_headbuf_current_idx] = socket(AF_INET,
 					SOCK_STREAM, 0);
-			int sdbf = 2;
-			/*if (setsockopt(g_headbuf_sockets[g_headbuf_current_idx], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
+			/* SENDBUF settings, need more tests on this.
+			 * int sdbf = 2;
+
+			if (setsockopt(g_headbuf_sockets[g_headbuf_current_idx], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
 			 == -1) {
 			 perror("setsockopt failure.\n");
 			 }*/
 			if (g_headbuf_sockets[g_headbuf_current_idx] == -1) {
 				perror("sock creation failed\n");
-			}
-
-			struct sockaddr_in servaddr;
-			servaddr.sin_family = AF_INET;
-			servaddr.sin_addr.s_addr = inet_addr(g_headbuf_dest_ip);
-			servaddr.sin_port = htons(g_headbuf_dest_port_start);
-			if (connect(g_headbuf_sockets[g_headbuf_current_idx],
-					(struct sockaddr*) &servaddr, sizeof(servaddr)) != 0) {
-				perror("connect failed\n");
 			}
 
 			g_headbuf_sockets[g_headbuf_current_idx] = tcp_make_connection(
@@ -91,6 +84,10 @@ void* generate_header_buffering(void *data) {
 
 			//printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
 		}
+		pthread_mutex_unlock(&g_headbuf_mutex);
+
+
+		pthread_mutex_lock(&g_headbuf_mutex);
 		// wait a second
 		if (g_headbuf_num_generated_in_sec >= g_headbuf_request_per_sec) {
 			pthread_cond_wait(&g_headbuf_cond, &g_headbuf_mutex);
@@ -105,7 +102,7 @@ void* generate_header_buffering(void *data) {
 			printf("src port = %d, data = %c\n",
 					g_headbuf_src_ports[g_headbuf_current_idx],*(g_headbuf_request_msg
 					+ g_headbuf_http_cursor[g_headbuf_current_idx]));
-			tcp_socket_send_data(g_headbuf_sockets[g_headbuf_current_idx],
+			tcp_socket_send_data_no_ack(g_headbuf_sockets[g_headbuf_current_idx],
 					inet_addr(g_headbuf_now_src_ip),
 					inet_addr(g_headbuf_now_dest_ip),
 					g_headbuf_src_ports[g_headbuf_current_idx],
@@ -126,8 +123,10 @@ void* generate_header_buffering(void *data) {
 
 			if (g_headbuf_http_cursor[g_headbuf_current_idx]
 					>= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
+				g_headbuf_http_cursor[g_headbuf_current_idx] = 0;
 				close(g_headbuf_sockets[g_headbuf_current_idx]);
-				g_headbuf_sockets[g_headbuf_current_idx] = -1;
+				g_headbuf_sockets[g_headbuf_current_idx] = -2;
+
 			}
 			g_headbuf_current_idx++;
 		}

@@ -44,5 +44,7 @@ void tcp_socket_send_data(int socket, __u32 src_ip, __u32 dest_ip, int src_port,
 		int dest_port, char *data, int data_size,int seq, int ack);
 void tcp_socket_send_ack(int sock, __u32 src_ip, __u32 dest_ip, int src_port,
 		int dest_port, int seq, int ack);
+void tcp_socket_send_data_no_ack(int sock, __u32 src_ip, __u32 dest_ip, int src_port,
+		int dest_port, char *data, int data_size, int seq, int ack);
 
 #endif

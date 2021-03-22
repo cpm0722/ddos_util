@@ -216,7 +216,6 @@ void tcp_socket_send_ack(int sock, __u32 src_ip, __u32 dest_ip, int src_port,
 
 	// ***For SYN TCP request, ACK seq should not be provided
 	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
-	tcp_h = tcp_set_psh_flag(tcp_h);
 	tcp_h = tcp_set_ack_flag(tcp_h);
 
 	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr) );

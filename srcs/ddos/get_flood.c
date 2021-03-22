@@ -23,7 +23,6 @@ unsigned int g_get_request_per_sec;
 pthread_mutex_t g_get_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_get_cond = PTHREAD_COND_INITIALIZER;
 
-//for ip masking
 // for masking next ip address
 char g_get_now_src_ip[16];
 char g_get_now_dest_ip[16];

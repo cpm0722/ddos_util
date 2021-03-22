@@ -1,139 +1,90 @@
-##########
-CC = gcc
+#################
+#  DIRECTORIES  #
+#################
 INCLUDE_DIR = includes
+SRC_DIR = srcs
+OBJ_DIR = objs
+LIB_DIR = libs
+BASE_DIR = base
+DDOS_DIR = ddos
+
+#################
+#  GCC-OPTIONS  #
+#################
+CC = gcc
 INCLUDE_OPT = -I $(INCLUDE_DIR)
 CCOPTS = -c $(INCLUDE_OPT)
 LINKOPTS = -lpthread -lm
 
-ALL = all
-MKDIR_OBJS = mkdir_objs
-MKDIR_LIBS = mkdir_libs
-ERASE = erase
-CLEAN = clean
-
-LIB_DIR = libs
+#################
+#   LIBRARIES   #
+#################
 LIBOPTS = -L./$(LIB_DIR)
 DDOS_LIB_NAME = ddos
 BASE_LIB_NAME = base
 DDOS_LIB_A = $(LIB_DIR)/lib$(DDOS_LIB_NAME).a
 BASE_LIB_A = $(LIB_DIR)/lib$(BASE_LIB_NAME).a
+
+#################
+#     FILES     #
+#################
 TARGET = attack.out
-
-SRC_DIR = srcs
-BASE_DIR = base
-DDOS_DIR = ddos
-OBJ_DIR = objs
-
-#########
-
-MAKE_IPV4_C = $(SRC_DIR)/$(BASE_DIR)/make_ipv4.c
-MAKE_TCP_C  = $(SRC_DIR)/$(BASE_DIR)/make_tcp.c
-MAKE_HTTP_C  = $(SRC_DIR)/$(BASE_DIR)/make_http.c
-RECEIVER_C = $(SRC_DIR)/$(BASE_DIR)/receiver.c
-SUBNET_MASK_C = $(SRC_DIR)/$(BASE_DIR)/subnet_mask.c
-TIME_CHECK_C = $(SRC_DIR)/$(BASE_DIR)/time_check.c
-
-CONN_FLOOD_C = $(SRC_DIR)/$(DDOS_DIR)/conn_flood.c
-GET_FLOOD_C = $(SRC_DIR)/$(DDOS_DIR)/get_flood.c
-SYN_FLOOD_C = $(SRC_DIR)/$(DDOS_DIR)/syn_flood.c
-UDP_FLOOD_C = $(SRC_DIR)/$(DDOS_DIR)/udp_flood.c
-ICMP_FLOOD_C = $(SRC_DIR)/$(DDOS_DIR)/icmp_flood.c
-HASH_DOS_C = $(SRC_DIR)/$(DDOS_DIR)/hash_dos.c
-HEADER_BUFFERING_C = $(SRC_DIR)/$(DDOS_DIR)/header_buffering.c
-BODY_BUFFERING_C = $(SRC_DIR)/$(DDOS_DIR)/body_buffering.c
-RESPONSE_BUFFERING_C = $(SRC_DIR)/$(DDOS_DIR)/response_buffering.c
-
+BASE_FNAMES = make_ipv4 make_tcp receiver subnet_mask time_check
+DDOS_FNAMES = syn_flood udp_flood icmp_flood conn_flood get_flood header_buffering body_buffering response_buffering hash_dos
+BASE_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(BASE_FNAMES)))
+DDOS_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(DDOS_FNAMES)))
 MAIN_C = $(SRC_DIR)/main.c
-
-#########
-
-MAKE_IPV4_O = $(OBJ_DIR)/make_ipv4.o
-MAKE_TCP_O  = $(OBJ_DIR)/make_tcp.o
-MAKE_HTTP_O  = $(OBJ_DIR)/make_http.o
-RECEIVER_O = $(OBJ_DIR)/receiver.o
-SUBNET_MASK_O = $(OBJ_DIR)/subnet_mask.o
-TIME_CHECK_O = $(OBJ_DIR)/time_check.o
-
-CONN_FLOOD_O = $(OBJ_DIR)/conn_flood.o
-GET_FLOOD_O = $(OBJ_DIR)/get_flood.o
-SYN_FLOOD_O = $(OBJ_DIR)/syn_flood.o
-UDP_FLOOD_O = $(OBJ_DIR)/udp_flood.o
-ICMP_FLOOD_O = $(OBJ_DIR)/icmp_flood.o
-HASH_DOS_O = $(OBJ_DIR)/hash_dos.o
-HEADER_BUFFERING_O = $(OBJ_DIR)/header_buffering.o
-BODY_BUFFERING_O = $(OBJ_DIR)/body_buffering.o
-RESPONSE_BUFFERING_O = $(OBJ_DIR)/response_buffering.o
-
 MAIN_O = $(OBJ_DIR)/main.o
 
-#########
+#################
+#     RULES     #
+#################
 
-.SUFFIXES : .c.h.o.a.out
-.PHONY: $(ALL) $(MKDIR_OBJ) $(CLEAN)
+ALL = all
+RE = re
+MKDIR_OBJS = mkdir_objs
+MKDIR_LIBS = mkdir_libs
+CLEAN = clean
+ERASE = erase
+FCLEAN = fclean
+
+.SUFFIXES : .c.o
+.PHONY: .c.o $(ALL) $(MKDIR_OBJS) $(CLEAN)
 
 $(ALL): $(TARGET)
 
-$(DDOS_LIB_A): $(MKDIR_LIBS) $(GET_FLOOD_O) $(CONN_FLOOD_O) $(SYN_FLOOD_O) $(UDP_FLOOD_O) $(ICMP_FLOOD_O) $(HASH_DOS_O) $(HEADER_BUFFERING_O) $(RESPONSE_BUFFERING_O) $(BODY_BUFFERING_O)
-	ar -rc $(DDOS_LIB_A) $(GET_FLOOD_O) $(CONN_FLOOD_O) $(SYN_FLOOD_O) $(UDP_FLOOD_O) $(ICMP_FLOOD_O) $(HASH_DOS_O) $(HEADER_BUFFERING_O) $(RESPONSE_BUFFERING_O) $(BODY_BUFFERING_O)
-	ranlib $(DDOS_LIB_A)
+$(TARGET): $(MKDIR_OBJS) $(BASE_LIB_A) $(DDOS_LIB_A) $(MAIN_O)
+	gcc $(MAIN_O) $(LIBOPTS) -l$(DDOS_LIB_NAME) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(TARGET)
 
-$(BASE_LIB_A): $(MKDIR_OBJ) $(MKDIR_LIBS) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) $(SUBNET_MASK_O) $(TIME_CHECK_O)
-	ar -rc $(BASE_LIB_A) $(MAKE_IPV4_O) $(MAKE_TCP_O) $(RECEIVER_O) $(SUBNET_MASK_O) $(TIME_CHECK_O)
+$(BASE_LIB_A): $(MKDIR_LIBS) $(BASE_OBJS)
+	ar -rc $(BASE_LIB_A) $(BASE_OBJS)
 	ranlib $(BASE_LIB_A)
 
-$(TARGET): $(LIB) $(MAIN_O)
-	gcc $(INCLUDE_OPT) $(MAIN_O) $(LIBOPTS) -l$(DDOS_LIB_NAME) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(TARGET)
+$(DDOS_LIB_A): $(MKDIR_LIBS) $(DDOS_OBJS)
+	ar -rc $(DDOS_LIB_A) $(DDOS_OBJS)
+	ranlib $(DDOS_LIB_A)
 
-$(MKDIR_OBJS):
-	mkdir -p objs
+$(OBJ_DIR)/%.o: $(SRC_DIR)/$(BASE_DIR)/%.c
+	$(CC) $(CCOPTS) -c -o $@ $<
 
-$(MKDIR_LIBS):
-	mkdir -p libs
-
-$(CLEAN):
-	rm -f $(OBJ_DIR)/*.o $(DDOS_LIB_A) $(BASE_LIB_A) attack.out
+$(OBJ_DIR)/%.o: $(SRC_DIR)/$(DDOS_DIR)/%.c
+	$(CC) $(CCOPTS) -c -o $@ $<
 
 $(MAIN_O): $(DDOS_LIB_A) $(MAIN_C)
 	$(CC) $(CCOPTS) $(MAIN_C) $(LINKOPTS) -o $(MAIN_O)
 
-$(MAKE_IPV4_O): $(MAKE_IPV4_C)
-	$(CC) $(CCOPTS) $(MAKE_IPV4_C) $(LINKOPTS) -o $(MAKE_IPV4_O)
+$(MKDIR_OBJS):
+	mkdir -p $(OBJ_DIR)
 
-$(MAKE_TCP_O): $(MAKE_TCP_C)
-	$(CC) $(CCOPTS) $(MAKE_TCP_C) $(LINKOPTS) -o $(MAKE_TCP_O)
+$(MKDIR_LIBS):
+	mkdir -p $(LIB_DIR)
 
-$(RECEIVER_O): $(RECEIVER_C)
-	$(CC) $(CCOPTS) $(RECEIVER_C) $(LINKOPTS) -o $(RECEIVER_O)
+$(RE): $(FCLEAN) $(ALL)
 
-$(SUBNET_MASK_O): $(SUBNET_MASK_C)
-	$(CC) $(CCOPTS) $(SUBNET_MASK_C) $(LINKOPTS) -o $(SUBNET_MASK_O)
+$(ERASE): $(CLEAN)
 
-$(TIME_CHECK_O): $(TIME_CHECK_C)
-	$(CC) $(CCOPTS) $(TIME_CHECK_C) $(LINKOPTS) -o $(TIME_CHECK_O)
+$(FCLEAN): $(CLEAN)
+	rm -f $(TARGET)
 
-$(GET_FLOOD_O): $(BASE_LIB_A) $(GET_FLOOD_C)
-	$(CC) $(CCOPTS) $(GET_FLOOD_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(GET_FLOOD_O)
-
-$(CONN_FLOOD_O): $(BASE_LIB_A) $(CONN_FLOOD_C)
-	$(CC) $(CCOPTS) $(CONN_FLOOD_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(CONN_FLOOD_O)
-
-$(SYN_FLOOD_O): $(BASE_LIB_A) $(SYN_FLOOD_C)
-	$(CC) $(CCOPTS) $(SYN_FLOOD_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(SYN_FLOOD_O)
-
-$(UDP_FLOOD_O): $(BASE_LIB_A) $(UDP_FLOOD_C)
-	$(CC) $(CCOPTS) $(UDP_FLOOD_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(UDP_FLOOD_O)
-
-$(ICMP_FLOOD_O): $(BASE_LIB_A) $(ICMP_FLOOD_C)
-	$(CC) $(CCOPTS) $(ICMP_FLOOD_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(ICMP_FLOOD_O)
-
-$(HASH_DOS_O): $(BASE_LIB_A) $(HASH_DOS_C)
-	$(CC) $(CCOPTS) $(HASH_DOS_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(HASH_DOS_O)
-
-$(HEADER_BUFFERING_O): $(BASE_LIB_A) $(HEADER_BUFFERING_C)
-	$(CC) $(CCOPTS) $(HEADER_BUFFERING_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(HEADER_BUFFERING_O)
-
-$(BODY_BUFFERING_O): $(BASE_LIB_A) $(BODY_BUFFERING_C)
-	$(CC) $(CCOPTS) $(BODY_BUFFERING_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(BODY_BUFFERING_O)
-
-$(RESPONSE_BUFFERING_O): $(BASE_LIB_A) $(RESPONSE_BUFFERING_C)
-	$(CC) $(CCOPTS) $(RESPONSE_BUFFERING_C) -L./$(LIBOPTS) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(RESPONSE_BUFFERING_O)
+$(CLEAN):
+	rm -f $(OBJ_DIR)/*.o $(DDOS_LIB_A) $(BASE_LIB_A)

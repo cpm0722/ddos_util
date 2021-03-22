@@ -267,6 +267,44 @@ void tcp_socket_send_data(int sock, __u32 src_ip, __u32 dest_ip, int src_port,
 
 }
 
+void tcp_socket_send_data_no_ack(int sock, __u32 src_ip, __u32 dest_ip, int src_port,
+		int dest_port, char *data, int data_size, int seq, int ack) {
+
+	struct iphdr ipv4_h;
+	ipv4_h = prepare_empty_ipv4();
+	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
+	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
+	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
+
+	// make tcp header.
+	struct tcphdr tcp_h;
+	tcp_h = prepare_empty_tcp();
+	// set src port number random
+	tcp_h = tcp_set_source(tcp_h, src_port);
+	tcp_h = tcp_set_dest(tcp_h, dest_port);
+	tcp_h = tcp_set_seq(tcp_h, seq);
+	tcp_h = tcp_set_ack_seq(tcp_h, ack);
+
+	// ***For SYN TCP request, ACK seq should not be provided
+	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
+	tcp_h = tcp_set_psh_flag(tcp_h);
+	//tcp_h = tcp_set_ack_flag(tcp_h);
+
+	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr) + data_size);
+	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, data, data_size);
+
+	char *tcp_with_data = malloc(sizeof(struct tcphdr) + data_size);
+	memcpy(tcp_with_data, &tcp_h, sizeof(tcp_h));
+	memcpy(tcp_with_data + sizeof(tcp_h), data, data_size);
+
+	char *packet = packet_assemble(ipv4_h, tcp_with_data,
+			sizeof(struct tcphdr) + data_size);
+	free(tcp_with_data);
+
+	send_packet(sock, ipv4_h, packet, dest_port);
+	free(packet);
+
+}
 int tcp_make_pseudo_connection(__u32 src_ip, __u32 dest_ip, int src_port,
 		int dest_port) {
 	int sock = make_socket(IPPROTO_TCP);

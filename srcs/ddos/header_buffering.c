@@ -84,6 +84,10 @@ void* generate_header_buffering(void *data) {
 
 			//printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
 		}
+		pthread_mutex_unlock(&g_headbuf_mutex);
+
+
+		pthread_mutex_lock(&g_headbuf_mutex);
 		// wait a second
 		if (g_headbuf_num_generated_in_sec >= g_headbuf_request_per_sec) {
 			pthread_cond_wait(&g_headbuf_cond, &g_headbuf_mutex);
@@ -119,8 +123,10 @@ void* generate_header_buffering(void *data) {
 
 			if (g_headbuf_http_cursor[g_headbuf_current_idx]
 					>= __HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
+				g_headbuf_http_cursor[g_headbuf_current_idx] = 0;
 				close(g_headbuf_sockets[g_headbuf_current_idx]);
-				g_headbuf_sockets[g_headbuf_current_idx] = -1;
+				g_headbuf_sockets[g_headbuf_current_idx] = -2;
+
 			}
 			g_headbuf_current_idx++;
 		}

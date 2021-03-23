@@ -45,13 +45,14 @@ void* generate_body_buffering(void *data) {
 	int src_port, seq, ack;
 	int body_buffering_cnt = 0;
 	while (1) {
+		// *** begin of critical section ***
+		pthread_mutex_lock(&g_bodybuf_mutex);
+
 		generator(g_bodybuf_src_ip, g_bodybuf_dest_ip, g_bodybuf_src_mask,
 				g_bodybuf_dest_mask, g_bodybuf_dest_port_start,
 				g_bodybuf_dest_port_end, g_bodybuf_now_src_ip,
 				g_bodybuf_now_dest_ip, &g_bodybuf_now_dest_port);
 
-		// *** begin of critical section ***
-		pthread_mutex_lock(&g_bodybuf_mutex);
 		if (body_buffering_cnt % BODY_BUFFERING_CNT == 0) {
 
 			sock = tcp_make_connection(inet_addr(g_bodybuf_now_src_ip),
@@ -78,8 +79,7 @@ void* generate_body_buffering(void *data) {
 
 		tcp_socket_send_data_no_ack(sock, inet_addr(g_bodybuf_now_src_ip),
 				inet_addr(g_bodybuf_now_dest_ip), src_port,
-				g_bodybuf_now_dest_port,data, strlen(data), seq,
-				ack);
+				g_bodybuf_now_dest_port, data, strlen(data), seq, ack);
 		seq += strlen(data);
 
 		g_bodybuf_num_generated_in_sec++;

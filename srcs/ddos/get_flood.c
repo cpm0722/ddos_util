@@ -1,7 +1,6 @@
 #include "header.h"
 #include "base/make_ipv4.h"
 #include "base/make_tcp.h"
-#include "base/receiver.h"
 #include "base/subnet_mask.h"
 #include "base/time_check.h"
 #include "ddos/get_flood.h"

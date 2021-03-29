@@ -52,7 +52,6 @@ void make_tokens(void)
 	for (i = 0; i < __MAX_TOKEN_NUM__; i++)
 		tokens[i] = NULL;
 	i = 0;
-
 	tokens[i] = strtok(input, " ");
 	while (tokens[i] != NULL) {
 		i++;
@@ -108,11 +107,15 @@ int choose_running_type(void)
 	return t;
 }
 
-attack_type type_choose_menu(void)
+attack_type type_choose_attack(void)
 {
-	printf("1. SYN flooding\n"
+	printf("\n"
+			"   [Serverless Attacks]\n"
+			"1. SYN flooding\n"
 			"2. UDP flooding\n"
 			"3. ICMP flooding\n"
+			"\n"
+			"   [Server Required Attacks]\n"
 			"4. Connection flooding\n"
 			"5. Get flooding\n"
 			"6. Header buffering\n"
@@ -193,8 +196,33 @@ void print_main(void)
 	return;
 }
 
-void print_usage(void)
+void print_usage(char *argv[])
 {
+	printf("Usage: sudo %s [attack_types] [Src-IP] [Dest-IP] [Dest-Port] [#Request/s] ...\n", argv[0]);
+	printf("Attack Types: \n"
+				 "syn,  SYN,   1        SYN Flooding Attack\n"
+				 "udp,  UDP,   2        UDP Flooding Attack\n"
+				 "icmp, ICMP,  3        ICMP Flooding Attack\n"
+				 "conn, CONN,  4        Connection Flooding Attack\n"
+				 "get,  GET,   5        GET Flooding Attack\n"
+				 "head, HEAD,  6        Header Buffering Attack\n"
+				 "body, BODY,  7        Body Buffering Attack\n"
+				 "resp, RESP,  8        Response Buffering Attack\n"
+				 "hash, HASH,  9        Hash Dos Attack\n"
+				 "ref,  REF,  10        RefRef Attack\n");
+	printf("Source IP Address:\n"
+				 "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"
+				 "    IPv4 Address format is XXX.XXX.XXX.XXX.\n"
+				 "    Subnet Masking format is 0 ~ 32 integer. It is optional.\n");
+	printf("Destination IP Address:\n"
+				 "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"
+				 "    IPv4 Address format is XXX.XXX.XXX.XXX.\n"
+				 "    Subnet Masking format is 0 ~ 32 integer. It is optional.\n");
+	printf("Destination Port Number:\n"
+				 "    The format is 0 ~ 65,535 integer.\n");
+	printf("Number of Requests Per Second:\n"
+				 "    The format is unsigned integer.\n"
+				 "    It is a number of Packet sent to Dest every second.\n");
 	return;
 }
 
@@ -219,14 +247,16 @@ int main(int argc, char *argv[])
 	if (argc == 1) {
 		print_main();
 		while (1) {
-			type = type_choose_menu();
+			type = type_choose_attack();
 			if (run_attacks(type, false) < 0)
 				print_main();
 		}
 	}
-	type = argv_to_tokens(argv, argc);
-	if (run_attacks(type, true) < 0) {
-		print_usage();
+	else {
+		type = argv_to_tokens(argv, argc);
+		if (run_attacks(type, true) < 0) {
+			print_usage(argv);
+		}
 	}
 	return (0);
 }

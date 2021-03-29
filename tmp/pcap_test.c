@@ -1,8 +1,10 @@
-#include "../includes/header.h"
-#include "../includes/base/make_ipv4.h"
-#include "../includes/base/make_tcp.h"
+#include "header.h"
+#include "base/make_ipv4.h"
+#include "base/make_tcp.h"
 #include <pcap.h>
 #include <netinet/in.h>
+
+void next_ip_addr(char *current, __u32 offset);
 
 #define BUFFER_SIZE 8192
 #define SIZE_ETHERNET 14

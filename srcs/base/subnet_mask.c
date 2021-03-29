@@ -58,20 +58,16 @@ int get_mask_from_ip_addr(char *ipv4)
 {
 	int mask = 32;
 	char *char_ptr = ipv4 + 7;
-
 	int i = 0;
 	while (char_ptr[i] != '/') {
 		i++;
-		if (i>strlen(ipv4))
+		if (i > strlen(ipv4))
 			return 32;
 	}
-
 	char mask_string[4];
-
 	i++;
 	strcpy(mask_string, char_ptr + i);
 	mask = atoi(mask_string);
-
 	return mask;
 
 }
@@ -82,14 +78,12 @@ void get_ip_from_ip_addr(char *ipv4, char *now)
 	int i = 0;
 	while (char_ptr[i] != '/') {
 		i++;
-		if (i>strlen(ipv4)){
+		if (i > strlen(ipv4)){
 			strcpy(now, ipv4);
 			return;
 		}
 	}
-
 	memcpy(now,ipv4,sizeof(char)*i);
-
 	return;
 }
 

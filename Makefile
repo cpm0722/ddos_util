@@ -29,7 +29,7 @@ BASE_LIB_A = $(LIB_DIR)/lib$(BASE_LIB_NAME).a
 #     FILES     #
 #################
 TARGET = attack.out
-BASE_FNAMES = make_ipv4 make_tcp receiver subnet_mask time_check
+BASE_FNAMES = make_ipv4 make_tcp subnet_mask time_check
 DDOS_FNAMES = syn_flood udp_flood icmp_flood conn_flood get_flood header_buffering body_buffering response_buffering hash_dos
 BASE_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(BASE_FNAMES)))
 DDOS_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(DDOS_FNAMES)))
@@ -48,10 +48,16 @@ CLEAN = clean
 ERASE = erase
 FCLEAN = fclean
 
+#################
+#  TCP  REPLAY  #
+#################
+
+TCP_REPLAY = tcp_replay
+
 .SUFFIXES : .c.o
 .PHONY: .c.o $(ALL) $(MKDIR_OBJS) $(CLEAN)
 
-$(ALL): $(TARGET)
+$(ALL): $(TARGET) $(TCP_REPLAY)
 
 $(TARGET): $(MKDIR_OBJS) $(BASE_LIB_A) $(DDOS_LIB_A) $(MAIN_O)
 	$(CC) $(MAIN_O) $(LIBOPTS) -l$(DDOS_LIB_NAME) -l$(BASE_LIB_NAME) $(LINKOPTS) -o $(TARGET)
@@ -88,3 +94,7 @@ $(FCLEAN): $(CLEAN)
 
 $(CLEAN):
 	rm -f $(OBJ_DIR)/*.o $(DDOS_LIB_A) $(BASE_LIB_A)
+
+$(TCP_REPLAY):
+	rm -f tmp/a.out
+	$(CC) $(INCLUDE_OPT) $(LIBOPTS) tmp/next_ip_addr.c tmp/pcap_test.c -l$(BASE_LIB_NAME) -lpcap -o tmp/a.out

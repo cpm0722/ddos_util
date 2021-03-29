@@ -12,16 +12,42 @@
 
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
+#define __ATTACK_TYPES__ 10
 
 char input[__SIZE_OF_INPUT__ ];
 char *tokens[__MAX_TOKEN_NUM__ ];
+void (*usage_functions[__ATTACK_TYPES__ + 1])(void) = { NULL, 
+				syn_flood_print_usage,
+				udp_flood_print_usage,
+				icmp_flood_print_usage,
+				conn_flood_print_usage,
+				get_flood_print_usage,
+				header_buffering_print_usage,
+				body_buffering_print_usage,
+				response_buffering_print_usage,
+				hash_dos_print_usage
+			};
+void (*main_functions[__ATTACK_TYPES__ + 1])(char *[]) = { NULL,
+				syn_flood_main,
+				udp_flood_main,
+				icmp_flood_main,
+				conn_flood_main,
+				get_flood_main,
+				header_buffering_main,
+				body_buffering_main,
+				response_buffering_main,
+				hash_dos_main
+			};
 
-void get_input() {
+void get_input(void)
+{
 	printf("$ ");
 	fgets(input, __SIZE_OF_INPUT__, stdin);
-
+	return;
 }
-void make_tokens() {
+
+void make_tokens(void)
+{
 	int i = 0;
 	for (i = 0; i < __MAX_TOKEN_NUM__; i++)
 		tokens[i] = NULL;
@@ -32,9 +58,42 @@ void make_tokens() {
 		i++;
 		tokens[i] = strtok(NULL, " ");
 	}
-
+	return;
 }
-int choose_running_type() {
+
+attack_type argv_to_tokens(char *argv[], int argc)
+{
+	for (int i = 2; i < argc; i++)
+		tokens[i - 2] = argv[i];
+	tokens[argc - 2] = NULL;
+	attack_type type;
+	if (!strcmp(argv[1], "syn") || !strcmp(argv[1], "SYN") || !strcmp(argv[1], "1"))
+		type = SYN;
+	else if (!strcmp(argv[1], "udp") || !strcmp(argv[1], "UDP") || !strcmp(argv[1], "2"))
+		type = UDP;
+	else if (!strcmp(argv[1], "icmp") || !strcmp(argv[1], "ICMP") || !strcmp(argv[1], "3"))
+		type = ICMP;
+	else if (!strcmp(argv[1], "conn") || !strcmp(argv[1], "CONN") || !strcmp(argv[1], "4"))
+		type = CONN;
+	else if (!strcmp(argv[1], "get") || !strcmp(argv[1], "GET") || !strcmp(argv[1], "5"))
+		type = GET;
+	else if (!strcmp(argv[1], "head") || !strcmp(argv[1], "HEAD") || !strcmp(argv[1], "6"))
+		type = HEAD;
+	else if (!strcmp(argv[1], "body") || !strcmp(argv[1], "BODY") || !strcmp(argv[1], "7"))
+		type = BODY;
+	else if (!strcmp(argv[1], "resp") || !strcmp(argv[1], "RESP") || !strcmp(argv[1], "8"))
+		type = RESP;
+	else if (!strcmp(argv[1], "hash") || !strcmp(argv[1], "HASH") || !strcmp(argv[1], "9"))
+		type = HASH;
+	else if (!strcmp(argv[1], "ref") || !strcmp(argv[1], "REF") || !strcmp(argv[1], "10"))
+		type = REF;
+	else
+		type = NONE;
+	return type;
+}
+
+int choose_running_type(void)
+{
 	printf("== Choose Running Type\n");
 	printf("== 1. Number Based\n"
 			"== 2. Over Time\n");
@@ -46,11 +105,11 @@ int choose_running_type() {
 		get_input();
 		t = atoi(input);
 	}
-
 	return t;
 }
 
-int type_choose_menu() {
+attack_type type_choose_menu(void)
+{
 	printf("1. SYN flooding\n"
 			"2. UDP flooding\n"
 			"3. ICMP flooding\n"
@@ -61,162 +120,113 @@ int type_choose_menu() {
 			"8. Response buffering\n"
 			"9. Hash Dos\n"
 			"10. RefRef\n\n");
-
 	get_input();
-	int t = atoi(input);
+	attack_type t = atoi(input);
 	while (t <= 0 || t > 10) {
 		printf("Input should be over 0 AND <=10\n");
 		get_input();
 		t = atoi(input);
 	}
-
 	return t;
-
 }
 
 #define DRAW_HEIGHT 7
 #define DRAW_WIDTHB 8
 #define DRAW_WIDTHS 6
-void print_main() {
 
+void print_main(void)
+{
 	char num[11];  //here too one extra room is needed for the '\0'
 	char c;  //for option
 	int i, j, k;
 	//declaring char 2D arrays and initializing with hash-printed digits
-	char bigD[DRAW_HEIGHT][DRAW_WIDTHB] = { " ####  ", //H=0
-			" #   # ", //H=1
-			" #   # ", //H=2
-			" #   # ", //H=3
-			" #   # ", //H=4
-			" #   # ", //H=5
-			" ####  " }, //H=6
-
-			litO[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "       ",
+	char upp_d[DRAW_HEIGHT][DRAW_WIDTHB] = { " ####  ", " #   # ", " #   # ",
+					" #   # ", " #   # ", " #   # ", " ####  " },
+			low_o[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "       ",
 					" ##### ", " #   # ", " #   # ", " ##### " },
-
-			bigS[DRAW_HEIGHT][DRAW_WIDTHB] = { " ##### ", " #     ", " #     ",
+			upp_s[DRAW_HEIGHT][DRAW_WIDTHB] = { " ##### ", " #     ", " #     ",
 					" ##### ", "     # ", "     # ", " ##### " },
-
-			bigU[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", " #   # ", " #   # ",
+			upp_u[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", " #   # ", " #   # ",
 					" #   # ", " #   # ", " #   # ", " ##### " },
-
-			litT[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "   #   ",
+			low_t[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "   #   ",
 					" ##### ", "   #   ", "   #   ", "   ### " },
-
-			litI[DRAW_HEIGHT][DRAW_WIDTHS] = { "     ", "     ", "  #  ",
+			low_i[DRAW_HEIGHT][DRAW_WIDTHS] = { "     ", "     ", "  #  ",
 					"     ", "  #  ", "  #  ", "  #  " },
-
-			litL[DRAW_HEIGHT][DRAW_WIDTHS] = { "     ", "  #  ", "  #  ",
+			low_l[DRAW_HEIGHT][DRAW_WIDTHS] = { "     ", "  #  ", "  #  ",
 					"  #  ", "  #  ", "  #  ", "  #  " };
-
 	printf("-----------------------------\n");
-
 	for (i = 0; i < DRAW_HEIGHT; i++) {
 		printf("|");
-		for (j = 0; j < DRAW_WIDTHB; j++)
-			printf("%c", bigD[i][j]);
-
-		for (j = 0; j < DRAW_WIDTHB; j++)
-			printf("%c", bigD[i][j]);
-
-		for (j = 0; j < DRAW_WIDTHB; j++)
-			printf("%c", litO[i][j]);
-
-		for (j = 0; j < DRAW_WIDTHB; j++)
-			printf("%c", bigS[i][j]);
+		for (j = 0; j < DRAW_WIDTHB; j++) {
+			printf("%c", upp_d[i][j]);
+		}
+		for (j = 0; j < DRAW_WIDTHB; j++) {
+			printf("%c", upp_d[i][j]);
+		}
+		for (j = 0; j < DRAW_WIDTHB; j++) {
+			printf("%c", low_o[i][j]);
+		}
+		for (j = 0; j < DRAW_WIDTHB; j++) {
+			printf("%c", upp_s[i][j]);
+		}
 		printf("|");
 		printf("\n");
 	}
-
-
 	for (i = 0; i < DRAW_HEIGHT; i++) {
 		printf("|");
-		for (j = 0; j < DRAW_WIDTHB; j++)
-			printf("%c", bigU[i][j]);
-
-		for (j = 0; j < DRAW_WIDTHB; j++)
-			printf("%c", litT[i][j]);
-
-		for (j = 0; j < DRAW_WIDTHS; j++)
-			printf("%c", litI[i][j]);
-
-		for (j = 0; j < DRAW_WIDTHS; j++)
-			printf("%c", litL[i][j]);
-
+		for (j = 0; j < DRAW_WIDTHB; j++) {
+			printf("%c", upp_u[i][j]);
+		}
+		for (j = 0; j < DRAW_WIDTHB; j++) {
+			printf("%c", low_t[i][j]);
+		}
+		for (j = 0; j < DRAW_WIDTHS; j++) {
+			printf("%c", low_i[i][j]);
+		}
+		for (j = 0; j < DRAW_WIDTHS; j++) {
+			printf("%c", low_l[i][j]);
+		}
 		printf("    |");
 		printf("\n");
 	}
 	printf("-----------------------------\n");
-
+	return;
 }
 
-int main(void) {
-	int mode;
+void print_usage(void)
+{
+	return;
+}
 
-	print_main();
-
-	while (1) {
-		int type = type_choose_menu();
-
-		switch (type) {
-		case 1:		//syn flooding
-			syn_flood_print_usage();
-			get_input();
-			make_tokens();
-			syn_flood_main(tokens);
-			break;
-		case 2:		//UDP flooding
-			udp_flood_print_usage();
-			get_input();
-			make_tokens();
-			udp_flood_main(tokens);
-			break;
-		case 3:		//ICMP flooding
-			icmp_flood_print_usage();
-			get_input();
-			make_tokens();
-			icmp_flood_main(tokens);
-			break;
-		case 4:		//connection flooding
-			conn_flood_print_usage();
-			get_input();
-			make_tokens();
-			conn_flood_main(tokens);
-			break;
-		case 5:		//get flooding
-			get_flood_print_usage();
-			get_input();
-			make_tokens();
-			get_flood_main(tokens);
-			break;
-		case 6: //header buffering
-			header_buffering_print_usage();
-			get_input();
-			make_tokens();
-			header_buffering_main(tokens);
-			break;
-		case 7:		//body buffering
-			body_buffering_print_usage();
-			get_input();
-			make_tokens();
-			body_buffering_main(tokens);
-			break;
-		case 8:		//response buffering
-			response_buffering_print_usage();
-			get_input();
-			make_tokens();
-			response_buffering_main(tokens);
-			break;
-		case 9:		//Hash Dos
-			hash_dos_print_usage();
-			get_input();
-			make_tokens();
-			hash_dos_main(tokens);
-			break;
-		case 10:	//Ref Ref
-			break;
-
-		}
-
+int run_attacks(attack_type type, bool is_command)
+{
+	if (type == NONE)
+		return -1;
+	if (!is_command) {
+		usage_functions[type]();
+		get_input();
+		make_tokens();
 	}
+	main_functions[type](tokens);
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	int mode;
+	attack_type type;
+
+	if (argc == 1) {
+		print_main();
+		while (1) {
+			type = type_choose_menu();
+			if (run_attacks(type, false) < 0)
+				print_main();
+		}
+	}
+	type = argv_to_tokens(argv, argc);
+	if (run_attacks(type, true) < 0) {
+		print_usage();
+	}
+	return (0);
 }

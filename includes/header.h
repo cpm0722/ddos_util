@@ -24,5 +24,14 @@
 
 #include "base/asm_types.h"
 
+typedef enum 
+{
+	NONE, SYN, UDP, ICMP, CONN, GET, HEAD, BODY, RESP, HASH, REF
+} attack_type;
+
+typedef enum
+{
+	false, true
+} bool;
 
 #endif

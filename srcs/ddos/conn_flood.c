@@ -56,7 +56,7 @@ void* generate_conn_flood(void *data) {
 		int src_port,seq,ack;
 		int sock = tcp_make_connection(inet_addr(g_conn_now_src_ip),
 				inet_addr(g_conn_now_dest_ip),&src_port,
-				g_conn_now_dest_port,&seq,&ack);
+				g_conn_now_dest_port,&seq,&ack,0);
 
 		// time checking
 		time_check(&g_conn_mutex, &g_conn_cond, &g_conn_before_time,

@@ -69,6 +69,10 @@ struct tcphdr tcp_set_psh_flag(struct tcphdr tcph)
 	tcph.psh = 1;
 	return tcph;
 }
+struct tcphdr tcp_set_window_size(struct tcphdr tcph, __u16 windowsize) {
+	tcph.window = htons(windowsize);
+	return tcph;
+}
 
 struct tcphdr tcp_get_checksum(struct iphdr ipv4h,
 															 struct tcphdr tcph,
@@ -98,12 +102,14 @@ int tcp_make_connection(__u32 src_ip,
 												int *src_port_copy,
 												int dest_port,
 												int *seq_copy,
-												int *ack_copy)
+												int *ack_copy,
+												__u16 window_size)
 {
-	//srand(time(NULL));
+	//in make_ipv4.c -> make tcp socket via raw socket.
 	int sock = make_socket(IPPROTO_TCP);
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
+
 	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
 	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
 	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
@@ -111,6 +117,9 @@ int tcp_make_connection(__u32 src_ip,
 	// make tcp header.
 	struct tcphdr tcp_h;
 	tcp_h = prepare_empty_tcp();
+	if (window_size != 0)
+		tcp_h = tcp_set_window_size(tcp_h, window_size);
+
 	// set src port number random
 	int src_port = rand() % 63535 + 1500;
 	*(src_port_copy) = src_port;
@@ -156,6 +165,9 @@ int tcp_make_connection(__u32 src_ip,
 
 	tcp_h = prepare_empty_tcp();
 	// set src port number random
+	if (window_size != 0)
+		tcp_h = tcp_set_window_size(tcp_h, window_size);
+
 	tcp_h = tcp_set_source(tcp_h, src_port);
 	tcp_h = tcp_set_dest(tcp_h, dest_port);
 
@@ -183,9 +195,9 @@ void tcp_socket_send_ack(int sock,
 												 int src_port,
 												 int dest_port,
 												 int seq,
-												 int ack)
+												 int ack,
+												 __u16 window_size)
 {
-
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
 	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
@@ -195,6 +207,8 @@ void tcp_socket_send_ack(int sock,
 	// make tcp header.
 	struct tcphdr tcp_h;
 	tcp_h = prepare_empty_tcp();
+	if (window_size != 0)
+		tcp_h = tcp_set_window_size(tcp_h, window_size);
 	// set src port number random
 	tcp_h = tcp_set_source(tcp_h, src_port);
 	tcp_h = tcp_set_dest(tcp_h, dest_port);
@@ -205,14 +219,14 @@ void tcp_socket_send_ack(int sock,
 	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
 	tcp_h = tcp_set_ack_flag(tcp_h);
 
-	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr) );
-	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL,0);
+	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
+	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
 
-	char *packet = packet_assemble(ipv4_h, &tcp_h,
-			sizeof(struct tcphdr) );
+	char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(struct tcphdr));
 
 	send_packet(sock, ipv4_h, packet, dest_port);
 	free(packet);
+	return ;
 }
 
 void tcp_socket_send_data(int sock,
@@ -223,7 +237,8 @@ void tcp_socket_send_data(int sock,
 													char *data,
 													int data_size,
 													int seq,
-													int ack)
+													int ack,
+													__u16 window_size)
 {
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
@@ -234,6 +249,13 @@ void tcp_socket_send_data(int sock,
 	// make tcp header.
 	struct tcphdr tcp_h;
 	tcp_h = prepare_empty_tcp();
+
+	if (window_size != 0)
+	{
+		printf("input : %d\n",window_size);
+		tcp_h = tcp_set_window_size(tcp_h, window_size);
+	}
+
 	// set src port number random
 	tcp_h = tcp_set_source(tcp_h, src_port);
 	tcp_h = tcp_set_dest(tcp_h, dest_port);
@@ -257,8 +279,10 @@ void tcp_socket_send_data(int sock,
 	free(tcp_with_data);
 
 	send_packet(sock, ipv4_h, packet, dest_port);
+
+	printf("window size : %d\n",tcp_h.window);
 	free(packet);
-	return;
+	return ;
 }
 
 void tcp_socket_send_data_no_ack(int sock,
@@ -269,7 +293,8 @@ void tcp_socket_send_data_no_ack(int sock,
 																 char *data,
 																 int data_size,
 																 int seq,
-																 int ack)
+																 int ack,
+																 __u16 window_size)
 {
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
@@ -280,6 +305,8 @@ void tcp_socket_send_data_no_ack(int sock,
 	// make tcp header.
 	struct tcphdr tcp_h;
 	tcp_h = prepare_empty_tcp();
+	if (window_size != 0)
+		tcp_h = tcp_set_window_size(tcp_h, window_size);
 	// set src port number random
 	tcp_h = tcp_set_source(tcp_h, src_port);
 	tcp_h = tcp_set_dest(tcp_h, dest_port);
@@ -304,5 +331,5 @@ void tcp_socket_send_data_no_ack(int sock,
 
 	send_packet(sock, ipv4_h, packet, dest_port);
 	free(packet);
-	return;
+	return ;
 }

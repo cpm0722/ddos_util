@@ -19,6 +19,7 @@ struct tcphdr tcp_set_ack_seq(struct tcphdr tcph, __u32 ack_seq);
 struct tcphdr tcp_set_syn_flag(struct tcphdr tcph);
 struct tcphdr tcp_set_ack_flag(struct tcphdr tcph);
 struct tcphdr tcp_set_psh_flag(struct tcphdr tcph);
+struct tcphdr tcp_set_window_size(struct tcphdr tcph, __u16 window_size);
 struct tcphdr tcp_get_checksum(struct iphdr ipv4h,
 															 struct tcphdr tcph,
 															 void *data,
@@ -28,14 +29,16 @@ int tcp_make_connection(__u32 src_ip,
 												int *src_port_copy,
 												int dest_port,
 												int *seq_copy,
-												int *ack_copy);
+												int *ack_copy,
+												 __u16 window_size);
 void tcp_socket_send_ack(int sock,
 												 __u32 src_ip,
 												 __u32 dest_ip,
 												 int src_port,
 												 int dest_port,
 												 int seq,
-												 int ack);
+												 int ack,
+												 __u16 window_size);
 void tcp_socket_send_data(int sock,
 													__u32 src_ip,
 													__u32 dest_ip,
@@ -44,7 +47,8 @@ void tcp_socket_send_data(int sock,
 													char *data,
 													int data_size,
 													int seq,
-													int ack);
+													int ack,
+													 __u16 window_size);
 void tcp_socket_send_data_no_ack(int sock,
 																 __u32 src_ip,
 																 __u32 dest_ip,
@@ -53,6 +57,7 @@ void tcp_socket_send_data_no_ack(int sock,
 																 char *data,
 																 int data_size,
 																 int seq,
-																 int ack);
+																 int ack,
+																 __u16 window_size);
 
 #endif

@@ -62,12 +62,12 @@ void* generate_get_flood(void *data) {
 		int src_port, seq, ack;
 		int sock = tcp_make_connection(inet_addr(g_get_now_src_ip),
 				inet_addr(g_get_now_dest_ip), &src_port, g_get_now_dest_port,
-				&seq, &ack);
+				&seq, &ack,0);
 
 		//send HTTP GET method
 		tcp_socket_send_data(sock, inet_addr(g_get_now_src_ip),
 					inet_addr(g_get_now_dest_ip), src_port, g_get_now_dest_port,
-					GET_METHOD, strlen(GET_METHOD), seq, ack);
+					GET_METHOD, strlen(GET_METHOD), seq, ack,0);
 
 		// time checking
 		time_check(&g_get_mutex, &g_get_cond, &g_get_before_time,

@@ -79,7 +79,7 @@ void* generate_header_buffering(void *data) {
 					&(g_headbuf_src_ports[g_headbuf_current_idx]),
 					g_headbuf_now_dest_port,
 					g_headbuf_seq + g_headbuf_current_idx,
-					g_headbuf_ack + g_headbuf_current_idx);
+					g_headbuf_ack + g_headbuf_current_idx,0);
 
 			//printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
 		}
@@ -108,7 +108,7 @@ void* generate_header_buffering(void *data) {
 					g_headbuf_now_dest_port,
 					g_headbuf_request_msg
 							+ g_headbuf_http_cursor[g_headbuf_current_idx], 1,
-					g_headbuf_seq[g_headbuf_current_idx], g_headbuf_seq[g_headbuf_current_idx]);
+					g_headbuf_seq[g_headbuf_current_idx], g_headbuf_seq[g_headbuf_current_idx],0);
 			g_headbuf_seq[g_headbuf_current_idx]++;
 
 			g_headbuf_num_generated_in_sec++;

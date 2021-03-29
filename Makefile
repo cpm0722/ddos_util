@@ -97,4 +97,4 @@ $(CLEAN):
 
 $(TCP_REPLAY):
 	rm -f tmp/a.out
-	$(CC) $(INCLUDE_OPT) $(LIBOPTS) tmp/next_ip_addr.c tmp/pcap_test.c -l$(BASE_LIB_NAME) -lpcap -o tmp/a.out
+	$(CC) $(INCLUDE_OPT) $(LIBOPTS) tmp/pcap_test.c -l$(BASE_LIB_NAME) -lpcap -lm -o tmp/a.out

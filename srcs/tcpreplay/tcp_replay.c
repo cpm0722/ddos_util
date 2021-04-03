@@ -1,6 +1,7 @@
 #include "header.h"
 #include "base/make_ipv4.h"
 #include "base/make_tcp.h"
+#include "tcp_replay.h"
 #include <pcap.h>
 #include <netinet/in.h>
 
@@ -11,120 +12,20 @@
 #define PACKET_NUM_MAXIMUM 1024
 #define MODIFY_MAXIMUM 512
 
-struct ip_pair {
-	char ip1[16];
-	char ip2[16];
-};
+pthread_mutex_t tcp_replay_mutex;
 
-struct port_pair {
-	__u8 port1;
-	__u8 port2;
-};
+u_char *packet_data[PACKET_NUM_MAXIMUM];
+__u16 packet_data_size[PACKET_NUM_MAXIMUM];
 
-struct session {
-	char ip_src[16];
-	char ip_dst[16];
-	__u8 sport;
-	__u8 dport;
+char src_ip_addr[16];
+char dest_ip_addr[16];
+	__u8 dest_port;
+int packetCount = 0;
 
-	//to be used with modification count;
-	__u16 modify_id;
-
-};
-
-struct sudo_packet_data {
-	__u8 sport;
-	__u8 dport;
-	char src_ip[16];
-	char dest_ip[16];
-	char *payload;
-	__u16 payload_size;
-};
-
-struct pcap_hdr {
-	__u32 magic_number;
-	__u16 version_major;
-	__u16 version_minor;
-	__s32 thiszone;
-	__u32 sigfigs;
-	__u32 snaplen;
-	__u32 network;
-};
-
-struct pcaprec_hdr {
-	__u32 ts_sec;
-	__u32 ts_usec;
-	__u32 incl_len;
-	__u32 orig_len;
-};
-
-struct sniff_ethernet {
-	u_char ether_dhost[6]; /* Destination host address */
-	u_char ether_shost[6]; /* Source host address */
-	u_short ether_type; /* IP? ARP? RARP? etc */
-};
-
-struct sniff_ip {
-	u_char ip_vhl; /* version << 4 | header length >> 2 */
-	u_char ip_tos; /* type of service */
-	u_short ip_len; /* total length */
-	u_short ip_id; /* identification */
-	u_short ip_off; /* fragment offset field */
-#define IP_RF 0x8000        /* reserved fragment flag */
-#define IP_DF 0x4000        /* dont fragment flag */
-#define IP_MF 0x2000        /* more fragments flag */
-#define IP_OFFMASK 0x1fff   /* mask for fragmenting bits */
-	u_char ip_ttl; /* time to live */
-	u_char ip_p; /* protocol */
-	u_short ip_sum; /* checksum */
-	struct in_addr ip_src, ip_dst; /* source and dest address */
-};
-#define IP_HL(ip)       (((ip)->ip_vhl) & 0x0f)
-#define IP_V(ip)        (((ip)->ip_vhl) >> 4)
-
-struct sniff_tcp {
-	u_short th_sport; /* source port */
-	u_short th_dport; /* destination port */
-	tcp_seq th_seq; /* sequence number */
-	tcp_seq th_ack; /* acknowledgement number */
-	u_char th_offx2; /* data offset, rsvd */
-#define TH_OFF(th)  (((th)->th_offx2 & 0xf0) >> 4)
-	u_char th_flags;
-#define TH_FIN 0x01
-#define TH_SYN 0x02
-#define TH_RST 0x04
-#define TH_PUSH 0x08
-#define TH_ACK 0x10
-#define TH_URG 0x20
-#define TH_ECE 0x40
-#define TH_CWR 0x80
-#define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
-	u_short th_win; /* window */
-	u_short th_sum; /* checksum */
-	u_short th_urp; /* urgent pointer */
-};
-
-//Function prototypes
-int session_match_check(struct session a_session, struct session b_session);
-int session_exist_check(struct session *session_list, __u16 session_num,
-		struct session a_session);
-int session_table_check(struct session *session_list, __u16 session_num,
-		struct session a_session);
-
-int ip_pair_match_check(struct ip_pair pair1, struct ip_pair pair2);
-int ip_pair_exist_check(struct ip_pair *pairs, struct ip_pair new_pair,
-		int count);
-int ip_table_check(struct ip_pair *table, char ip[16], int size);
-struct ip_pair* ip_table_element_to_end(struct ip_pair *table_p, int index,
-		int size);
-
-int port_pair_match_check(struct port_pair pair1, struct port_pair pair2);
-int port_pair_exist_check(struct port_pair *pairs, struct port_pair new_pair,
-		int count);
-int port_table_check(struct port_pair *table, __u8 port, int size);
-struct port_pair* port_table_element_to_end(struct port_pair *table_p,
-		int index, int size);
-char* get_masked_ip_addr(char *current, __u8 mask);
+__u16 send_count=1;
+__u8 thread_count=1;
+__u16 sent_count=0;
+int loop_index=-1;
 
 int main(int argc, char *argv[]) {
 
@@ -140,9 +41,11 @@ int main(int argc, char *argv[]) {
 	struct ip_pair ip_table[MODIFY_MAXIMUM];
 	struct port_pair port_table[MODIFY_MAXIMUM];
 
-	char src_ip_addr[16];
-	char dest_ip_addr[16];
-	__u8 dest_port;
+
+
+
+
+
 	for (i = 1; i < argc; i++) {
 
 		if (strstr(argv[i], ".pcap") != NULL || strstr(argv[i], ".pcapng"))
@@ -167,6 +70,18 @@ int main(int argc, char *argv[]) {
 		if (!strcmp(argv[i], "-p")) {
 			i++;
 			dest_port = atoi(argv[i]);
+		}
+
+		if(!strcmp(argv[i],"-c"))
+		{
+			i++;
+			send_count = atoi(argv[i]);
+		}
+
+		if(!strcmp(argv[i],"-t"))
+		{
+			i++;
+			thread_count = atoi(argv[i]);
 		}
 
 	}
@@ -385,12 +300,7 @@ int main(int argc, char *argv[]) {
 	//actual packet;
 	const u_char *packet;
 
-	u_char *packet_data[PACKET_NUM_MAXIMUM];
-	__u16 packet_data_size[PACKET_NUM_MAXIMUM];
-
 	const char *tcp_payload;
-
-	int packetCount = 0;
 
 	//to save result...
 	//FILE *fp = fopen("result.txt", "wb+");
@@ -418,13 +328,7 @@ int main(int argc, char *argv[]) {
 		if (header->len != header->caplen)
 			printf("Warning! Capture size != packet size\n");
 
-		packet_data[packetCount - 1] = malloc(
-				header->len - sizeof(struct sniff_ethernet));
-		memcpy(packet_data[packetCount - 1],
-				packet + sizeof(struct sniff_ethernet),
-				header->len - sizeof(struct sniff_ethernet));
-		packet_data_size[packetCount - 1] = header->len
-				- sizeof(struct sniff_ethernet);
+
 
 		//point to packet(ethernet = beginning).
 		ethernet = (struct sniff_ethernet*) (packet);
@@ -435,8 +339,18 @@ int main(int argc, char *argv[]) {
 
 		if (size_ip < 20) {
 			printf("   * Invalid IP header length : %u bytes\n", size_ip);
-			exit(1);
+			packetCount--;
+			continue;
 		}
+
+		//prepare data
+		packet_data[packetCount - 1] = malloc(
+				header->len - sizeof(struct sniff_ethernet));
+		memcpy(packet_data[packetCount - 1],
+				packet + sizeof(struct sniff_ethernet),
+				header->len - sizeof(struct sniff_ethernet));
+		packet_data_size[packetCount - 1] = header->len
+				- sizeof(struct sniff_ethernet);
 
 		//point to tcp part.
 		tcp = (struct sniff_tcp*) (packet + sizeof(struct sniff_ethernet)
@@ -445,7 +359,8 @@ int main(int argc, char *argv[]) {
 		packets[packetCount - 1].sport = ntohs(tcp->th_sport);
 		packets[packetCount - 1].dport = ntohs(tcp->th_dport);
 
-		printf("src port: %u dest port: %u \n", packets[packetCount - 1].sport,
+
+		printf("src port: %hu dest port: %hu \n", packets[packetCount - 1].sport,
 				packets[packetCount - 1].dport);
 
 		strcpy(packets[packetCount - 1].src_ip, inet_ntoa(ip->ip_src));
@@ -537,14 +452,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//make socket for new data send;
-	int sock = make_socket(IPPROTO_TCP);
-	struct sockaddr_in dest;
-	dest.sin_family = AF_INET;
 
-	dest.sin_port = htons(dest_port);
-
-	dest.sin_addr.s_addr = inet_addr(dest_ip_addr);
 
 	for (i = 0; i < packetCount; i++) {
 		ip = (struct sniff_ip*) (packet_data[i]);
@@ -574,17 +482,16 @@ int main(int argc, char *argv[]) {
 			tcp->th_dport = htons(sessions[packet_to_session[i]].sport);
 		}
 
-		if (sendto(sock, (void*) packet_data[i], packet_data_size[i], 0,
-				(struct sockaddr*) &dest, sizeof(dest)) < 0) {
-			perror("sendto() error");
-			exit(-1);
-		}
-		/*if (sendto(sock, (void*) packet_data[i], packet_data_size[i], 0,
-		 (struct sockaddr*) &dest, sizeof(dest)) < 0) {
-		 perror("sendto() error");
-		 exit(-1);
-		 }
-		 */
+			/*struct iphdr ipv4_h;
+			ipv4_h = prepare_empty_ipv4();
+			ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
+			ipv4_h = ipv4_set_saddr(ipv4_h,src_ip_addr);
+			ipv4_h = ipv4_set_daddr(ipv4_h,dest_ip_addr);
+			ipv4_h = ipv4_add_size(ipv4_h,sizeof(struct tcphdr) + packet_data_size[i]+packets[i].payload_size));
+*/
+
+			tcp->th_sum = tcp_get_checksum_for_tcp_replay(tcp,packets[i].payload,packets[i].payload_size);
+
 		//print sent data.
 		printf("New Packet # %d Session # %d\n", i + 1,packet_to_session[i]);
 		printf("src port: %u dest port: %u \n", ntohs(tcp->th_sport),
@@ -593,9 +500,41 @@ int main(int argc, char *argv[]) {
 		printf("src address: %s", inet_ntoa(ip->ip_src));
 		printf(" dest address: %s \n", inet_ntoa(ip->ip_dst));
 
+		printf("payload size : %d\n",packets[i].payload_size);
+		int kl=0;
+		for(kl=0;kl<packets[i].payload_size;kl++)
+			printf("%x ",packets[i].payload[kl] & 0xff);
+		printf("\n");
 		printf("\n");
 
 	}
+
+
+	pthread_mutex_init(&tcp_replay_mutex,NULL);
+	pthread_t *threads;
+
+	threads = malloc(sizeof(pthread_t) * thread_count);
+
+	for(i=0;i<thread_count;i++)
+	{
+
+		pthread_create(&threads[i],NULL,tcpreplay_thread,NULL);
+	}
+
+	for(i=0;i<thread_count;i++)
+	{
+		pthread_join(threads[i],NULL);
+		printf("Thread %d finished.\n",i);
+	}
+	  pthread_mutex_destroy(&tcp_replay_mutex);
+	pthread_exit(NULL);
+	free(threads);
+	for(i=0;i<packetCount;i++)
+	{
+		free(packet_data[i]);
+		free(packets[i].payload);
+	}
+
 
 }
 
@@ -848,4 +787,83 @@ char* get_masked_ip_addr(char *current, __u8 mask) {
 
 	return buffer;
 
+}
+
+u_short tcp_get_checksum_for_tcp_replay(
+															 struct  sniff_tcp *snifftcp,
+															 char *data,
+															 int datasize)
+{
+	struct tcp_pseudo_header psh;
+	memset(&psh, 0, sizeof(struct tcp_pseudo_header));
+	psh.source_address = inet_addr(src_ip_addr);
+	psh.dest_address = inet_addr(dest_ip_addr);
+	psh.placeholder = 0;
+	psh.protocol = IPPROTO_TCP;
+	psh.tcp_length = htons(sizeof(struct tcphdr) + datasize);
+	int psize = sizeof(struct tcp_pseudo_header) + sizeof(struct tcphdr) + datasize;
+	char *assembled = (char *) malloc(psize);
+	memcpy(assembled, (char *) &psh, sizeof(struct tcp_pseudo_header));
+
+	struct tcphdr tcph;
+
+	memcpy(&tcph, snifftcp, sizeof(struct sniff_tcp));
+
+	memcpy(assembled + sizeof(struct tcp_pseudo_header), &tcph, sizeof(struct tcphdr));
+	if (data != NULL && datasize != 0)
+	{
+		printf("Copying data... cksum.\n");
+		memcpy(assembled + sizeof(struct tcp_pseudo_header) + sizeof(struct tcphdr), data, datasize);
+	}
+
+
+	u_short ck_sum = in_cksum((__u16*) assembled, psize);
+	free(assembled);
+	return ck_sum;
+
+
+}
+
+
+void *tcpreplay_thread()
+{
+	printf("Thread init\n");
+	//make socket for new data send;
+		int sock = make_socket(IPPROTO_TCP);
+		struct sockaddr_in dest;
+		dest.sin_family = AF_INET;
+
+		dest.sin_port = htons(dest_port);
+
+		dest.sin_addr.s_addr = inet_addr(dest_ip_addr);
+
+	while (1) {
+
+		// *** begin of critical section ***
+		pthread_mutex_lock(&tcp_replay_mutex);
+		if(loop_index >= packetCount-1){
+					loop_index=-1;
+					sent_count++;
+				}
+		loop_index++;
+
+		if(send_count<=sent_count)
+		{
+			printf("exit..\n");
+			pthread_mutex_unlock(&tcp_replay_mutex);
+			return NULL;
+		}
+
+		printf("Goal : %d, Now : %d, SessionMax : %d, loop_index : %d\n",send_count,sent_count,packetCount,loop_index);
+
+
+		if (sendto(sock, (void*) packet_data[loop_index], packet_data_size[loop_index], 0,
+					(struct sockaddr*) &dest, sizeof(dest)) < 0) {
+				printf("ERROR!\n");
+				exit(-1);
+			}
+		pthread_mutex_unlock(&tcp_replay_mutex);
+	}
+	close(sock);
+	return NULL;
 }

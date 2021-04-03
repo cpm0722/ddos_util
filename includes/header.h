@@ -21,6 +21,7 @@
 #include <netinet/tcp.h>
 #include <netinet/ip_icmp.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 #include "base/asm_types.h"
 

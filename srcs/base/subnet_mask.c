@@ -1,23 +1,24 @@
+#include "header.h"
 #include "base/subnet_mask.h"
 
-unsigned int get_addr_val(char *str)	// unsigned int -> str
+__u32 get_addr_val(__uc *str)
 {
-	unsigned int res = 0;
-	char tmp_str[IPV4_STR_LEN];
+	__u32 res = 0;
+	__uc tmp_str[IPV4_STR_LEN];
 	memset(tmp_str, '\0', IPV4_STR_LEN);
 	strcpy(tmp_str, str);
-	char *ptr = strtok(tmp_str, ".");
+	__uc *ptr = strtok(tmp_str, ".");
 	for (int i = 3; i >= 0; i--) {
-		unsigned int val = atoi(ptr);
+		__u32 val = atoi(ptr);
 		res |= val << (BYTE_LEN * i);
 		ptr = strtok(NULL, ".");
 	}
 	return res;
 }
 
-void get_addr_str(unsigned int val, char str[IPV4_STR_LEN])	// str -> unsigned int
+void get_addr_str(__u32 val, __uc str[IPV4_STR_LEN])
 {
-	unsigned int split[4] = { 0, 0, 0, 0 };
+	__u32 split[4] = { 0, 0, 0, 0 };
 	for (int i = 3; i >= 0; i--) {
 		split[i] = (val >> (BYTE_LEN * i)) & BYTE_MAX_VAL;
 	}
@@ -25,24 +26,24 @@ void get_addr_str(unsigned int val, char str[IPV4_STR_LEN])	// str -> unsigned i
 	return;
 }
 
-int masking_next_ip_addr(char *ipv4, char now[IPV4_STR_LEN], int mask)	// get next ipv4 address from now with subnetmask
+int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STR_LEN], __u32 mask)
 {
-	unsigned int now_addr;
-	if (!strlen(now)) {	//first call
-		unsigned int ipv4_addr = get_addr_val(ipv4);
+	__u32 now_addr;
+	if (!strlen(now)) {	 // first call
+		__u32 ipv4_addr = get_addr_val(ipv4);
 		now_addr = ipv4_addr;
-		unsigned int max_val = BIT_32_MAX_VAL;
-		now_addr = (unsigned int) now_addr & (max_val << (32 - mask));
+		__u32 max_val = BIT_32_MAX_VAL;
+		now_addr = (__u32) now_addr & (max_val << (32 - mask));
 		get_addr_str(now_addr, now);
 		return -1;
 	}
 	now_addr = get_addr_val(now);
-	unsigned int max_val = (unsigned int) pow(2, (32 - mask)) - 1;
-	if ((now_addr & max_val) == max_val) { // finish
-		unsigned int ipv4_addr = get_addr_val(ipv4);
+	__u32 max_val = (__u32) pow(2, (32 - mask)) - 1;
+	if ((now_addr & max_val) == max_val) {  // finish
+		__u32 ipv4_addr = get_addr_val(ipv4);
 		now_addr = ipv4_addr;
-		unsigned int max_val = BIT_32_MAX_VAL;
-		now_addr = (unsigned int) now_addr & (max_val << (32 - mask));
+		__u32 max_val = BIT_32_MAX_VAL;
+		now_addr = (__u32) now_addr & (max_val << (32 - mask));
 		get_addr_str(now_addr, now);
 		return 1;
 	}
@@ -54,27 +55,26 @@ int masking_next_ip_addr(char *ipv4, char now[IPV4_STR_LEN], int mask)	// get ne
 	return 0;
 }
 
-int get_mask_from_ip_addr(char *ipv4)
+__u32 get_mask_from_ip_addr(__uc *ipv4)
 {
-	int mask = 32;
-	char *char_ptr = ipv4 + 7;
+	__u32 mask = 32;
+	__uc *char_ptr = ipv4 + 7;
 	int i = 0;
 	while (char_ptr[i] != '/') {
 		i++;
 		if (i > strlen(ipv4))
 			return 32;
 	}
-	char mask_string[4];
+	__uc mask_string[4];
 	i++;
 	strcpy(mask_string, char_ptr + i);
 	mask = atoi(mask_string);
 	return mask;
-
 }
 
-void get_ip_from_ip_addr(char *ipv4, char *now)
+void get_ip_from_ip_addr(__uc *ipv4, __uc *now)
 {
-	char *char_ptr = ipv4;
+	__uc *char_ptr = ipv4;
 	int i = 0;
 	while (char_ptr[i] != '/') {
 		i++;
@@ -83,43 +83,58 @@ void get_ip_from_ip_addr(char *ipv4, char *now)
 			return;
 		}
 	}
-	memcpy(now,ipv4,sizeof(char)*i);
+	memcpy(now, ipv4, sizeof(__uc) * i);
+	now[i] = '\0';
 	return;
 }
 
-int split_ip_mask_port(char *argv[], char src_ipv4[IPV4_STR_LEN], char dest_ipv4[IPV4_STR_LEN], int *src_mask, int *dest_mask, int *port_start, int *port_end)
+int split_ip_mask_port(char *argv[],
+											 __uc src_ipv4[IPV4_STR_LEN],
+											 __uc dest_ipv4[IPV4_STR_LEN],
+											 __u32 *src_mask,
+											 __u32 *dest_mask,
+											 __u32 *port_start,
+											 __u32 *port_end)
 {
-	char *src = argv[0];
-	char *dest = argv[1];
-	char *port = argv[2];
+	__uc *src = argv[0];
+	__uc *dest = argv[1];
+	__uc *port = argv[2];
 	get_ip_from_ip_addr(src, src_ipv4);
 	get_ip_from_ip_addr(dest, dest_ipv4);
 	*src_mask = get_mask_from_ip_addr(src);
 	*dest_mask = get_mask_from_ip_addr(dest);
 
-	char *ptr = strtok(port, "-");
+	__uc *ptr = strtok(port, "-");
 	*port_start = atoi(ptr);
 	ptr = strtok(NULL, "-");
-	if(ptr) {
+	if (ptr) {
 		*port_end = atoi(ptr);
-	}
-	else {
+	} else {
 		*port_end = *port_start;
 	}
 	return 0;
 }
 
-int generator(char *src_ipv4, char *dest_ipv4, int src_mask, int dest_mask, int port_start, int port_end, char src_now[IPV4_STR_LEN], char dest_now[IPV4_STR_LEN], int *port_now)
+int generator(__uc *src_ipv4,
+							__uc *dest_ipv4,
+							__u32 src_mask,
+							__u32 dest_mask,
+							__u32 port_start,
+							__u32 port_end,
+							__uc src_now[IPV4_STR_LEN],
+							__uc dest_now[IPV4_STR_LEN],
+							__u32 *port_now)
 {
-	if(masking_next_ip_addr(dest_ipv4, dest_now, dest_mask)){ // last dest_ipv4 or first(blank)
+	// last dest_ipv4 or first(blank)
+	if (masking_next_ip_addr(dest_ipv4, dest_now, dest_mask)) {
 		int res;
-		if((res = masking_next_ip_addr(src_ipv4, src_now, src_mask)) > 0){ // last src_ipv4
+		// last src_ipv4
+		if ((res = masking_next_ip_addr(src_ipv4, src_now, src_mask)) > 0) {
 			(*port_now)++;
-			if(*port_now > port_end){
+			if (*port_now > port_end) {
 				*port_now = port_start;
 			}
-		}
-		else if(res < 0){
+		} else if (res < 0) {
 			*port_now = port_start;
 		}
 	}

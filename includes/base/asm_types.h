@@ -8,18 +8,21 @@ typedef unsigned short umode_t;
  * header files exported to user space
  */
 
-typedef __signed__ char __s8;
-typedef unsigned char __u8;
+typedef char __sc;
+typedef unsigned char __uc;
 
-typedef __signed__ short __s16;
-typedef unsigned short __u16;
+typedef int8_t __s8;
+typedef uint8_t __u8;
 
-typedef __signed__ int __s32;
-typedef unsigned int __u32;
+typedef int16_t __s16;
+typedef uint16_t __u16;
+
+typedef int32_t __s32;
+typedef uint32_t __u32;
 
 #if defined(__GNUC__) && !defined(__STRICT_ANSI__)
-typedef __signed__ long long __s64;
-typedef unsigned long long __u64;
+typedef int64_t __s64;
+typedef uint64_t __u64;
 #endif
 
 /*
@@ -28,18 +31,6 @@ typedef unsigned long long __u64;
 #ifdef __KERNEL__
 
 #include <linux/config.h>
-
-typedef signed char s8;
-typedef unsigned char u8;
-
-typedef signed short s16;
-typedef unsigned short u16;
-
-typedef signed int s32;
-typedef unsigned int u32;
-
-typedef signed long long s64;
-typedef unsigned long long u64;
 
 #define BITS_PER_LONG 32
 

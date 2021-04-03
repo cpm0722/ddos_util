@@ -94,7 +94,7 @@ void* generate_response_buffering(void *data) {
 			pthread_cond_wait(&g_resbuf_cond, &g_resbuf_mutex);
 		}
 		// time checking
-		time_check(&g_resbuf_mutex, &g_resbuf_cond, &g_resbuf_before_time,
+		time_check(&g_resbuf_cond, &g_resbuf_before_time,
 				&g_resbuf_now_time, &g_resbuf_num_generated_in_sec);
 		// read a character
 		char buffer[2];
@@ -123,7 +123,7 @@ void* generate_response_buffering(void *data) {
 void* response_buffering_time_check(void *data) {
 	while (1) {
 		pthread_mutex_lock(&g_resbuf_mutex);
-		time_check(&g_resbuf_mutex, &g_resbuf_cond, &g_resbuf_before_time,
+		time_check(&g_resbuf_cond, &g_resbuf_before_time,
 				&g_resbuf_now_time, &g_resbuf_num_generated_in_sec);
 		pthread_mutex_unlock(&g_resbuf_mutex);
 	}

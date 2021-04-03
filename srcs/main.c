@@ -14,9 +14,9 @@
 #define __MAX_TOKEN_NUM__ 20
 #define __ATTACK_TYPES__ 10
 
-char input[__SIZE_OF_INPUT__ ];
+char input[__SIZE_OF_INPUT__];
 char *tokens[__MAX_TOKEN_NUM__ ];
-void (*usage_functions[__ATTACK_TYPES__ + 1])(void) = { NULL, 
+void (*usage_functions[__ATTACK_TYPES__ + 1])(void) = { NULL,
 				syn_flood_print_usage,
 				udp_flood_print_usage,
 				icmp_flood_print_usage,
@@ -66,25 +66,45 @@ attack_type argv_to_tokens(char *argv[], int argc)
 		tokens[i - 2] = argv[i];
 	tokens[argc - 2] = NULL;
 	attack_type type;
-	if (!strcmp(argv[1], "syn") || !strcmp(argv[1], "SYN") || !strcmp(argv[1], "1"))
+	if (!strcmp(argv[1], "syn") ||
+			!strcmp(argv[1], "SYN") ||
+			!strcmp(argv[1], "1"))
 		type = SYN;
-	else if (!strcmp(argv[1], "udp") || !strcmp(argv[1], "UDP") || !strcmp(argv[1], "2"))
+	else if (!strcmp(argv[1], "udp") ||
+					 !strcmp(argv[1], "UDP") ||
+					 !strcmp(argv[1], "2"))
 		type = UDP;
-	else if (!strcmp(argv[1], "icmp") || !strcmp(argv[1], "ICMP") || !strcmp(argv[1], "3"))
+	else if (!strcmp(argv[1], "icmp") ||
+					 !strcmp(argv[1], "ICMP") ||
+					 !strcmp(argv[1], "3"))
 		type = ICMP;
-	else if (!strcmp(argv[1], "conn") || !strcmp(argv[1], "CONN") || !strcmp(argv[1], "4"))
+	else if (!strcmp(argv[1], "conn") ||
+					 !strcmp(argv[1], "CONN") ||
+					 !strcmp(argv[1], "4"))
 		type = CONN;
-	else if (!strcmp(argv[1], "get") || !strcmp(argv[1], "GET") || !strcmp(argv[1], "5"))
+	else if (!strcmp(argv[1], "get") ||
+					 !strcmp(argv[1], "GET") ||
+					 !strcmp(argv[1], "5"))
 		type = GET;
-	else if (!strcmp(argv[1], "head") || !strcmp(argv[1], "HEAD") || !strcmp(argv[1], "6"))
+	else if (!strcmp(argv[1], "head") ||
+					 !strcmp(argv[1], "HEAD") ||
+					 !strcmp(argv[1], "6"))
 		type = HEAD;
-	else if (!strcmp(argv[1], "body") || !strcmp(argv[1], "BODY") || !strcmp(argv[1], "7"))
+	else if (!strcmp(argv[1], "body") ||
+					 !strcmp(argv[1], "BODY") ||
+					 !strcmp(argv[1], "7"))
 		type = BODY;
-	else if (!strcmp(argv[1], "resp") || !strcmp(argv[1], "RESP") || !strcmp(argv[1], "8"))
+	else if (!strcmp(argv[1], "resp") ||
+					 !strcmp(argv[1], "RESP") ||
+					 !strcmp(argv[1], "8"))
 		type = RESP;
-	else if (!strcmp(argv[1], "hash") || !strcmp(argv[1], "HASH") || !strcmp(argv[1], "9"))
+	else if (!strcmp(argv[1], "hash") ||
+					 !strcmp(argv[1], "HASH") ||
+					 !strcmp(argv[1], "9"))
 		type = HASH;
-	else if (!strcmp(argv[1], "ref") || !strcmp(argv[1], "REF") || !strcmp(argv[1], "10"))
+	else if (!strcmp(argv[1], "ref") ||
+					 !strcmp(argv[1], "REF") ||
+					 !strcmp(argv[1], "10"))
 		type = REF;
 	else
 		type = NONE;
@@ -139,10 +159,10 @@ attack_type type_choose_attack(void)
 
 void print_main(void)
 {
-	char num[11];  //here too one extra room is needed for the '\0'
-	char c;  //for option
+	char num[11];  // here too one extra room is needed for the '\0'
+	char c;  // for option
 	int i, j, k;
-	//declaring char 2D arrays and initializing with hash-printed digits
+	// declaring char 2D arrays and initializing with hash-printed digits
 	char upp_d[DRAW_HEIGHT][DRAW_WIDTHB] = { " ####  ", " #   # ", " #   # ",
 					" #   # ", " #   # ", " #   # ", " ####  " },
 			low_o[DRAW_HEIGHT][DRAW_WIDTHB] = { "       ", "       ", "       ",
@@ -198,11 +218,15 @@ void print_main(void)
 
 void print_usage(char *argv[])
 {
-	printf("Usage: sudo %s [attack_types] [Src-IP] [Dest-IP] [Dest-Port] [#Request/s] ...\n", argv[0]);
+	printf("Usage: sudo %s [attack_types] "
+				 "[Src-IP] [Dest-IP] [Dest-Port] [#Request/s] ...\n",
+			argv[0]);
 	printf("Attack Types: \n"
+				 "   [Serverless Attacks]\n"
 				 "syn,  SYN,   1        SYN Flooding Attack\n"
 				 "udp,  UDP,   2        UDP Flooding Attack\n"
 				 "icmp, ICMP,  3        ICMP Flooding Attack\n"
+				 "   [Server Required Attacks]\n"
 				 "conn, CONN,  4        Connection Flooding Attack\n"
 				 "get,  GET,   5        GET Flooding Attack\n"
 				 "head, HEAD,  6        Header Buffering Attack\n"
@@ -251,8 +275,7 @@ int main(int argc, char *argv[])
 			if (run_attacks(type, false) < 0)
 				print_main();
 		}
-	}
-	else {
+	} else {
 		type = argv_to_tokens(argv, argc);
 		if (run_attacks(type, true) < 0) {
 			print_usage(argv);

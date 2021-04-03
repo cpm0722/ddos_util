@@ -15,51 +15,51 @@ struct iphdr prepare_empty_ipv4(void)
 	ip_head.check = 0;
 	ip_head.saddr = 0;
 	ip_head.daddr = 0;
-	ip_head.check = in_cksum((unsigned short *) &ip_head, sizeof(struct iphdr));
+	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
 struct iphdr ipv4_set_protocol(struct iphdr ip_head, __u8 protocol)
 {
 	ip_head.protocol = protocol;
-	ip_head.check = in_cksum((unsigned short *) &ip_head, sizeof(struct iphdr));
+	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
 struct iphdr ipv4_set_saddr(struct iphdr ip_head, __u32 saddr)
 {
 	ip_head.saddr = saddr;
-	ip_head.check = in_cksum((unsigned short *) &ip_head, sizeof(struct iphdr));
+	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
 struct iphdr ipv4_set_daddr(struct iphdr ip_head, __u32 daddr)
 {
 	ip_head.daddr = daddr;
-	ip_head.check = in_cksum((unsigned short *) &ip_head, sizeof(struct iphdr));
+	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
 struct iphdr ipv4_add_size(struct iphdr ip_head, __u32 data_size)
 {
 	ip_head.tot_len += data_size;
-	ip_head.check = in_cksum((unsigned short *) &ip_head,
+	ip_head.check = in_cksum((__u16 *) &ip_head,
 			sizeof(struct iphdr) + data_size);
 	return ip_head;
 }
 
 char *packet_assemble(struct iphdr ip_head, void *data, __u32 data_size)
 {
-	char *packet = (char *) malloc(sizeof(ip_head) + data_size);
-	memcpy(packet, (char *) &ip_head, sizeof(ip_head));
-	memcpy((char *) packet + sizeof(ip_head), (char *) data, data_size);
+	char *packet = (char *)malloc(sizeof(ip_head) + data_size);
+	memcpy(packet, (char *)&ip_head, sizeof(ip_head));
+	memcpy((char *)packet + sizeof(ip_head), (char *) data, data_size);
 	return packet;
 }
 
-int make_socket(int PROTOCOL)
+int make_socket(int protocol)
 {
 	int sock;
-	sock = socket(AF_INET, SOCK_RAW, PROTOCOL);
+	sock = socket(AF_INET, SOCK_RAW, protocol);
 	if (sock < 0) {
 		perror("socket() error");
 		exit(-1);
@@ -79,21 +79,19 @@ void send_packet(int sock, struct iphdr ip_head, char *packet, int port)
 	dest.sin_family = AF_INET;
 	dest.sin_port = htons(port);
 	dest.sin_addr.s_addr = ip_head.daddr;
-	//printf("Message length = %d\n", ip_head.tot_len);
-	if (sendto(sock, (void *) packet, ip_head.tot_len, 0,
+	if (sendto(sock, (void *)packet, ip_head.tot_len, 0,
 			(struct sockaddr *) &dest, sizeof(dest)) < 0) {
 		perror("sendto() error");
 		exit(-1);
 	}
-	//printf(" sendto() is OK\n");
 	return;
 }
 
-__u16 in_cksum(unsigned short *ptr, int nbytes)
+__u16 in_cksum(__u16 *ptr, int nbytes)
 {
-	register long sum;
-	u_short oddbyte;
-	register u_short answer;
+	register __u64 sum;
+	__u16 oddbyte;
+	register __u16 answer;
 	sum = 0;
 	while (nbytes > 1) {
 		sum += *ptr++;
@@ -101,7 +99,7 @@ __u16 in_cksum(unsigned short *ptr, int nbytes)
 	}
 	if (nbytes == 1) {
 		oddbyte = 0;
-		*((u_char *) &oddbyte) = *(u_char *) ptr;
+		*((u_char *)&oddbyte) = *(u_char *) ptr;
 		sum += oddbyte;
 	}
 	sum = (sum >> 16) + (sum & 0xffff);

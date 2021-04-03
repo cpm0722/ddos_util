@@ -7,7 +7,7 @@
 
 #define GET_METHOD "GET /Force.mp3 HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
-#define RESPONSE_BUFFERING_CNT 20
+#define RESPONSE_BUFFERING_CNT 50
 
 // session counting
 unsigned long g_resbuf_num_total;
@@ -69,12 +69,14 @@ void* generate_response_buffering(void *data) {
 			 perror("connect failed\n");
 			 }*/
 			int rvsz = 2;
-			setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (const char*) &rvsz,
+			setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
 					sizeof(rvsz));
+			rvsz=1;
+			setsockopt(sock,SOL_SOCKET,SO_KEEPALIVE,(const char*)&rvsz,sizeof(rvsz));
 
 			sock = tcp_make_connection(inet_addr(g_resbuf_now_src_ip),
 					inet_addr(g_resbuf_now_dest_ip), &src_port,
-					g_resbuf_now_dest_port, &seq, &ack,2);
+					g_resbuf_now_dest_port, &seq, &ack,5000);
 
 			char http_request[] = GET_METHOD;
 			/*if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
@@ -88,6 +90,8 @@ void* generate_response_buffering(void *data) {
 					GET_METHOD, strlen(GET_METHOD), seq, ack,2);
 
 			response_buffering_cnt = 0;
+
+			fcntl(sock,F_SETFL,O_NONBLOCK);
 		}
 		// wait a second
 		if (g_resbuf_num_generated_in_sec >= g_resbuf_request_per_sec) {
@@ -99,7 +103,8 @@ void* generate_response_buffering(void *data) {
 		// read a character
 		char buffer[2];
 		int recv_size = -1;
-		recv_size = recv(sock,buffer,2, MSG_PEEK);
+		int sockaddrlen = sizeof(struct sockaddr_in);
+		recv_size = recvfrom(sock,buffer,1,0,NULL,sockaddrlen);
 		if (recv_size == -1) {
 			printf("no recv!\n");
 		}
@@ -109,7 +114,7 @@ void* generate_response_buffering(void *data) {
 				g_resbuf_now_dest_port, seq, ack);*/
 		ack++;
 
-		printf("Read : %c\n", buffer[1]);
+		printf("Read : %c\n", buffer[0]);
 		g_resbuf_num_generated_in_sec++;
 		g_resbuf_num_total++;
 		response_buffering_cnt++;

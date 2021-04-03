@@ -2,6 +2,8 @@
 #include "base/make_ipv4.h"
 #include "base/make_tcp.h"
 
+extern int __RECV_FLAG__;
+
 struct tcphdr prepare_empty_tcp(void)
 {
 	struct tcphdr tcp_head;
@@ -144,25 +146,32 @@ int tcp_make_connection(__u32 src_ip,
 	char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
 	send_packet(sock, ipv4_h, packet, dest_port);
 	free(packet);
+	__u64 req_seq;
 
+	if(__RECV_FLAG__==1)
+	{
 	unsigned char buffer[1000];
 	int recv_size = 0;
 
 	recv_size = recv(sock, buffer, 1000, 0);
 
-	printf("recvd : %d\n", recv_size);
+	//printf("recvd : %d\n", recv_size);
 	int i;
-	for (i = 20; i < recv_size; i++)
-		printf("%x ", buffer[i]);
-	printf("\n");
+	//for (i = 20; i < recv_size; i++)
+	//	printf("%x ", buffer[i]);
+	//printf("\n");
 
-	__u64 req_seq;
+
 	memcpy(&req_seq, buffer + 24, 4);
 
 	req_seq = ntohl(req_seq);
-	printf("req_seq : %lu", req_seq);
+	//printf("req_seq : %lu", req_seq);
 
-	printf("\n\n");
+	//printf("\n\n");
+
+	}
+	else
+		req_seq=0;
 
 	ipv4_h = prepare_empty_ipv4();
 	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
@@ -220,7 +229,6 @@ void tcp_socket_send_data(int sock,
 
 	if (window_size != 0)
 	{
-		printf("input : %d\n", window_size);
 		tcp_h = tcp_set_window_size(tcp_h, window_size);
 	}
 
@@ -248,7 +256,7 @@ void tcp_socket_send_data(int sock,
 
 	send_packet(sock, ipv4_h, packet, dest_port);
 
-	printf("window size : %d\n", tcp_h.window);
+	//printf("window size : %d\n", tcp_h.window);
 	free(packet);
 	return;
 }

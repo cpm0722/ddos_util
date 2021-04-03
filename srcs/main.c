@@ -14,6 +14,9 @@
 #define __MAX_TOKEN_NUM__ 20
 #define __ATTACK_TYPES__ 10
 
+int __RECV_FLAG__ = 0;
+
+
 char input[__SIZE_OF_INPUT__];
 char *tokens[__MAX_TOKEN_NUM__ ];
 void (*usage_functions[__ATTACK_TYPES__ + 1])(void) = { NULL,

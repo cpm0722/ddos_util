@@ -142,7 +142,7 @@ void get_flood_main(char *argv[])
 	memset(&g_get_before_time, 0, sizeof(struct timespec));
 	memset(&g_get_now_time, 0, sizeof(struct timespec));
 	g_get_request_per_sec = atoi(argv[3]);
-	const int num_threads = 10;
+	const int num_threads = 100;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	for (int i = 0; i < num_threads; i++) {

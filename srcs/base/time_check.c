@@ -11,7 +11,9 @@ void time_check(pthread_cond_t *cond_p,
 	long double elapsed_time = (now_time_p->tv_sec - before_time_p->tv_sec) +
 		((now_time_p->tv_nsec - before_time_p->tv_nsec) / NANO_PER_SEC);
 	if (elapsed_time >= 1.0) {
+		printf("%lu generated in sec \n",*produced_in_sec_p);
 		*produced_in_sec_p = 0;
+
 		clock_gettime(CLOCK_MONOTONIC, before_time_p);
 		pthread_cond_signal(cond_p);
 	}

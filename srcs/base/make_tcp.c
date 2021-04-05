@@ -115,9 +115,16 @@ int tcp_make_connection(__u32 src_ip,
 												int *ack_copy,
 												__u16 window_size)
 {
+	/*	CODE OPTIMIZATION
+	 *  1. PREPARE ipv4 or tcp headers before, so that less calculation in loop
+	 *  2. try using register keyword
+	 *  3. OpenMP or use FORK
+	 */
+
 	// in make_ipv4.c -> make tcp socket via raw socket.
 	int sock = make_socket(IPPROTO_TCP);
 	struct iphdr ipv4_h;
+
 	ipv4_h = prepare_empty_ipv4();
 
 	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);

@@ -4,6 +4,8 @@
 #include "base/time_check.h"
 #include "ddos/hash_dos.h"
 
+extern int g_num_threads;
+
 // session counting
 __u64 g_hash_dos_num_total;
 __u64 g_hash_dos_num_generated_in_sec;
@@ -150,7 +152,7 @@ void hash_dos_main(char *argv[])
 	memset(&g_hash_dos_before_time, 0, sizeof(struct timespec));
 	memset(&g_hash_dos_now_time, 0, sizeof(struct timespec));
 	g_hash_dos_request_per_sec = atoi(argv[3]);
-	const int num_threads = 10;
+	const int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	printf("Sending hash_dos requests to %s per %d\n",

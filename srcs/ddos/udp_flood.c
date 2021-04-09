@@ -6,6 +6,8 @@
 
 #define DATA "Hello, This is Data!"
 
+extern int g_num_threads;
+
 // session counting
 __u64 g_udp_num_total;
 __u64 g_udp_num_generated_in_sec;
@@ -131,7 +133,7 @@ void udp_flood_main(char *argv[])
 	memset(&g_udp_before_time, 0, sizeof(struct timespec));
 	memset(&g_udp_now_time, 0, sizeof(struct timespec));
 	g_udp_request_per_sec = atoi(argv[3]);
-	const int num_threads = 10;
+	const int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	for (int i = 0; i < num_threads; i++) {

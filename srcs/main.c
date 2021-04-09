@@ -14,7 +14,8 @@
 #define __MAX_TOKEN_NUM__ 20
 #define __ATTACK_TYPES__ 10
 
-int __RECV_FLAG__ = 0;
+int g_recv_flags=0;
+int g_num_threads=1;
 
 
 char input[__SIZE_OF_INPUT__];
@@ -111,6 +112,9 @@ attack_type argv_to_tokens(char *argv[], int argc)
 		type = REF;
 	else
 		type = NONE;
+
+
+
 	return type;
 }
 

@@ -8,6 +8,8 @@
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 #define BODY_BUFFERING_CNT 2000
 
+extern int g_num_threads;
+
 // session counting
 __u64 g_bodybuf_num_total;
 __u64 g_bodybuf_num_generated_in_sec;
@@ -153,7 +155,7 @@ void body_buffering_main(char *argv[])
 	memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
 	memset(&g_bodybuf_now_time, 0, sizeof(struct timespec));
 	g_bodybuf_request_per_sec = atoi(argv[3]);
-	const int num_threads = 10;
+	const int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	for (int i = 0; i < num_threads; i++) {

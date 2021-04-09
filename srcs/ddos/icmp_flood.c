@@ -4,6 +4,8 @@
 #include "base/time_check.h"
 #include "ddos/icmp_flood.h"
 
+extern int g_num_threads;
+
 // session counting
 __u64 g_icmp_num_total;
 __u64 g_icmp_num_generated_in_sec;
@@ -133,7 +135,7 @@ void icmp_flood_main(char *argv[])
 	memset(&g_icmp_before_time, 0, sizeof(struct timespec));
 	memset(&g_icmp_now_time, 0, sizeof(struct timespec));
 	g_icmp_request_per_sec = atoi(argv[3]);
-	int num_threads = 10;
+	int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	for (int i = 0; i < num_threads; i++) {

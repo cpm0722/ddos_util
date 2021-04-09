@@ -19,24 +19,25 @@ struct iphdr prepare_empty_ipv4(void)
 	return ip_head;
 }
 
+
 struct iphdr ipv4_set_protocol(struct iphdr ip_head, __u8 protocol)
 {
 	ip_head.protocol = protocol;
-	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
+	//ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
 struct iphdr ipv4_set_saddr(struct iphdr ip_head, __u32 saddr)
 {
 	ip_head.saddr = saddr;
-	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
+	//ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
 struct iphdr ipv4_set_daddr(struct iphdr ip_head, __u32 daddr)
 {
 	ip_head.daddr = daddr;
-	ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
+	//ip_head.check = in_cksum((__u16 *) &ip_head, sizeof(struct iphdr));
 	return ip_head;
 }
 
@@ -79,6 +80,8 @@ void send_packet(int sock, struct iphdr ip_head, char *packet, int port)
 	dest.sin_family = AF_INET;
 	dest.sin_port = htons(port);
 	dest.sin_addr.s_addr = ip_head.daddr;
+
+
 	if (sendto(sock, (void *)packet, ip_head.tot_len, 0,
 			(struct sockaddr *) &dest, sizeof(dest)) < 0) {
 		perror("sendto() error");

@@ -127,27 +127,29 @@ int tcp_make_connection(__u32 src_ip,
 
 	ipv4_h = prepare_empty_ipv4();
 
-	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
-	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
-	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
+	ipv4_h.protocol = IPPROTO_TCP;
+	ipv4_h.saddr = src_ip;
+	ipv4_h.daddr = dest_ip;
+	ipv4_h.tot_len += sizeof(struct tcphdr);
+	ipv4_h.check = in_cksum((__u16 *) &ipv4_h,sizeof(struct iphdr) + sizeof(struct tcphdr));
+
 	// make tcp header.
 	struct tcphdr tcp_h;
 	tcp_h = prepare_empty_tcp();
 	if (window_size != 0)
-		tcp_h = tcp_set_window_size(tcp_h, window_size);
+		tcp_h.window = htons(window_size);
 
 	// set src port number random
 	int src_port = rand() % 63535 + 1500;
 	*(src_port_copy) = src_port;
-	tcp_h = tcp_set_src_port(tcp_h, src_port);
-	tcp_h = tcp_set_dest_port(tcp_h, dest_port);
+	tcp_h.source = htons(src_port);
+	tcp_h.dest = htons(dest_port);
 	int seq = rand() % 10000000;
-	tcp_h = tcp_set_seq(tcp_h, seq);
+	tcp_h.seq = htonl(seq);
 	seq++;
 	// ***For SYN TCP request, ACK seq should not be provided
 	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
-	tcp_h = tcp_set_syn_flag(tcp_h);
+	tcp_h.syn=1;
 	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
 
 	char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
@@ -178,29 +180,30 @@ int tcp_make_connection(__u32 src_ip,
 
 	}
 	else
-		req_seq=0;
+		req_seq=rand() % 10000000;
 
 	ipv4_h = prepare_empty_ipv4();
-	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
-	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
-	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
+	ipv4_h.protocol = IPPROTO_TCP;
+	ipv4_h.saddr = src_ip;
+	ipv4_h.daddr = dest_ip;
+	ipv4_h.tot_len += sizeof(struct tcphdr);
+	ipv4_h.check = in_cksum((__u16 *) &ipv4_h,sizeof(struct iphdr) + sizeof(struct tcphdr));
 	// make tcp header.
 
 	tcp_h = prepare_empty_tcp();
 	// set src port number random
 	if (window_size != 0)
-		tcp_h = tcp_set_window_size(tcp_h, window_size);
+		tcp_h.window = htons(window_size);
 
-	tcp_h = tcp_set_src_port(tcp_h, src_port);
-	tcp_h = tcp_set_dest_port(tcp_h, dest_port);
+	tcp_h.source = htons(src_port);
+	tcp_h.dest = htons(dest_port);
 
-	tcp_h = tcp_set_seq(tcp_h, seq);
-	tcp_h = tcp_set_ack_seq(tcp_h, req_seq + 1);
+	tcp_h.seq = htonl(seq);
+	tcp_h.ack_seq = htonl(req_seq+1);
 
 	// ***For SYN TCP request, ACK seq should not be provided
 	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
-	tcp_h = tcp_set_ack_flag(tcp_h);
+	tcp_h.ack = 1;
 	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, NULL, 0);
 
 	packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
@@ -226,44 +229,49 @@ void tcp_socket_send_data(int sock,
 {
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
-	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
-	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
+	ipv4_h.protocol = IPPROTO_TCP;
+	ipv4_h.saddr = src_ip;
+	ipv4_h.daddr = dest_ip;
+
 
 	// make tcp header.
 	struct tcphdr tcp_h;
+
 	tcp_h = prepare_empty_tcp();
+		if (window_size != 0)
+			tcp_h.window = htons(window_size);
 
-	if (window_size != 0)
-	{
-		tcp_h = tcp_set_window_size(tcp_h, window_size);
-	}
+		// set src port number random
 
-	// set src port number random
-	tcp_h = tcp_set_src_port(tcp_h, src_port);
-	tcp_h = tcp_set_dest_port(tcp_h, dest_port);
-	tcp_h = tcp_set_seq(tcp_h, seq);
-	tcp_h = tcp_set_ack_seq(tcp_h, ack);
+		tcp_h.source = htons(src_port);
+		tcp_h.dest = htons(dest_port);
+		tcp_h.seq = htonl(seq);
+		tcp_h.ack_seq = htonl(ack);
+		seq++;
+		// ***For SYN TCP request, ACK seq should not be provided
+		// tcp_h = tcp_set_ack_seq(tcp_h,35623);
+		tcp_h.psh=1;
+		tcp_h.ack=1;
 
-	// ***For SYN TCP request, ACK seq should not be provided
-	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
-	tcp_h = tcp_set_psh_flag(tcp_h);
-	tcp_h = tcp_set_ack_flag(tcp_h);
 
-	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr) + data_size);
+
+
+	ipv4_h.tot_len += sizeof(struct tcphdr) + data_size;
+	ipv4_h.check = in_cksum((__u16 *) &ipv4_h,
+			sizeof(struct iphdr) + sizeof(struct tcphdr)+data_size);
+
 	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, data, data_size);
 
 	char *tcp_with_data = malloc(sizeof(struct tcphdr) + data_size);
 	memcpy(tcp_with_data, &tcp_h, sizeof(tcp_h));
 	memcpy(tcp_with_data + sizeof(tcp_h), data, data_size);
 
+
 	char *packet = packet_assemble(ipv4_h, tcp_with_data,
 			sizeof(struct tcphdr) + data_size);
 	free(tcp_with_data);
 
 	send_packet(sock, ipv4_h, packet, dest_port);
-
-	//printf("window size : %d\n", tcp_h.window);
 	free(packet);
 	return;
 }
@@ -281,27 +289,30 @@ void tcp_socket_send_data_no_ack(int sock,
 {
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
-	ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-	ipv4_h = ipv4_set_saddr(ipv4_h, src_ip);
-	ipv4_h = ipv4_set_daddr(ipv4_h, dest_ip);
+	ipv4_h.protocol = IPPROTO_TCP;
+	ipv4_h.saddr = src_ip;
+	ipv4_h.daddr = dest_ip;
 
 	// make tcp header.
 	struct tcphdr tcp_h;
 	tcp_h = prepare_empty_tcp();
 	if (window_size != 0)
-		tcp_h = tcp_set_window_size(tcp_h, window_size);
+		tcp_h.window = htons(window_size);
 	// set src port number random
-	tcp_h = tcp_set_src_port(tcp_h, src_port);
-	tcp_h = tcp_set_dest_port(tcp_h, dest_port);
-	tcp_h = tcp_set_seq(tcp_h, seq);
-	tcp_h = tcp_set_ack_seq(tcp_h, ack);
+	tcp_h.source = htons(src_port);
+	tcp_h.dest = htons(dest_port);
+	tcp_h.seq = htonl(seq);
+	tcp_h.ack_seq = htonl(ack);
 
 	// ***For SYN TCP request, ACK seq should not be provided
 	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
-	tcp_h = tcp_set_psh_flag(tcp_h);
+	tcp_h.ack = 1;
+	tcp_h.psh = 1;
 	// tcp_h = tcp_set_ack_flag(tcp_h);
 
-	ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr) + data_size);
+	ipv4_h.tot_len += data_size;
+	ipv4_h.check = in_cksum((__u16 *) &ipv4_h,
+			sizeof(struct iphdr) + data_size);
 	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, data, data_size);
 
 	char *tcp_with_data = malloc(sizeof(struct tcphdr) + data_size);

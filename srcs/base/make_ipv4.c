@@ -81,7 +81,6 @@ void send_packet(int sock, struct iphdr ip_head, char *packet, int port)
 	dest.sin_port = htons(port);
 	dest.sin_addr.s_addr = ip_head.daddr;
 
-
 	if (sendto(sock, (void *)packet, ip_head.tot_len, 0,
 			(struct sockaddr *) &dest, sizeof(dest)) < 0) {
 		perror("sendto() error");

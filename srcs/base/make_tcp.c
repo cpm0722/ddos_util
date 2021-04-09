@@ -213,6 +213,7 @@ int tcp_make_connection(__u32 src_ip,
 	*(seq_copy) = seq;
 	*(ack_copy) = req_seq + 1;
 
+
 	return sock;
 }
 
@@ -306,13 +307,13 @@ void tcp_socket_send_data_no_ack(int sock,
 
 	// ***For SYN TCP request, ACK seq should not be provided
 	// tcp_h = tcp_set_ack_seq(tcp_h,35623);
-	tcp_h.ack = 1;
+	//tcp_h.ack = 1;
 	tcp_h.psh = 1;
 	// tcp_h = tcp_set_ack_flag(tcp_h);
 
-	ipv4_h.tot_len += data_size;
+	ipv4_h.tot_len += sizeof(struct tcphdr) + data_size;
 	ipv4_h.check = in_cksum((__u16 *) &ipv4_h,
-			sizeof(struct iphdr) + data_size);
+			sizeof(struct iphdr) + sizeof(struct tcphdr)+data_size);
 	tcp_h = tcp_get_checksum(ipv4_h, tcp_h, data, data_size);
 
 	char *tcp_with_data = malloc(sizeof(struct tcphdr) + data_size);

@@ -62,6 +62,7 @@ void *generate_body_buffering(void *data)
 				g_bodybuf_now_dest_ip,
 				&g_bodybuf_now_dest_port);
 		if (body_buffering_cnt % BODY_BUFFERING_CNT == 0) {
+			if(sock!=-1) close(sock);
 			sock = tcp_make_connection(
 					inet_addr(g_bodybuf_now_src_ip),
 					inet_addr(g_bodybuf_now_dest_ip),
@@ -94,6 +95,7 @@ void *generate_body_buffering(void *data)
 				&g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
 		// send one character
 		char data[] = "a\r\n";
+
 
 		tcp_socket_send_data_no_ack(
 				sock,

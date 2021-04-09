@@ -2,7 +2,7 @@
 #include "base/make_ipv4.h"
 #include "base/make_tcp.h"
 
-extern int __RECV_FLAG__;
+extern int g_recv_flag;
 
 struct tcphdr prepare_empty_tcp(void)
 {
@@ -155,7 +155,7 @@ int tcp_make_connection(__u32 src_ip,
 	free(packet);
 	__u64 req_seq;
 
-	if(__RECV_FLAG__==1)
+	if(g_recv_flag==1)
 	{
 	unsigned char buffer[1000];
 	int recv_size = 0;

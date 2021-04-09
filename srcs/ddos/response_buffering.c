@@ -9,6 +9,8 @@
 
 #define RESPONSE_BUFFERING_CNT 50
 
+extern int g_num_threads;
+
 // session counting
 __u64 g_resbuf_num_total;
 __u64 g_resbuf_num_generated_in_sec;
@@ -179,7 +181,7 @@ void response_buffering_main(char *argv[])
 	g_resbuf_request_per_sec = atoi(argv[3]);
 	if (g_resbuf_request_per_sec == 0)
 		g_resbuf_request_per_sec = __UINT_MAXIMUM__;
-	const int num_threads = 10;
+	const int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
 	for (int i = 0; i < num_threads; i++) {

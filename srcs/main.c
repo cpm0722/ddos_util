@@ -47,7 +47,7 @@ void (*g_main_functions[__ATTACK_TYPES__ + 1])(char *[]) = { NULL,
 void get_input(void)
 {
 	printf("$ ");
-	fgets(g_input, __SIZE_OF_INPUT__, stdin);
+	void *ptr = fgets(g_input, __SIZE_OF_INPUT__, stdin);
 	return;
 }
 

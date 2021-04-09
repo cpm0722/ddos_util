@@ -11,7 +11,7 @@ DDOS_DIR = ddos
 #################
 #  GCC-OPTIONS  #
 #################
-CC = gcc
+CC = gcc -O3
 INCLUDE_OPT = -I $(INCLUDE_DIR)
 CCOPTS = -c $(INCLUDE_OPT)
 LINKOPTS = -lpthread -lm

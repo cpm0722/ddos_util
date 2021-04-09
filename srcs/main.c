@@ -15,7 +15,7 @@
 #define __ATTACK_TYPES__ 10
 
 int g_recv_flag = 0;
-int g_num_threads = 10;
+int g_num_threads = 1;
 int g_num_cores = 1;
 int	g_fork_cnt = 0;
 

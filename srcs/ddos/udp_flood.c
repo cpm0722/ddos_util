@@ -42,10 +42,11 @@ void *generate_udp_flood(void *data)
 		// make ipv4 header
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
-		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_UDP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_udp_now.src));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_udp_now.dest));
-		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct udphdr));
+		ipv4_h.protocol = (IPPROTO_UDP);
+		ipv4_h.saddr = inet_addr(g_udp_now.src);
+		ipv4_h.daddr = inet_addr(g_udp_now.dest);
+		ipv4_h.tot_len += sizeof(struct udphdr);
+		ipv4_h.check = in_cksum((__u16 *) &ipv4_h,sizeof(struct udphdr) + sizeof(struct icmp));
 		// make udp header
 		struct udphdr *udp_h_ptr;
 		char buf[sizeof(struct udphdr)];

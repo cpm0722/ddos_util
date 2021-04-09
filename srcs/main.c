@@ -15,9 +15,11 @@
 #define __ATTACK_TYPES__ 10
 
 int g_recv_flag = 0;
-int g_num_threads = 10;
+int g_num_threads = 1;
 int g_num_cores = 1;
 int	g_fork_cnt = 0;
+
+int g_pid_list[100];
 
 char g_input[__SIZE_OF_INPUT__];
 char *g_tokens[__MAX_TOKEN_NUM__ ];
@@ -43,6 +45,18 @@ void (*g_main_functions[__ATTACK_TYPES__ + 1])(char *[]) = { NULL,
 				response_buffering_main,
 				hash_dos_main
 			};
+
+void sigint_handler(int signo)
+{
+	int i;
+	for(i=0;i<g_num_cores;i++)
+	{
+		printf("Killig : %d\n",g_pid_list[i]);
+		kill(g_pid_list[i], SIGKILL);
+	}
+
+}
+
 
 void get_input(void)
 {
@@ -338,6 +352,34 @@ int main(int argc, char *argv[])
 		print_usage(argv);
 		return 0;
 	}
-	g_main_functions[type](g_tokens);
+	printf("num core : %d\n",g_num_cores);
+
+	signal(SIGINT, sigint_handler);
+
+	int i;
+
+	for(i=0;i<g_num_cores;i++)
+	{
+		g_pid_list[i] = fork();
+		if(g_pid_list[i] < 0)
+		{
+			perror("fork");
+			abort();
+		}
+		else if(g_pid_list[i] == 0 )
+		{
+			g_main_functions[type](g_tokens);
+			exit(0);
+		}
+	}
+
+	int status;
+	int count;
+	while(count>=0)
+	{
+		int pid = wait(&status);
+		--count;
+	}
+
 	return 0;
 }

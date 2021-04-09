@@ -11,17 +11,10 @@ extern int g_num_threads;
 __u64 g_conn_num_total;
 __u64 g_conn_num_generated_in_sec;
 // from main()
-unsigned char g_conn_src_ip[16];
-unsigned char g_conn_dest_ip[16];
-__u32 g_conn_src_mask;
-__u32 g_conn_dest_mask;
-__u32 g_conn_dest_port_start;
-__u32 g_conn_dest_port_end;
+InputArguments g_conn_input;
 __u32 g_conn_request_per_sec;
 // for masking next ip address
-unsigned char g_conn_now_src_ip[16];
-unsigned char g_conn_now_dest_ip[16];
-__u32 g_conn_now_dest_port;
+MaskingArguments g_conn_now;
 // thread
 pthread_mutex_t g_conn_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_conn_cond = PTHREAD_COND_INITIALIZER;
@@ -51,23 +44,14 @@ void *generate_conn_flood(void *data)
 			pthread_cond_wait(&g_conn_cond, &g_conn_mutex);
 		}
 		// get now resource
-		generator(
-				g_conn_src_ip,
-				g_conn_dest_ip,
-				g_conn_src_mask,
-				g_conn_dest_mask,
-				g_conn_dest_port_start,
-				g_conn_dest_port_end,
-				g_conn_now_src_ip,
-				g_conn_now_dest_ip,
-				&g_conn_now_dest_port);
+		get_masking_arguments(&g_conn_input, &g_conn_now);
 		// make and do tcp connection using raw socket
 		int src_port, seq, ack;
 		int sock = tcp_make_connection(
-				inet_addr(g_conn_now_src_ip),
-				inet_addr(g_conn_now_dest_ip),
+				inet_addr(g_conn_now.src),
+				inet_addr(g_conn_now.dest),
 				&src_port,
-				g_conn_now_dest_port,
+				g_conn_now.port,
 				&seq,
 				&ack,
 				0);
@@ -113,14 +97,7 @@ void conn_flood_main(char *argv[])
 		return;
 	}
 	// parse args
-	split_ip_mask_port(
-			argv,
-			g_conn_src_ip,
-			g_conn_dest_ip,
-			&g_conn_src_mask,
-			&g_conn_dest_mask,
-			&g_conn_dest_port_start,
-			&g_conn_dest_port_end);
+	argv_to_input_arguments(argv, &g_conn_input);
 	g_conn_num_generated_in_sec = 0;
 	g_conn_num_total = 0;
 	// initialize timespecs
@@ -134,7 +111,7 @@ void conn_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending CONN requests to %s using %d threads\n", g_conn_dest_ip,
+	printf("Sending CONN requests to %s using %d threads\n", g_conn_input.dest,
 			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {

@@ -10,17 +10,10 @@ extern int g_num_threads;
 __u64 g_icmp_num_total;
 __u64 g_icmp_num_generated_in_sec;
 // from main()
-unsigned char g_icmp_src_ip[16] = { 0, };
-unsigned char g_icmp_dest_ip[16] = { 0, };
-__u32 g_icmp_src_mask;
-__u32 g_icmp_dest_mask;
-__u32 g_icmp_dest_port_start;
-__u32 g_icmp_dest_port_end;
+InputArguments g_icmp_input;
 __u32 g_icmp_request_per_sec;
 // for masking next ip address
-unsigned char g_icmp_now_src_ip[16] = { 0, };
-unsigned char g_icmp_now_dest_ip[16] = { 0, };
-__u32 g_icmp_now_port;
+MaskingArguments g_icmp_now;
 // thread
 pthread_mutex_t g_icmp_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_icmp_cond = PTHREAD_COND_INITIALIZER;
@@ -46,28 +39,19 @@ void *generate_icmp_flood(void *data)
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_icmp_mutex);
 		// get now resource
-		generator(
-				g_icmp_src_ip,
-				g_icmp_dest_ip,
-				g_icmp_src_mask,
-				g_icmp_dest_mask,
-				g_icmp_dest_port_start,
-				g_icmp_dest_port_end,
-				g_icmp_now_src_ip,
-				g_icmp_now_dest_ip,
-				&g_icmp_now_port);
+		get_masking_arguments(&g_icmp_input, &g_icmp_now);
 		// make ipv4 header
 
 		/*ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_ICMP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_icmp_now_src_ip));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_icmp_now_dest_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_icmp_now.src));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_icmp_now.dest));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct icmp));*/
 
 		ipv4_h.tot_len = sizeof(struct iphdr);
 		ipv4_h.protocol = IPPROTO_ICMP;
-		ipv4_h.saddr = inet_addr(g_icmp_now_src_ip);
-		ipv4_h.daddr = inet_addr(g_icmp_now_dest_ip);
+		ipv4_h.saddr = inet_addr(g_icmp_now.src);
+		ipv4_h.daddr = inet_addr(g_icmp_now.dest);
 		ipv4_h.tot_len += sizeof(struct icmp);
 		ipv4_h.check = in_cksum((__u16 *) &ipv4_h,sizeof(struct iphdr) + sizeof(struct icmp));
 
@@ -97,7 +81,7 @@ void *generate_icmp_flood(void *data)
 				&g_icmp_num_generated_in_sec);
 		// make and send packet
 		char *packet = packet_assemble(ipv4_h, icmp_h_ptr, sizeof(struct icmp));
-		send_packet(sock, ipv4_h, packet, g_icmp_now_port);
+		send_packet(sock, ipv4_h, packet, g_icmp_now.port);
 		free(packet);
 		g_icmp_num_generated_in_sec++;
 		g_icmp_num_total++;
@@ -134,14 +118,7 @@ void icmp_flood_main(char *argv[])
 		return;
 	}
 	// get ip address, mask, port
-	split_ip_mask_port(
-			argv,
-			g_icmp_src_ip,
-			g_icmp_dest_ip,
-			&g_icmp_src_mask,
-			&g_icmp_dest_mask,
-			&g_icmp_dest_port_start,
-			&g_icmp_dest_port_end);
+	argv_to_input_arguments(argv, &g_icmp_input);
 	g_icmp_num_generated_in_sec = 0;
 	g_icmp_num_total = 0;
 	memset(&g_icmp_before_time, 0, sizeof(struct timespec));
@@ -154,7 +131,7 @@ void icmp_flood_main(char *argv[])
 		thread_ids[i] = i;
 	}
 	printf("Sending ICMP requests to %s using %d threads %u per sec\n",
-			g_icmp_dest_ip,
+			g_icmp_input.dest,
 			num_threads,
 			g_icmp_request_per_sec);
 	int i;

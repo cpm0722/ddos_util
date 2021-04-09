@@ -13,21 +13,13 @@ extern int g_num_threads;
 __u64 g_get_num_total;
 __u64 g_get_num_generated_in_sec;
 // from main()
-unsigned char g_get_src_ip[16] = { 0, };
-unsigned char g_get_dest_ip[16] = { 0, };
-__u32 g_get_src_mask;
-__u32 g_get_dest_mask;
-__u32 g_get_dest_port_start;
-__u32 g_get_dest_port_end;
+InputArguments g_get_input;
 __u32 g_get_request_per_sec;
+// for masking next ip address
+MaskingArguments g_get_now;
 // thread
 pthread_mutex_t g_get_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_get_cond = PTHREAD_COND_INITIALIZER;
-
-// for masking next ip address
-unsigned char g_get_now_src_ip[16];
-unsigned char g_get_now_dest_ip[16];
-__u32 g_get_now_dest_port;
 
 // time checking
 struct timespec g_get_before_time;
@@ -57,33 +49,24 @@ void *generate_get_flood(void *data)
 			pthread_cond_wait(&g_get_cond, &g_get_mutex);
 		}
 		// get now resource
-		generator(
-				g_get_src_ip,
-				g_get_dest_ip,
-				g_get_src_mask,
-				g_get_dest_mask,
-				g_get_dest_port_start,
-				g_get_dest_port_end,
-				g_get_now_src_ip,
-				g_get_now_dest_ip,
-				&g_get_now_dest_port);
+		get_masking_arguments(&g_get_input, &g_get_now);
 		// make and do tcp connection using raw socket
 		int src_port, seq, ack;
 		int sock = tcp_make_connection(
-				inet_addr(g_get_now_src_ip),
-				inet_addr(g_get_now_dest_ip),
+				inet_addr(g_get_now.src),
+				inet_addr(g_get_now.dest),
 				&src_port,
-				g_get_now_dest_port,
+				g_get_now.port,
 				&seq,
 				&ack,
 				0);
 		// send HTTP GET method
 		tcp_socket_send_data(
 				sock,
-				inet_addr(g_get_now_src_ip),
-				inet_addr(g_get_now_dest_ip),
+				inet_addr(g_get_now.src),
+				inet_addr(g_get_now.dest),
 				src_port,
-				g_get_now_dest_port,
+				g_get_now.port,
 				GET_METHOD,
 				strlen(GET_METHOD),
 				seq,
@@ -131,14 +114,7 @@ void get_flood_main(char *argv[])
 		get_flood_print_usage();
 		return;
 	}
-	split_ip_mask_port(
-			argv,
-			g_get_src_ip,
-			g_get_dest_ip,
-			&g_get_src_mask,
-			&g_get_dest_mask,
-			&g_get_dest_port_start,
-			&g_get_dest_port_end);
+	argv_to_input_arguments(argv, &g_get_input);
 	g_get_num_generated_in_sec = 0;
 	g_get_num_total = 0;
 	memset(&g_get_before_time, 0, sizeof(struct timespec));
@@ -151,7 +127,7 @@ void get_flood_main(char *argv[])
 		thread_ids[i] = i;
 	}
 	printf("Sending GET requests to %s using %d threads %u per sec\n",
-			g_get_dest_ip, num_threads, g_get_request_per_sec);
+			g_get_input.dest, num_threads, g_get_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(

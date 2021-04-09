@@ -70,4 +70,7 @@ int split_ip_mask_port(char *argv[], __uc src_ipv4[IPV4_STR_LEN], __uc dest_ipv4
 */
 int generator(__uc *src_ipv4, __uc *dest_ipv4, __u32 src_mask, __u32 dest_mask, __u32 port_start, __u32 port_end, __uc src_now[IPV4_STR_LEN], __uc dest_now[IPV4_STR_LEN], __u32 *port_now);
 
+int argv_to_input_arguments(char *argv[], InputArguments *input);
+int get_masking_arguments(InputArguments *input, MaskingArguments *now);
+
 #endif	// ifndef SUBNET_MASK

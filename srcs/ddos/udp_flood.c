@@ -12,17 +12,10 @@ extern int g_num_threads;
 __u64 g_udp_num_total;
 __u64 g_udp_num_generated_in_sec;
 // from main()
-unsigned char g_udp_src_ip[16] = { 0, };
-unsigned char g_udp_dest_ip[16] = { 0, };
-__u32 g_udp_src_mask;
-__u32 g_udp_dest_mask;
-__u32 g_udp_dest_port_start;
-__u32 g_udp_dest_port_end;
+InputArguments g_udp_input;
 __u32 g_udp_request_per_sec;
 // for masking next ip address
-unsigned char g_udp_now_src_ip[16] = { 0, };
-unsigned char g_udp_now_dest_ip[16] = { 0, };
-__u32 g_udp_now_dest_port;
+MaskingArguments g_udp_now;
 // thread
 pthread_mutex_t g_udp_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_udp_cond = PTHREAD_COND_INITIALIZER;
@@ -45,22 +38,13 @@ void *generate_udp_flood(void *data)
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_udp_mutex);
 		// get now resource
-		generator(
-				g_udp_src_ip,
-				g_udp_dest_ip,
-				g_udp_src_mask,
-				g_udp_dest_mask,
-				g_udp_dest_port_start,
-				g_udp_dest_port_end,
-				g_udp_now_src_ip,
-				g_udp_now_dest_ip,
-				&g_udp_now_dest_port);
+		get_masking_arguments(&g_udp_input, &g_udp_now);
 		// make ipv4 header
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_UDP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_udp_now_src_ip));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_udp_now_dest_ip));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_udp_now.src));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_udp_now.dest));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct udphdr));
 		// make udp header
 		struct udphdr *udp_h_ptr;
@@ -69,7 +53,7 @@ void *generate_udp_flood(void *data)
 		udp_h_ptr = (struct udphdr *)buf;
 		udp_h_ptr->checksum = 0;
 		udp_h_ptr->src_port = htons(0);
-		udp_h_ptr->dest_port = htons(g_udp_now_dest_port);
+		udp_h_ptr->dest_port = htons(g_udp_now.port);
 		strcpy(udp_h_ptr -> data, DATA);
 		udp_h_ptr->len = htons(strlen(DATA));
 		// wait a second
@@ -84,7 +68,7 @@ void *generate_udp_flood(void *data)
 				&g_udp_num_generated_in_sec);
 		// make and send packet
 		char *packet = packet_assemble(ipv4_h, udp_h_ptr, sizeof(struct udphdr));
-		send_packet(sock, ipv4_h, packet, g_udp_now_dest_port);
+		send_packet(sock, ipv4_h, packet, g_udp_now.port);
 		free(packet);
 		g_udp_num_generated_in_sec++;
 		g_udp_num_total++;
@@ -120,14 +104,7 @@ void udp_flood_main(char *argv[])
 		return;
 	}
 	// get ip address, mask, port
-	split_ip_mask_port(
-			argv,
-			g_udp_src_ip,
-			g_udp_dest_ip,
-			&g_udp_src_mask,
-			&g_udp_dest_mask,
-			&g_udp_dest_port_start,
-			&g_udp_dest_port_end);
+	argv_to_input_arguments(argv, &g_udp_input);
 	g_udp_num_generated_in_sec = 0;
 	g_udp_num_total = 0;
 	memset(&g_udp_before_time, 0, sizeof(struct timespec));
@@ -140,7 +117,7 @@ void udp_flood_main(char *argv[])
 		thread_ids[i] = i;
 	}
 	printf("Sending UDP requests to %s using %d threads %u per sec\n",
-			g_udp_dest_ip, num_threads, g_udp_request_per_sec);
+			g_udp_input.dest, num_threads, g_udp_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(

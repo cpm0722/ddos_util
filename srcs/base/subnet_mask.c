@@ -140,3 +140,42 @@ int generator(__uc *src_ipv4,
 	}
 	return 0;
 }
+
+int argv_to_input_arguments(char *argv[], InputArguments *input)
+{
+	__uc *src = argv[0];
+	__uc *dest = argv[1];
+	__uc *port = argv[2];
+	get_ip_from_ip_addr(src, input->src);
+	get_ip_from_ip_addr(dest, input->dest);
+	input->src_mask = get_mask_from_ip_addr(src);
+	input->dest_mask = get_mask_from_ip_addr(dest);
+
+	__uc *ptr = strtok(port, "-");
+	input->port_start = atoi(ptr);
+	ptr = strtok(NULL, "-");
+	if (ptr) {
+		input->port_end = atoi(ptr);
+	} else {
+		input->port_end = input->port_start;
+	}
+	return 0;
+}
+
+int get_masking_arguments(InputArguments *input, MaskingArguments *now)
+{
+	// last dest_ipv4 or first(blank)
+	if (masking_next_ip_addr(input->dest, now->dest, input->dest_mask)) {
+		int res;
+		// last src_ipv4
+		if ((res = masking_next_ip_addr(input->src, now->src, input->src_mask)) > 0) {
+			(now->port)++;
+			if (now->port > input->port_end) {
+				now->port = input->port_start;
+			}
+		} else if (res < 0) {
+			now->port = input->port_start;
+		}
+	}
+	return 0;
+}

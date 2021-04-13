@@ -27,7 +27,7 @@ __u32 get_addr_val(__uc *str);
  * @param[out]	str		ipv4 string(XXX.XXX.XXX.XXX)
  * @return		void
  */
-void get_addr_str(__u32 val, __uc str[IPV4_STR_LEN]);
+void get_addr_str(__u32 val, __uc str[IPV4_STRLEN]);
 
 /*!
  * @brief
@@ -41,7 +41,7 @@ void get_addr_str(__u32 val, __uc str[IPV4_STR_LEN]);
  * @retval		1: there is no next ipv4 address in subnet masking
  * @reval		0: else
  */
-int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STR_LEN], __u32 mask);
+int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask);
 
 /*!
  * @brief

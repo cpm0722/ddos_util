@@ -4,8 +4,8 @@
 __u32 get_addr_val(__uc *str)
 {
 	__u32 res = 0;
-	__uc tmp_str[IPV4_STR_LEN];
-	memset(tmp_str, '\0', IPV4_STR_LEN);
+	__uc tmp_str[IPV4_STRLEN];
+	memset(tmp_str, '\0', IPV4_STRLEN);
 	strcpy(tmp_str, str);
 	__uc *ptr = strtok(tmp_str, ".");
 	for (int i = 3; i >= 0; i--) {
@@ -16,7 +16,7 @@ __u32 get_addr_val(__uc *str)
 	return res;
 }
 
-void get_addr_str(__u32 val, __uc str[IPV4_STR_LEN])
+void get_addr_str(__u32 val, __uc str[IPV4_STRLEN])
 {
 	__u32 split[4] = { 0, 0, 0, 0 };
 	for (int i = 3; i >= 0; i--) {
@@ -26,7 +26,7 @@ void get_addr_str(__u32 val, __uc str[IPV4_STR_LEN])
 	return;
 }
 
-int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STR_LEN], __u32 mask)
+int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask)
 {
 	__u32 now_addr;
 	if (!strlen(now)) {	 // first call
@@ -89,8 +89,8 @@ void get_ip_from_ip_addr(__uc *ipv4, __uc *now)
 }
 
 int split_ip_mask_port(char *argv[],
-											 __uc src_ipv4[IPV4_STR_LEN],
-											 __uc dest_ipv4[IPV4_STR_LEN],
+											 __uc src_ipv4[IPV4_STRLEN],
+											 __uc dest_ipv4[IPV4_STRLEN],
 											 __u32 *src_mask,
 											 __u32 *dest_mask,
 											 __u32 *port_start,
@@ -121,8 +121,8 @@ int generator(__uc *src_ipv4,
 							__u32 dest_mask,
 							__u32 port_start,
 							__u32 port_end,
-							__uc src_now[IPV4_STR_LEN],
-							__uc dest_now[IPV4_STR_LEN],
+							__uc src_now[IPV4_STRLEN],
+							__uc dest_now[IPV4_STRLEN],
 							__u32 *port_now)
 {
 	// last dest_ipv4 or first(blank)

@@ -1,0 +1,252 @@
+\hypertarget{icmp__flood_8c}{}\doxysection{srcs/ddos/icmp\+\_\+flood.c File Reference}
+\label{icmp__flood_8c}\index{srcs/ddos/icmp\_flood.c@{srcs/ddos/icmp\_flood.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/subnet\+\_\+mask.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/time\+\_\+check.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/icmp\+\_\+flood.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{icmp__flood_8c_a27e5366f4ba1296d750766fbf734f755}{icmp\+\_\+flood\+\_\+print\+\_\+usage}} (void)
+\begin{DoxyCompactList}\small\item\em print icmp flooding usage \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{icmp__flood_8c_a4d7d4af372e23b2bd5a156ab4df6de79}{generate\+\_\+icmp\+\_\+flood}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em icmp flooding generate thread \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{icmp__flood_8c_aba468211363fc89891854a18c2193c14}{icmp\+\_\+flood\+\_\+time\+\_\+check}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em icmp flooding time check thread \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{icmp__flood_8c_a75aaadf4fe9376da29f576439d073770}{icmp\+\_\+flood\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em icmp flooding main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{icmp__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{icmp__flood_8c_a2c8c2ff4da8ffa9f536fe779bdee77e6}{g\+\_\+icmp\+\_\+num\+\_\+total}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{icmp__flood_8c_a5d9981432f74894adf1d5b50ca877d93}{g\+\_\+icmp\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \mbox{\hyperlink{icmp__flood_8c_a5601b03508c0ebda839665a063acfb89}{g\+\_\+icmp\+\_\+input}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{icmp__flood_8c_afe4af02514b07d728392265fce5ee871}{g\+\_\+icmp\+\_\+request\+\_\+per\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} \mbox{\hyperlink{icmp__flood_8c_af9141f049f4de30aa9ddf76bbc9bf26b}{g\+\_\+icmp\+\_\+now}}
+\item 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{icmp__flood_8c_a99702915952c3bb7e5efbcb257ee1665}{g\+\_\+icmp\+\_\+mutex}} = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER
+\item 
+pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{icmp__flood_8c_af3678aa5bca3b03373a158aaa5b16cbc}{g\+\_\+icmp\+\_\+cond}} = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER
+\item 
+struct timespec \mbox{\hyperlink{icmp__flood_8c_a926cbf3afd5bff723dc815eab20485b9}{g\+\_\+icmp\+\_\+before\+\_\+time}}
+\item 
+struct timespec \mbox{\hyperlink{icmp__flood_8c_a5b848415e411915c7afe6741abc7b012}{g\+\_\+icmp\+\_\+now\+\_\+time}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{icmp__flood_8c_a4d7d4af372e23b2bd5a156ab4df6de79}\label{icmp__flood_8c_a4d7d4af372e23b2bd5a156ab4df6de79}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!generate\_icmp\_flood@{generate\_icmp\_flood}}
+\index{generate\_icmp\_flood@{generate\_icmp\_flood}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{generate\_icmp\_flood()}{generate\_icmp\_flood()}}
+{\footnotesize\ttfamily void$\ast$ generate\+\_\+icmp\+\_\+flood (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+icmp flooding generate thread 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 31 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a75aaadf4fe9376da29f576439d073770}\label{icmp__flood_8c_a75aaadf4fe9376da29f576439d073770}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!icmp\_flood\_main@{icmp\_flood\_main}}
+\index{icmp\_flood\_main@{icmp\_flood\_main}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{icmp\_flood\_main()}{icmp\_flood\_main()}}
+{\footnotesize\ttfamily void icmp\+\_\+flood\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+icmp flooding main function 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 110 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a27e5366f4ba1296d750766fbf734f755}\label{icmp__flood_8c_a27e5366f4ba1296d750766fbf734f755}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!icmp\_flood\_print\_usage@{icmp\_flood\_print\_usage}}
+\index{icmp\_flood\_print\_usage@{icmp\_flood\_print\_usage}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{icmp\_flood\_print\_usage()}{icmp\_flood\_print\_usage()}}
+{\footnotesize\ttfamily void icmp\+\_\+flood\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print icmp flooding usage 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 24 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_aba468211363fc89891854a18c2193c14}\label{icmp__flood_8c_aba468211363fc89891854a18c2193c14}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!icmp\_flood\_time\_check@{icmp\_flood\_time\_check}}
+\index{icmp\_flood\_time\_check@{icmp\_flood\_time\_check}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{icmp\_flood\_time\_check()}{icmp\_flood\_time\_check()}}
+{\footnotesize\ttfamily void$\ast$ icmp\+\_\+flood\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+icmp flooding time check thread 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 96 of file icmp\+\_\+flood.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{icmp__flood_8c_a926cbf3afd5bff723dc815eab20485b9}\label{icmp__flood_8c_a926cbf3afd5bff723dc815eab20485b9}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_before\_time@{g\_icmp\_before\_time}}
+\index{g\_icmp\_before\_time@{g\_icmp\_before\_time}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_before\_time}{g\_icmp\_before\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+icmp\+\_\+before\+\_\+time}
+
+
+
+Definition at line 19 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_af3678aa5bca3b03373a158aaa5b16cbc}\label{icmp__flood_8c_af3678aa5bca3b03373a158aaa5b16cbc}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_cond@{g\_icmp\_cond}}
+\index{g\_icmp\_cond@{g\_icmp\_cond}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_cond}{g\_icmp\_cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+icmp\+\_\+cond = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 19 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a5601b03508c0ebda839665a063acfb89}\label{icmp__flood_8c_a5601b03508c0ebda839665a063acfb89}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_input@{g\_icmp\_input}}
+\index{g\_icmp\_input@{g\_icmp\_input}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_input}{g\_icmp\_input}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} g\+\_\+icmp\+\_\+input}
+
+
+
+Definition at line 13 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a99702915952c3bb7e5efbcb257ee1665}\label{icmp__flood_8c_a99702915952c3bb7e5efbcb257ee1665}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_mutex@{g\_icmp\_mutex}}
+\index{g\_icmp\_mutex@{g\_icmp\_mutex}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_mutex}{g\_icmp\_mutex}}
+{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+icmp\+\_\+mutex = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 18 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_af9141f049f4de30aa9ddf76bbc9bf26b}\label{icmp__flood_8c_af9141f049f4de30aa9ddf76bbc9bf26b}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_now@{g\_icmp\_now}}
+\index{g\_icmp\_now@{g\_icmp\_now}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_now}{g\_icmp\_now}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} g\+\_\+icmp\+\_\+now}
+
+
+
+Definition at line 16 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a5b848415e411915c7afe6741abc7b012}\label{icmp__flood_8c_a5b848415e411915c7afe6741abc7b012}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_now\_time@{g\_icmp\_now\_time}}
+\index{g\_icmp\_now\_time@{g\_icmp\_now\_time}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_now\_time}{g\_icmp\_now\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+icmp\+\_\+now\+\_\+time}
+
+
+
+Definition at line 19 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a5d9981432f74894adf1d5b50ca877d93}\label{icmp__flood_8c_a5d9981432f74894adf1d5b50ca877d93}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_num\_generated\_in\_sec@{g\_icmp\_num\_generated\_in\_sec}}
+\index{g\_icmp\_num\_generated\_in\_sec@{g\_icmp\_num\_generated\_in\_sec}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_num\_generated\_in\_sec}{g\_icmp\_num\_generated\_in\_sec}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+icmp\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
+
+
+
+Definition at line 11 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a2c8c2ff4da8ffa9f536fe779bdee77e6}\label{icmp__flood_8c_a2c8c2ff4da8ffa9f536fe779bdee77e6}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_num\_total@{g\_icmp\_num\_total}}
+\index{g\_icmp\_num\_total@{g\_icmp\_num\_total}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_num\_total}{g\_icmp\_num\_total}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+icmp\+\_\+num\+\_\+total}
+
+
+
+Definition at line 10 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_afe4af02514b07d728392265fce5ee871}\label{icmp__flood_8c_afe4af02514b07d728392265fce5ee871}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_icmp\_request\_per\_sec@{g\_icmp\_request\_per\_sec}}
+\index{g\_icmp\_request\_per\_sec@{g\_icmp\_request\_per\_sec}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_icmp\_request\_per\_sec}{g\_icmp\_request\_per\_sec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} g\+\_\+icmp\+\_\+request\+\_\+per\+\_\+sec}
+
+
+
+Definition at line 14 of file icmp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{icmp__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{icmp__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
+\index{icmp\_flood.c@{icmp\_flood.c}!g\_num\_threads@{g\_num\_threads}}
+\index{g\_num\_threads@{g\_num\_threads}!icmp\_flood.c@{icmp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 19 of file main.\+c.
+

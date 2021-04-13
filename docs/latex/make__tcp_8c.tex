@@ -1,0 +1,350 @@
+\hypertarget{make__tcp_8c}{}\doxysection{srcs/base/make\+\_\+tcp.c File Reference}
+\label{make__tcp_8c}\index{srcs/base/make\_tcp.c@{srcs/base/make\_tcp.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+tcp.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_a5a5405590f01c9ca1e63f8f05e80447b}{prepare\+\_\+empty\+\_\+tcp}} (void)
+\begin{DoxyCompactList}\small\item\em function\+: get empty tcphdr \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_abc38c6f62edb194d2d9027813cba66dd}{tcp\+\_\+set\+\_\+src\+\_\+port}} (struct tcphdr tcph, \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} src\+\_\+port)
+\begin{DoxyCompactList}\small\item\em function\+: set tcphdr\textquotesingle{}s src port \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_adcc491e1d35fc4b1c5b75e399681ff20}{tcp\+\_\+set\+\_\+dest\+\_\+port}} (struct tcphdr tcph, \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} \mbox{\hyperlink{tcp__replay_8c_af6bb105e185ed654270b13c002c478cb}{dest\+\_\+port}})
+\begin{DoxyCompactList}\small\item\em function\+: set tcphdr\textquotesingle{}s src port \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_ae4a88e4b8f7a0c09b15e0da4f9b15e66}{tcp\+\_\+set\+\_\+seq}} (struct tcphdr tcph, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} seq)
+\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_ae4f341b4e3b28788bdddf8cf18215403}{tcp\+\_\+set\+\_\+ack\+\_\+seq}} (struct tcphdr tcph, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} ack\+\_\+seq)
+\begin{DoxyCompactList}\small\item\em function\+: set tcphdr\textquotesingle{}s ack sequence \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_a1f010534d4df2729dd4abc4256d74b1d}{tcp\+\_\+set\+\_\+syn\+\_\+flag}} (struct tcphdr tcph)
+\begin{DoxyCompactList}\small\item\em function\+: set tcphdr\textquotesingle{}s syn flag as 1 \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_af37d161798ca0da0589684dff66f51f7}{tcp\+\_\+set\+\_\+ack\+\_\+flag}} (struct tcphdr tcph)
+\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_af979e77e1c3fddeceb193338fe9c2827}{tcp\+\_\+set\+\_\+psh\+\_\+flag}} (struct tcphdr tcph)
+\begin{DoxyCompactList}\small\item\em function\+: set tcphdr\textquotesingle{}s psh flag as 1 \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_a11bc489473827418e1811c96b58cb521}{tcp\+\_\+set\+\_\+window\+\_\+size}} (struct tcphdr tcph, \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} window\+\_\+size)
+\begin{DoxyCompactList}\small\item\em function\+: set tcphdr\textquotesingle{}s window size \end{DoxyCompactList}\item 
+struct tcphdr \mbox{\hyperlink{make__tcp_8c_a9538f23b78317a10ecd920a70f3b0f12}{tcp\+\_\+get\+\_\+checksum}} (struct iphdr ipv4h, struct tcphdr tcph, void $\ast$data, int datasize)
+\begin{DoxyCompactList}\small\item\em function\+: tcphdr checksum value calculate with iphdr, data \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{make__tcp_8c_a958ff1df378e1c91a410d1f7dff9816c}{tcp\+\_\+make\+\_\+connection}} (\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} src\+\_\+ip, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} dest\+\_\+ip, int $\ast$src\+\_\+port\+\_\+copy, int \mbox{\hyperlink{tcp__replay_8c_af6bb105e185ed654270b13c002c478cb}{dest\+\_\+port}}, int $\ast$seq\+\_\+copy, int $\ast$ack\+\_\+copy, \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} window\+\_\+size)
+\begin{DoxyCompactList}\small\item\em function\+: make tcp connection (3-\/way handshake, 1. send SYN, 2. receive SYN+\+ACK, 3. send ACK) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{make__tcp_8c_a4b242c88691bcb98b60c4c7d28841e68}{tcp\+\_\+socket\+\_\+send\+\_\+data}} (int sock, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} src\+\_\+ip, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} dest\+\_\+ip, int src\+\_\+port, int \mbox{\hyperlink{tcp__replay_8c_af6bb105e185ed654270b13c002c478cb}{dest\+\_\+port}}, char $\ast$data, int data\+\_\+size, int seq, int ack, \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} window\+\_\+size)
+\begin{DoxyCompactList}\small\item\em function\+: after tcp-\/connection, send data with ACK requesting \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{make__tcp_8c_a9ecfafa20a595333e12b29a6965cbe4a}{tcp\+\_\+socket\+\_\+send\+\_\+data\+\_\+no\+\_\+ack}} (int sock, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} src\+\_\+ip, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} dest\+\_\+ip, int src\+\_\+port, int \mbox{\hyperlink{tcp__replay_8c_af6bb105e185ed654270b13c002c478cb}{dest\+\_\+port}}, char $\ast$data, int data\+\_\+size, int seq, int ack, \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} window\+\_\+size)
+\begin{DoxyCompactList}\small\item\em function\+: after tcp-\/connection, send data without ACK requesting \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{make__tcp_8c_a65299e47b1a6f3d37ed4e3da33f9c429}{g\+\_\+recv\+\_\+flag}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{make__tcp_8c_a5a5405590f01c9ca1e63f8f05e80447b}\label{make__tcp_8c_a5a5405590f01c9ca1e63f8f05e80447b}} 
+\index{make\_tcp.c@{make\_tcp.c}!prepare\_empty\_tcp@{prepare\_empty\_tcp}}
+\index{prepare\_empty\_tcp@{prepare\_empty\_tcp}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{prepare\_empty\_tcp()}{prepare\_empty\_tcp()}}
+{\footnotesize\ttfamily struct tcphdr prepare\+\_\+empty\+\_\+tcp (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+function\+: get empty tcphdr 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em void} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tchpdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_a9538f23b78317a10ecd920a70f3b0f12}\label{make__tcp_8c_a9538f23b78317a10ecd920a70f3b0f12}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_get\_checksum@{tcp\_get\_checksum}}
+\index{tcp\_get\_checksum@{tcp\_get\_checksum}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_get\_checksum()}{tcp\_get\_checksum()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+get\+\_\+checksum (\begin{DoxyParamCaption}\item[{struct iphdr}]{ipv4h,  }\item[{struct tcphdr}]{tcph,  }\item[{void $\ast$}]{data,  }\item[{int}]{datasize }\end{DoxyParamCaption})}
+
+
+
+function\+: tcphdr checksum value calculate with iphdr, data 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & iphdr ipv4h, struct tcphdr tcph, void $\ast$data, int datasize \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_a958ff1df378e1c91a410d1f7dff9816c}\label{make__tcp_8c_a958ff1df378e1c91a410d1f7dff9816c}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_make\_connection@{tcp\_make\_connection}}
+\index{tcp\_make\_connection@{tcp\_make\_connection}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_make\_connection()}{tcp\_make\_connection()}}
+{\footnotesize\ttfamily int tcp\+\_\+make\+\_\+connection (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{src\+\_\+ip,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{dest\+\_\+ip,  }\item[{int $\ast$}]{src\+\_\+port\+\_\+copy,  }\item[{int}]{dest\+\_\+port,  }\item[{int $\ast$}]{seq\+\_\+copy,  }\item[{int $\ast$}]{ack\+\_\+copy,  }\item[{\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}}}]{window\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+function\+: make tcp connection (3-\/way handshake, 1. send SYN, 2. receive SYN+\+ACK, 3. send ACK) 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em \+\_\+\+\_\+u32} & src\+\_\+ip, \+\_\+\+\_\+u32 dest\+\_\+ip, int $\ast$src\+\_\+port\+\_\+copy, int dest\+\_\+port, int $\ast$seq\+\_\+copy, int $\ast$ack\+\_\+copy, \+\_\+\+\_\+u16 window\+\_\+size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int\+: socket 
+\end{DoxyReturn}
+
+
+Definition at line 110 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_af37d161798ca0da0589684dff66f51f7}\label{make__tcp_8c_af37d161798ca0da0589684dff66f51f7}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_ack\_flag@{tcp\_set\_ack\_flag}}
+\index{tcp\_set\_ack\_flag@{tcp\_set\_ack\_flag}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_ack\_flag()}{tcp\_set\_ack\_flag()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+ack\+\_\+flag (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph }\end{DoxyParamCaption})}
+
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_ae4f341b4e3b28788bdddf8cf18215403}\label{make__tcp_8c_ae4f341b4e3b28788bdddf8cf18215403}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_ack\_seq@{tcp\_set\_ack\_seq}}
+\index{tcp\_set\_ack\_seq@{tcp\_set\_ack\_seq}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_ack\_seq()}{tcp\_set\_ack\_seq()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+ack\+\_\+seq (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{ack\+\_\+seq }\end{DoxyParamCaption})}
+
+
+
+function\+: set tcphdr\textquotesingle{}s ack sequence 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & tcphdr tcph, \+\_\+\+\_\+u32 ack sequence \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_adcc491e1d35fc4b1c5b75e399681ff20}\label{make__tcp_8c_adcc491e1d35fc4b1c5b75e399681ff20}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_dest\_port@{tcp\_set\_dest\_port}}
+\index{tcp\_set\_dest\_port@{tcp\_set\_dest\_port}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_dest\_port()}{tcp\_set\_dest\_port()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+dest\+\_\+port (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph,  }\item[{\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}}}]{dest\+\_\+port }\end{DoxyParamCaption})}
+
+
+
+function\+: set tcphdr\textquotesingle{}s src port 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & tcphdr tcph, \+\_\+\+\_\+u16 src\+\_\+port \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_af979e77e1c3fddeceb193338fe9c2827}\label{make__tcp_8c_af979e77e1c3fddeceb193338fe9c2827}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_psh\_flag@{tcp\_set\_psh\_flag}}
+\index{tcp\_set\_psh\_flag@{tcp\_set\_psh\_flag}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_psh\_flag()}{tcp\_set\_psh\_flag()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+psh\+\_\+flag (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph }\end{DoxyParamCaption})}
+
+
+
+function\+: set tcphdr\textquotesingle{}s psh flag as 1 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & tcphdr tcph \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_ae4a88e4b8f7a0c09b15e0da4f9b15e66}\label{make__tcp_8c_ae4a88e4b8f7a0c09b15e0da4f9b15e66}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_seq@{tcp\_set\_seq}}
+\index{tcp\_set\_seq@{tcp\_set\_seq}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_seq()}{tcp\_set\_seq()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+seq (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{seq }\end{DoxyParamCaption})}
+
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_abc38c6f62edb194d2d9027813cba66dd}\label{make__tcp_8c_abc38c6f62edb194d2d9027813cba66dd}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_src\_port@{tcp\_set\_src\_port}}
+\index{tcp\_set\_src\_port@{tcp\_set\_src\_port}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_src\_port()}{tcp\_set\_src\_port()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+src\+\_\+port (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph,  }\item[{\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}}}]{src\+\_\+port }\end{DoxyParamCaption})}
+
+
+
+function\+: set tcphdr\textquotesingle{}s src port 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & tcphdr tcph, \+\_\+\+\_\+u16 src\+\_\+port \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_a1f010534d4df2729dd4abc4256d74b1d}\label{make__tcp_8c_a1f010534d4df2729dd4abc4256d74b1d}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_syn\_flag@{tcp\_set\_syn\_flag}}
+\index{tcp\_set\_syn\_flag@{tcp\_set\_syn\_flag}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_syn\_flag()}{tcp\_set\_syn\_flag()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+syn\+\_\+flag (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph }\end{DoxyParamCaption})}
+
+
+
+function\+: set tcphdr\textquotesingle{}s syn flag as 1 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & tcphdr tcph \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_a11bc489473827418e1811c96b58cb521}\label{make__tcp_8c_a11bc489473827418e1811c96b58cb521}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_set\_window\_size@{tcp\_set\_window\_size}}
+\index{tcp\_set\_window\_size@{tcp\_set\_window\_size}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_set\_window\_size()}{tcp\_set\_window\_size()}}
+{\footnotesize\ttfamily struct tcphdr tcp\+\_\+set\+\_\+window\+\_\+size (\begin{DoxyParamCaption}\item[{struct tcphdr}]{tcph,  }\item[{\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}}}]{window\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+function\+: set tcphdr\textquotesingle{}s window size 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em struct} & tcphdr tcph, \+\_\+\+\_\+u16 window\+\_\+size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct tcphdr 
+\end{DoxyReturn}
+
+
+Definition at line 5 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_a4b242c88691bcb98b60c4c7d28841e68}\label{make__tcp_8c_a4b242c88691bcb98b60c4c7d28841e68}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_socket\_send\_data@{tcp\_socket\_send\_data}}
+\index{tcp\_socket\_send\_data@{tcp\_socket\_send\_data}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_socket\_send\_data()}{tcp\_socket\_send\_data()}}
+{\footnotesize\ttfamily void tcp\+\_\+socket\+\_\+send\+\_\+data (\begin{DoxyParamCaption}\item[{int}]{sock,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{src\+\_\+ip,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{dest\+\_\+ip,  }\item[{int}]{src\+\_\+port,  }\item[{int}]{dest\+\_\+port,  }\item[{char $\ast$}]{data,  }\item[{int}]{data\+\_\+size,  }\item[{int}]{seq,  }\item[{int}]{ack,  }\item[{\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}}}]{window\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+function\+: after tcp-\/connection, send data with ACK requesting 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em int} & sock, \+\_\+\+\_\+u32 src\+\_\+ip, \+\_\+\+\_\+u32 dest\+\_\+ip, int src\+\_\+port, int dest\+\_\+port, char $\ast$data, int data\+\_\+size, int seq, int ack, \+\_\+\+\_\+u16 window\+\_\+size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 220 of file make\+\_\+tcp.\+c.
+
+\mbox{\Hypertarget{make__tcp_8c_a9ecfafa20a595333e12b29a6965cbe4a}\label{make__tcp_8c_a9ecfafa20a595333e12b29a6965cbe4a}} 
+\index{make\_tcp.c@{make\_tcp.c}!tcp\_socket\_send\_data\_no\_ack@{tcp\_socket\_send\_data\_no\_ack}}
+\index{tcp\_socket\_send\_data\_no\_ack@{tcp\_socket\_send\_data\_no\_ack}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{tcp\_socket\_send\_data\_no\_ack()}{tcp\_socket\_send\_data\_no\_ack()}}
+{\footnotesize\ttfamily void tcp\+\_\+socket\+\_\+send\+\_\+data\+\_\+no\+\_\+ack (\begin{DoxyParamCaption}\item[{int}]{sock,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{src\+\_\+ip,  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{dest\+\_\+ip,  }\item[{int}]{src\+\_\+port,  }\item[{int}]{dest\+\_\+port,  }\item[{char $\ast$}]{data,  }\item[{int}]{data\+\_\+size,  }\item[{int}]{seq,  }\item[{int}]{ack,  }\item[{\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}}}]{window\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+function\+: after tcp-\/connection, send data without ACK requesting 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+\begin{DoxyParams}{Parameters}
+{\em int} & sock, \+\_\+\+\_\+u32 src\+\_\+ip, \+\_\+\+\_\+u32 dest\+\_\+ip, int src\+\_\+port, int dest\+\_\+port, char $\ast$data, int data\+\_\+size, int seq, int ack, \+\_\+\+\_\+u16 window\+\_\+size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 280 of file make\+\_\+tcp.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{make__tcp_8c_a65299e47b1a6f3d37ed4e3da33f9c429}\label{make__tcp_8c_a65299e47b1a6f3d37ed4e3da33f9c429}} 
+\index{make\_tcp.c@{make\_tcp.c}!g\_recv\_flag@{g\_recv\_flag}}
+\index{g\_recv\_flag@{g\_recv\_flag}!make\_tcp.c@{make\_tcp.c}}
+\doxysubsubsection{\texorpdfstring{g\_recv\_flag}{g\_recv\_flag}}
+{\footnotesize\ttfamily int g\+\_\+recv\+\_\+flag\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 18 of file main.\+c.
+

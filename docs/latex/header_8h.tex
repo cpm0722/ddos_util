@@ -1,0 +1,180 @@
+\hypertarget{header_8h}{}\doxysection{includes/header.h File Reference}
+\label{header_8h}\index{includes/header.h@{includes/header.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$wait.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+{\ttfamily \#include $<$netinet/ip.\+h$>$}\newline
+{\ttfamily \#include $<$netinet/tcp.\+h$>$}\newline
+{\ttfamily \#include $<$netinet/ip\+\_\+icmp.\+h$>$}\newline
+{\ttfamily \#include $<$arpa/inet.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}base/asm\+\_\+types.\+h\char`\"{}}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}}
+\begin{DoxyCompactList}\small\item\em ip, port, subnet masking values \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}}
+\begin{DoxyCompactList}\small\item\em now values(ip, port) in subnet masking \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{header_8h_a8755f1a359f8a36b480f5fac8df230d2}{\+\_\+\+\_\+\+UINT\+\_\+\+MAXIMUM\+\_\+\+\_\+}}~(1L $<$$<$ (31)) -\/ 1
+\begin{DoxyCompactList}\small\item\em maximum value of unsigned integer \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{IPV4\+\_\+\+STRLEN}}~20
+\begin{DoxyCompactList}\small\item\em ipv4 string\textquotesingle{}s length \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} \{ \newline
+\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993eac157bdf0b85a40d2619cbc8bc1ae5fe2}{NONE}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea09525917af0ed4514b05c075b3830488}{SYN}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993eadb542475cf9d0636e4225e216cee9ae6}{UDP}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea90f471bb91043604b88253b494eb971c}{ICMP}}
+, \newline
+\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea3fc3e2b310346be79d567f5fc606bb17}{CONN}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea12a8dcf59c16b5aadfda3a08ba67d529}{GET}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea0b0955668575b21eb0ab2272aef49f76}{HEAD}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea40adb6a513bd35c0dfff0291e9fdaa63}{BODY}}
+, \newline
+\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea659082eece39a8e509757b90252ed089}{RESP}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993ea3463ba81467a175d3608388e36aacab5}{HASH}}
+, \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993eabfdf17eb53b95728af2d4afeff366dd8}{REF}}
+ \}
+\begin{DoxyCompactList}\small\item\em attack types \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool}} \{ \mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1ae9de385ef6fe9bf3360d1038396b884c}{false}}
+, \mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1a08f175a5505a10b9ed657defeb050e4b}{true}}
+ \}
+\begin{DoxyCompactList}\small\item\em boolean \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{header_8h_a8755f1a359f8a36b480f5fac8df230d2}\label{header_8h_a8755f1a359f8a36b480f5fac8df230d2}} 
+\index{header.h@{header.h}!\_\_UINT\_MAXIMUM\_\_@{\_\_UINT\_MAXIMUM\_\_}}
+\index{\_\_UINT\_MAXIMUM\_\_@{\_\_UINT\_MAXIMUM\_\_}!header.h@{header.h}}
+\doxysubsubsection{\texorpdfstring{\_\_UINT\_MAXIMUM\_\_}{\_\_UINT\_MAXIMUM\_\_}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+UINT\+\_\+\+MAXIMUM\+\_\+\+\_\+~(1L $<$$<$ (31)) -\/ 1}
+
+
+
+maximum value of unsigned integer 
+
+
+
+Definition at line 6 of file header.\+h.
+
+\mbox{\Hypertarget{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}\label{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}} 
+\index{header.h@{header.h}!IPV4\_STRLEN@{IPV4\_STRLEN}}
+\index{IPV4\_STRLEN@{IPV4\_STRLEN}!header.h@{header.h}}
+\doxysubsubsection{\texorpdfstring{IPV4\_STRLEN}{IPV4\_STRLEN}}
+{\footnotesize\ttfamily \#define IPV4\+\_\+\+STRLEN~20}
+
+
+
+ipv4 string\textquotesingle{}s length 
+
+
+
+Definition at line 8 of file header.\+h.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993e}\label{header_8h_ad63626a764d821e818fb2d3e23e6993e}} 
+\index{header.h@{header.h}!attack\_type@{attack\_type}}
+\index{attack\_type@{attack\_type}!header.h@{header.h}}
+\doxysubsubsection{\texorpdfstring{attack\_type}{attack\_type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}}}
+
+
+
+attack types 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NONE@{NONE}!header.h@{header.h}}\index{header.h@{header.h}!NONE@{NONE}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993eac157bdf0b85a40d2619cbc8bc1ae5fe2}\label{header_8h_ad63626a764d821e818fb2d3e23e6993eac157bdf0b85a40d2619cbc8bc1ae5fe2}} 
+NONE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYN@{SYN}!header.h@{header.h}}\index{header.h@{header.h}!SYN@{SYN}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea09525917af0ed4514b05c075b3830488}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea09525917af0ed4514b05c075b3830488}} 
+SYN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UDP@{UDP}!header.h@{header.h}}\index{header.h@{header.h}!UDP@{UDP}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993eadb542475cf9d0636e4225e216cee9ae6}\label{header_8h_ad63626a764d821e818fb2d3e23e6993eadb542475cf9d0636e4225e216cee9ae6}} 
+UDP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ICMP@{ICMP}!header.h@{header.h}}\index{header.h@{header.h}!ICMP@{ICMP}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea90f471bb91043604b88253b494eb971c}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea90f471bb91043604b88253b494eb971c}} 
+ICMP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CONN@{CONN}!header.h@{header.h}}\index{header.h@{header.h}!CONN@{CONN}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea3fc3e2b310346be79d567f5fc606bb17}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea3fc3e2b310346be79d567f5fc606bb17}} 
+CONN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GET@{GET}!header.h@{header.h}}\index{header.h@{header.h}!GET@{GET}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea12a8dcf59c16b5aadfda3a08ba67d529}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea12a8dcf59c16b5aadfda3a08ba67d529}} 
+GET&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HEAD@{HEAD}!header.h@{header.h}}\index{header.h@{header.h}!HEAD@{HEAD}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea0b0955668575b21eb0ab2272aef49f76}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea0b0955668575b21eb0ab2272aef49f76}} 
+HEAD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BODY@{BODY}!header.h@{header.h}}\index{header.h@{header.h}!BODY@{BODY}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea40adb6a513bd35c0dfff0291e9fdaa63}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea40adb6a513bd35c0dfff0291e9fdaa63}} 
+BODY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESP@{RESP}!header.h@{header.h}}\index{header.h@{header.h}!RESP@{RESP}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea659082eece39a8e509757b90252ed089}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea659082eece39a8e509757b90252ed089}} 
+RESP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HASH@{HASH}!header.h@{header.h}}\index{header.h@{header.h}!HASH@{HASH}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993ea3463ba81467a175d3608388e36aacab5}\label{header_8h_ad63626a764d821e818fb2d3e23e6993ea3463ba81467a175d3608388e36aacab5}} 
+HASH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{REF@{REF}!header.h@{header.h}}\index{header.h@{header.h}!REF@{REF}}}\mbox{\Hypertarget{header_8h_ad63626a764d821e818fb2d3e23e6993eabfdf17eb53b95728af2d4afeff366dd8}\label{header_8h_ad63626a764d821e818fb2d3e23e6993eabfdf17eb53b95728af2d4afeff366dd8}} 
+REF&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 32 of file header.\+h.
+
+\mbox{\Hypertarget{header_8h_af6a258d8f3ee5206d682d799316314b1}\label{header_8h_af6a258d8f3ee5206d682d799316314b1}} 
+\index{header.h@{header.h}!bool@{bool}}
+\index{bool@{bool}!header.h@{header.h}}
+\doxysubsubsection{\texorpdfstring{bool}{bool}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool}}}
+
+
+
+boolean 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{false@{false}!header.h@{header.h}}\index{header.h@{header.h}!false@{false}}}\mbox{\Hypertarget{header_8h_af6a258d8f3ee5206d682d799316314b1ae9de385ef6fe9bf3360d1038396b884c}\label{header_8h_af6a258d8f3ee5206d682d799316314b1ae9de385ef6fe9bf3360d1038396b884c}} 
+false&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{true@{true}!header.h@{header.h}}\index{header.h@{header.h}!true@{true}}}\mbox{\Hypertarget{header_8h_af6a258d8f3ee5206d682d799316314b1a08f175a5505a10b9ed657defeb050e4b}\label{header_8h_af6a258d8f3ee5206d682d799316314b1a08f175a5505a10b9ed657defeb050e4b}} 
+true&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 41 of file header.\+h.
+

@@ -1,0 +1,77 @@
+.TH "InputArguments" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+InputArguments \- ip, port, subnet masking values  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <header\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "unsigned char \fBsrc\fP [\fBIPV4_STRLEN\fP]"
+.br
+.ti -1c
+.RI "unsigned char \fBdest\fP [\fBIPV4_STRLEN\fP]"
+.br
+.ti -1c
+.RI "\fB__u32\fP \fBsrc_mask\fP"
+.br
+.ti -1c
+.RI "\fB__u32\fP \fBdest_mask\fP"
+.br
+.ti -1c
+.RI "\fB__u32\fP \fBport_start\fP"
+.br
+.ti -1c
+.RI "\fB__u32\fP \fBport_end\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+ip, port, subnet masking values 
+
+
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file header\&.h\&.
+.SH "Field Documentation"
+.PP 
+.SS "unsigned char dest[\fBIPV4_STRLEN\fP]"
+source ipv4 string, format: XXX\&.XXX\&.XXX\&.XXX 
+.PP
+Definition at line 53 of file header\&.h\&.
+.SS "\fB__u32\fP dest_mask"
+source ipv4 mask, range: 0~32, default: 32 
+.PP
+Definition at line 55 of file header\&.h\&.
+.SS "\fB__u32\fP port_end"
+destination port start, range: 0~65535 
+.PP
+Definition at line 57 of file header\&.h\&.
+.SS "\fB__u32\fP port_start"
+destination ipv4 mask, range: 0~32, default: 32 
+.PP
+Definition at line 56 of file header\&.h\&.
+.SS "unsigned char src[\fBIPV4_STRLEN\fP]"
+
+.PP
+Definition at line 52 of file header\&.h\&.
+.SS "\fB__u32\fP src_mask"
+destination ipv4 string, format: XXX\&.XXX\&.XXX\&.XXX 
+.PP
+Definition at line 54 of file header\&.h\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

@@ -1,0 +1,283 @@
+\hypertarget{get__flood_8c}{}\doxysection{srcs/ddos/get\+\_\+flood.c File Reference}
+\label{get__flood_8c}\index{srcs/ddos/get\_flood.c@{srcs/ddos/get\_flood.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+tcp.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/subnet\+\_\+mask.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/time\+\_\+check.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/get\+\_\+flood.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{get__flood_8c_ab2e8a18a8b1cfe5c391fd1824e9e53dd}{GET\+\_\+\+METHOD}}~\char`\"{}GET / HTTP/1.\+1\textbackslash{}r\textbackslash{}n\+Host\+: localhost\textbackslash{}r\textbackslash{}n\textbackslash{}r\textbackslash{}n\char`\"{}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{get__flood_8c_a3e1d6f753ec94b192058958b907633e5}{get\+\_\+flood\+\_\+print\+\_\+usage}} (void)
+\begin{DoxyCompactList}\small\item\em print get flooding usage \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{get__flood_8c_aa4022f627a2346298cd1cb2893ef6e68}{generate\+\_\+get\+\_\+flood}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em get flooding generate thread \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{get__flood_8c_a769b7d64d1e6c39aa18d6ca7ae710dca}{get\+\_\+flood\+\_\+time\+\_\+check}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em get flooding time check thread \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{get__flood_8c_a0e09a45dacc8864b97d23052ee2185a7}{get\+\_\+flood\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em get flooding main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{get__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{get__flood_8c_a3b504b4490219d9e04c9b00d9635eb60}{g\+\_\+get\+\_\+num\+\_\+total}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{get__flood_8c_a09dd84b4a6b479afb807293ec170f48b}{g\+\_\+get\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \mbox{\hyperlink{get__flood_8c_a65387a4c8d799ccae9b058dd22fa0413}{g\+\_\+get\+\_\+input}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{get__flood_8c_a2689f07da3fb307a6dd49c82dd947893}{g\+\_\+get\+\_\+request\+\_\+per\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} \mbox{\hyperlink{get__flood_8c_a8d49f00a377bf82ccbba1bc9c07bcfa1}{g\+\_\+get\+\_\+now}}
+\item 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{get__flood_8c_aea3aeb6996474d6466c449dc1ba8cc39}{g\+\_\+get\+\_\+mutex}} = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER
+\item 
+pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{get__flood_8c_a3cbb8f8fb1b5af4ad8043b35d84e835b}{g\+\_\+get\+\_\+cond}} = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER
+\item 
+struct timespec \mbox{\hyperlink{get__flood_8c_a362b8ab9b7f9cb6ef8b605404700aaf2}{g\+\_\+get\+\_\+before\+\_\+time}}
+\item 
+struct timespec \mbox{\hyperlink{get__flood_8c_ad0f1577759481e3eb5c0dbd00941af5f}{g\+\_\+get\+\_\+now\+\_\+time}}
+\item 
+char \mbox{\hyperlink{get__flood_8c_a1d5ba7a20d47729d21bd8e60f159e50b}{g\+\_\+get\+\_\+request\+\_\+msg}} \mbox{[}\mbox{\hyperlink{get__flood_8h_a525b1688d92b62870aae2e094da44fdc}{\+\_\+\+\_\+\+GET\+\_\+\+REQUEST\+\_\+\+MSG\+\_\+\+SIZE\+\_\+\+\_\+}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{get__flood_8c_ab2e8a18a8b1cfe5c391fd1824e9e53dd}\label{get__flood_8c_ab2e8a18a8b1cfe5c391fd1824e9e53dd}} 
+\index{get\_flood.c@{get\_flood.c}!GET\_METHOD@{GET\_METHOD}}
+\index{GET\_METHOD@{GET\_METHOD}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{GET\_METHOD}{GET\_METHOD}}
+{\footnotesize\ttfamily \#define GET\+\_\+\+METHOD~\char`\"{}GET / HTTP/1.\+1\textbackslash{}r\textbackslash{}n\+Host\+: localhost\textbackslash{}r\textbackslash{}n\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Definition at line 8 of file get\+\_\+flood.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{get__flood_8c_aa4022f627a2346298cd1cb2893ef6e68}\label{get__flood_8c_aa4022f627a2346298cd1cb2893ef6e68}} 
+\index{get\_flood.c@{get\_flood.c}!generate\_get\_flood@{generate\_get\_flood}}
+\index{generate\_get\_flood@{generate\_get\_flood}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{generate\_get\_flood()}{generate\_get\_flood()}}
+{\footnotesize\ttfamily void$\ast$ generate\+\_\+get\+\_\+flood (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+get flooding generate thread 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 38 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a0e09a45dacc8864b97d23052ee2185a7}\label{get__flood_8c_a0e09a45dacc8864b97d23052ee2185a7}} 
+\index{get\_flood.c@{get\_flood.c}!get\_flood\_main@{get\_flood\_main}}
+\index{get\_flood\_main@{get\_flood\_main}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{get\_flood\_main()}{get\_flood\_main()}}
+{\footnotesize\ttfamily void get\+\_\+flood\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+get flooding main function 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 105 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a3e1d6f753ec94b192058958b907633e5}\label{get__flood_8c_a3e1d6f753ec94b192058958b907633e5}} 
+\index{get\_flood.c@{get\_flood.c}!get\_flood\_print\_usage@{get\_flood\_print\_usage}}
+\index{get\_flood\_print\_usage@{get\_flood\_print\_usage}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{get\_flood\_print\_usage()}{get\_flood\_print\_usage()}}
+{\footnotesize\ttfamily void get\+\_\+flood\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print get flooding usage 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 30 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a769b7d64d1e6c39aa18d6ca7ae710dca}\label{get__flood_8c_a769b7d64d1e6c39aa18d6ca7ae710dca}} 
+\index{get\_flood.c@{get\_flood.c}!get\_flood\_time\_check@{get\_flood\_time\_check}}
+\index{get\_flood\_time\_check@{get\_flood\_time\_check}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{get\_flood\_time\_check()}{get\_flood\_time\_check()}}
+{\footnotesize\ttfamily void$\ast$ get\+\_\+flood\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+get flooding time check thread 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 91 of file get\+\_\+flood.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{get__flood_8c_a362b8ab9b7f9cb6ef8b605404700aaf2}\label{get__flood_8c_a362b8ab9b7f9cb6ef8b605404700aaf2}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_before\_time@{g\_get\_before\_time}}
+\index{g\_get\_before\_time@{g\_get\_before\_time}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_before\_time}{g\_get\_before\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+get\+\_\+before\+\_\+time}
+
+
+
+Definition at line 22 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a3cbb8f8fb1b5af4ad8043b35d84e835b}\label{get__flood_8c_a3cbb8f8fb1b5af4ad8043b35d84e835b}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_cond@{g\_get\_cond}}
+\index{g\_get\_cond@{g\_get\_cond}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_cond}{g\_get\_cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+get\+\_\+cond = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 22 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a65387a4c8d799ccae9b058dd22fa0413}\label{get__flood_8c_a65387a4c8d799ccae9b058dd22fa0413}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_input@{g\_get\_input}}
+\index{g\_get\_input@{g\_get\_input}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_input}{g\_get\_input}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} g\+\_\+get\+\_\+input}
+
+
+
+Definition at line 16 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_aea3aeb6996474d6466c449dc1ba8cc39}\label{get__flood_8c_aea3aeb6996474d6466c449dc1ba8cc39}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_mutex@{g\_get\_mutex}}
+\index{g\_get\_mutex@{g\_get\_mutex}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_mutex}{g\_get\_mutex}}
+{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+get\+\_\+mutex = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 21 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a8d49f00a377bf82ccbba1bc9c07bcfa1}\label{get__flood_8c_a8d49f00a377bf82ccbba1bc9c07bcfa1}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_now@{g\_get\_now}}
+\index{g\_get\_now@{g\_get\_now}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_now}{g\_get\_now}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} g\+\_\+get\+\_\+now}
+
+
+
+Definition at line 19 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_ad0f1577759481e3eb5c0dbd00941af5f}\label{get__flood_8c_ad0f1577759481e3eb5c0dbd00941af5f}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_now\_time@{g\_get\_now\_time}}
+\index{g\_get\_now\_time@{g\_get\_now\_time}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_now\_time}{g\_get\_now\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+get\+\_\+now\+\_\+time}
+
+
+
+Definition at line 22 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a09dd84b4a6b479afb807293ec170f48b}\label{get__flood_8c_a09dd84b4a6b479afb807293ec170f48b}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_num\_generated\_in\_sec@{g\_get\_num\_generated\_in\_sec}}
+\index{g\_get\_num\_generated\_in\_sec@{g\_get\_num\_generated\_in\_sec}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_num\_generated\_in\_sec}{g\_get\_num\_generated\_in\_sec}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+get\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
+
+
+
+Definition at line 14 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a3b504b4490219d9e04c9b00d9635eb60}\label{get__flood_8c_a3b504b4490219d9e04c9b00d9635eb60}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_num\_total@{g\_get\_num\_total}}
+\index{g\_get\_num\_total@{g\_get\_num\_total}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_num\_total}{g\_get\_num\_total}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+get\+\_\+num\+\_\+total}
+
+
+
+Definition at line 13 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a1d5ba7a20d47729d21bd8e60f159e50b}\label{get__flood_8c_a1d5ba7a20d47729d21bd8e60f159e50b}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_request\_msg@{g\_get\_request\_msg}}
+\index{g\_get\_request\_msg@{g\_get\_request\_msg}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_request\_msg}{g\_get\_request\_msg}}
+{\footnotesize\ttfamily char g\+\_\+get\+\_\+request\+\_\+msg\mbox{[}\mbox{\hyperlink{get__flood_8h_a525b1688d92b62870aae2e094da44fdc}{\+\_\+\+\_\+\+GET\+\_\+\+REQUEST\+\_\+\+MSG\+\_\+\+SIZE\+\_\+\+\_\+}}\mbox{]}}
+
+
+
+Definition at line 28 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a2689f07da3fb307a6dd49c82dd947893}\label{get__flood_8c_a2689f07da3fb307a6dd49c82dd947893}} 
+\index{get\_flood.c@{get\_flood.c}!g\_get\_request\_per\_sec@{g\_get\_request\_per\_sec}}
+\index{g\_get\_request\_per\_sec@{g\_get\_request\_per\_sec}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_get\_request\_per\_sec}{g\_get\_request\_per\_sec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} g\+\_\+get\+\_\+request\+\_\+per\+\_\+sec}
+
+
+
+Definition at line 17 of file get\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{get__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{get__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
+\index{get\_flood.c@{get\_flood.c}!g\_num\_threads@{g\_num\_threads}}
+\index{g\_num\_threads@{g\_num\_threads}!get\_flood.c@{get\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 19 of file main.\+c.
+

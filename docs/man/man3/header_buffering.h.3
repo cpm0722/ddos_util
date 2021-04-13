@@ -1,0 +1,146 @@
+.TH "includes/ddos/header_buffering.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+includes/ddos/header_buffering.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__HEADER_BUFFERING_REQUEST_MSG_SIZE__\fP   100"
+.br
+.RI "http request method message size in header buffering "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBheader_buffering_print_usage\fP ()"
+.br
+.RI "print header buffering usage "
+.ti -1c
+.RI "void * \fBgenerate_header_buffering\fP (void *data)"
+.br
+.RI "header buffering generate thread "
+.ti -1c
+.RI "void * \fBheader_buffering_time_check\fP (void *data)"
+.br
+.RI "header buffering time check thread "
+.ti -1c
+.RI "void \fBheader_buffering_main\fP (char *argv[])"
+.br
+.RI "header buffering main function "
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __HEADER_BUFFERING_REQUEST_MSG_SIZE__   100"
+
+.PP
+http request method message size in header buffering 
+.PP
+Definition at line 6 of file header_buffering\&.h\&.
+.SH "Function Documentation"
+.PP 
+.SS "void* generate_header_buffering (void * data)"
+
+.PP
+header buffering generate thread 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP thread input, default: NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void * 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINULL\fP always 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file header_buffering\&.c\&.
+.SS "void header_buffering_main (char * argv[])"
+
+.PP
+header buffering main function 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP arguments 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 122 of file header_buffering\&.c\&.
+.SS "void header_buffering_print_usage ()"
+
+.PP
+print header buffering usage 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 28 of file header_buffering\&.c\&.
+.SS "void* header_buffering_time_check (void * data)"
+
+.PP
+header buffering time check thread 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP thread input, default: NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void * 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINULL\fP always 
+.RE
+.PP
+
+.PP
+Definition at line 108 of file header_buffering\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

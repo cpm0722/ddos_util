@@ -1,0 +1,121 @@
+\hypertarget{conn__flood_8h}{}\doxysection{includes/ddos/conn\+\_\+flood.h File Reference}
+\label{conn__flood_8h}\index{includes/ddos/conn\_flood.h@{includes/ddos/conn\_flood.h}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{conn__flood_8h_a14379e8617955f4c9fcf390b08c9832b}{conn\+\_\+flood\+\_\+print\+\_\+usage}} (void)
+\begin{DoxyCompactList}\small\item\em print connection flooding usage \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{conn__flood_8h_a61ae5917cf8c4b3990b54c398ec60d0c}{generate\+\_\+conn\+\_\+flood}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em connection flooding generate thread \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{conn__flood_8h_ae7029ee4a38c39b8f0ce32dcc500ee35}{conn\+\_\+flood\+\_\+time\+\_\+check}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em connection flooding time check thread \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{conn__flood_8h_aa948440c748fd52c6f4fcc84794f6477}{conn\+\_\+flood\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em connection flooding main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{conn__flood_8h_aa948440c748fd52c6f4fcc84794f6477}\label{conn__flood_8h_aa948440c748fd52c6f4fcc84794f6477}} 
+\index{conn\_flood.h@{conn\_flood.h}!conn\_flood\_main@{conn\_flood\_main}}
+\index{conn\_flood\_main@{conn\_flood\_main}!conn\_flood.h@{conn\_flood.h}}
+\doxysubsubsection{\texorpdfstring{conn\_flood\_main()}{conn\_flood\_main()}}
+{\footnotesize\ttfamily void conn\+\_\+flood\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+connection flooding main function 
+
+\begin{DoxyDate}{Date}
+2021/03/08 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 88 of file conn\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{conn__flood_8h_a14379e8617955f4c9fcf390b08c9832b}\label{conn__flood_8h_a14379e8617955f4c9fcf390b08c9832b}} 
+\index{conn\_flood.h@{conn\_flood.h}!conn\_flood\_print\_usage@{conn\_flood\_print\_usage}}
+\index{conn\_flood\_print\_usage@{conn\_flood\_print\_usage}!conn\_flood.h@{conn\_flood.h}}
+\doxysubsubsection{\texorpdfstring{conn\_flood\_print\_usage()}{conn\_flood\_print\_usage()}}
+{\footnotesize\ttfamily void conn\+\_\+flood\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print connection flooding usage 
+
+\begin{DoxyDate}{Date}
+2021/03/08 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 25 of file conn\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{conn__flood_8h_ae7029ee4a38c39b8f0ce32dcc500ee35}\label{conn__flood_8h_ae7029ee4a38c39b8f0ce32dcc500ee35}} 
+\index{conn\_flood.h@{conn\_flood.h}!conn\_flood\_time\_check@{conn\_flood\_time\_check}}
+\index{conn\_flood\_time\_check@{conn\_flood\_time\_check}!conn\_flood.h@{conn\_flood.h}}
+\doxysubsubsection{\texorpdfstring{conn\_flood\_time\_check()}{conn\_flood\_time\_check()}}
+{\footnotesize\ttfamily void$\ast$ conn\+\_\+flood\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+connection flooding time check thread 
+
+\begin{DoxyDate}{Date}
+2021/03/08 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 74 of file conn\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{conn__flood_8h_a61ae5917cf8c4b3990b54c398ec60d0c}\label{conn__flood_8h_a61ae5917cf8c4b3990b54c398ec60d0c}} 
+\index{conn\_flood.h@{conn\_flood.h}!generate\_conn\_flood@{generate\_conn\_flood}}
+\index{generate\_conn\_flood@{generate\_conn\_flood}!conn\_flood.h@{conn\_flood.h}}
+\doxysubsubsection{\texorpdfstring{generate\_conn\_flood()}{generate\_conn\_flood()}}
+{\footnotesize\ttfamily void$\ast$ generate\+\_\+conn\+\_\+flood (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+connection flooding generate thread 
+
+\begin{DoxyDate}{Date}
+2021/03/08 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 33 of file conn\+\_\+flood.\+c.
+

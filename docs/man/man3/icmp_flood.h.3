@@ -1,0 +1,130 @@
+.TH "includes/ddos/icmp_flood.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+includes/ddos/icmp_flood.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBicmp_flood_print_usage\fP (void)"
+.br
+.RI "print icmp flooding usage "
+.ti -1c
+.RI "void * \fBgenerate_icmp_flood\fP (void *data)"
+.br
+.RI "icmp flooding generate thread "
+.ti -1c
+.RI "void * \fBicmp_flood_time_check\fP (void *data)"
+.br
+.RI "icmp flooding time check thread "
+.ti -1c
+.RI "void \fBicmp_flood_main\fP (char *argv[])"
+.br
+.RI "icmp flooding main function "
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void* generate_icmp_flood (void * data)"
+
+.PP
+icmp flooding generate thread 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP thread input, default: NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void * 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINULL\fP always 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file icmp_flood\&.c\&.
+.SS "void icmp_flood_main (char * argv[])"
+
+.PP
+icmp flooding main function 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP arguments 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 110 of file icmp_flood\&.c\&.
+.SS "void icmp_flood_print_usage (void)"
+
+.PP
+print icmp flooding usage 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 24 of file icmp_flood\&.c\&.
+.SS "void* icmp_flood_time_check (void * data)"
+
+.PP
+icmp flooding time check thread 
+.PP
+\fBDate\fP
+.RS 4
+2021/02/20 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP thread input, default: NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void * 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINULL\fP always 
+.RE
+.PP
+
+.PP
+Definition at line 96 of file icmp_flood\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

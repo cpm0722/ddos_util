@@ -2,75 +2,91 @@
 
 #define SUBNET_MASK
 
+/// 32bit maximum value
 #define BIT_32_MAX_VAL 0xffffffff
+/// 1byte maximum value
 #define BYTE_MAX_VAL 0xff
+/// bit per byte
 #define BYTE_LEN 8
-#define IPV4_STR_LEN 20
 
-/**
-	@fn unsigned int get_addr_val(char *str)
-	@brief function: change ipv4 format: str(XXX.XXX.XXX.XXX) -> __u32
-	@date 2021/04/03
-	@param __uc *str: str(XXX.XXX.XXX.XXX)
-	@return __u32
-*/
+/*!
+ * @brief
+ * change ipv4 format: string(XXX.XXX.XXX.XXX) -> __u32
+ * @date		2021/04/03
+ * @param[in]	str		ipv4 string(XXX.XXX.XXX.XXX)
+ * @return		__u32
+ * @retval		ipv4 32bit value
+ */
 __u32 get_addr_val(__uc *str);
 
-/**
-	@fn void get_addr_str(unsigned int val, char str[IPV4_STR_LEN])
-	@brief function: change ipv4 format: __32 -> str(XXX.XXX.XXX.XXX)
-	@date 2021/04/03
-	@param __u32 val, __uc str[IPV4_STR_LEN]
-	@return void
-*/
+/*!
+ * @brief
+ * change ipv4 format: __32 -> string(XXX.XXX.XXX.XXX)
+ * @date		2021/04/03
+ * @param[in]	val		ipv4 32bit value
+ * @param[out]	str		ipv4 string(XXX.XXX.XXX.XXX)
+ * @return		void
+ */
 void get_addr_str(__u32 val, __uc str[IPV4_STR_LEN]);
 
-/**
-	@fn int masking_next_ip_addr(char *ipv4, char now[IPV4_STR_LEN], int mask)
-	@brief function: update now ipv4 to next ipv4 with subnet masking value
-	@date 2021/04/03
-	@param __uc *ipv4: initial input of ipv4, __uc *now[IPV4_STR_LEN]: now ipv4 for update, __u32 mask: subnet masking value
-	@return int: first case(now param was empty): -1, last case(there is no next ip with subnet masking): 1, else: 0
-*/
+/*!
+ * @brief
+ * update now ipv4 to next ipv4 with subnet masking value
+ * @date		2021/04/03
+ * @param[in]	ipv4	initial input of ipv4 string(XXX.XXX.XXX.XXX)
+ * @param[out]	now		now ipv4 string(XXX.XXX.XXX.XXX), it will be updated to next ipv4.
+ * @param[in]	mask	initial input of subnet masking value(0~32)
+ * @return		int
+ * @retval		-1: now parameter was empty string
+ * @retval		1: there is no next ipv4 address in subnet masking
+ * @reval		0: else
+ */
 int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STR_LEN], __u32 mask);
 
-/**
-	@fn int get_mask_from_ip_addr(char *ipv4)
-	@brief function: get subnet masking value from masking ipv4 str(XXX.XXX.XXX.XXX/XX)
-	@date 2021/04/03
-	@param __uc *ipv4
-	@return __u32: masking value
-*/
+/*!
+ * @brief
+ * get subnet masking value from masking ipv4 string(XXX.XXX.XXX.XXX/XX)
+ * @date		2021/04/03
+ * @param[in]	ipv4	initial input of ipv4/mask string(XXX.XXX.XXX.XXX/XX)
+ * @return		__u32
+ * @retval		subnet masking value
+ */
 __u32 get_mask_from_ip_addr(__uc *ipv4);
 
-/**
-	@fn void get_ip_from_ip_addr(char *ipv4, char *now)
-	@brief function: get ipv4 str(XXX.XXX.XXX.XXX) from masking ipv4 str(XXX.XXX.XXX.XXX/XX)
-	@date 2021/04/03
-	@param __uc *ipv4: masking ipv4 str, __uc *now: ipv4 str
-	@return void
-*/
+/*!
+ * @brief
+ * get ipv4 str(XXX.XXX.XXX.XXX) from masking ipv4 str(XXX.XXX.XXX.XXX/XX)
+ * @date		2021/04/03
+ * @param[in]	ipv4	initial input of ipv4/mask string(XXX.XXX.XXX.XXX/XX)
+ * @param[out]	now		now ipv4 string(XXX.XXX.XXX.XXX)
+ * @return		void
+ */
 void get_ip_from_ip_addr(__uc *ipv4, __uc *now);
 
-/**
-	@fn int split_ip_mask_port(char *argv[], char src_ipv4[IPV4_STR_LEN], char dest_ipv4[IPV4_STR_LEN], int *src_mask, int *dest_mask, int *port_start, int *port_end)
-	@brief function: split argv to arguments(ipv4, masking, port)
-	@date 2021/04/03
-	@param char *argv[], __uc src_ipv4[IPV4_STR_LEN], __uc dest_ipv4[IPV4_STR_LEN], __u32 *src_mask, __u32 *dest_mask, __u32 *port_start, __u32 *port_end
-	@return int 0: SUCCESS, -1: FAIL
-*/
-int split_ip_mask_port(char *argv[], __uc src_ipv4[IPV4_STR_LEN], __uc dest_ipv4[IPV4_STR_LEN], __u32 *src_mask, __u32 *dest_mask, __u32 *port_start, __u32 *port_end);
+//int split_ip_mask_port(char *argv[], __uc src_ipv4[IPV4_STR_LEN], __uc dest_ipv4[IPV4_STR_LEN], __u32 *src_mask, __u32 *dest_mask, __u32 *port_start, __u32 *port_end);
 
-/**
-	@fn int generator(char *src_ipv4, char *dest_ipv4, int src_mask, int dest_mask, int port_start, int port_end, char src_now[IPV4_STR_LEN], char dest_now[IPV4_STR_LEN], int *port_now)
-	@brief function: get next arguments(ipv4, masking, port) from now arguments
-	@date 2021/04/03
-	@param __uc *src_ipv4, unsigend char *dest_ipv4, __u32 src_mask, __u32 dest_mask, __u32 port_start, __u32 port_end, __uc src_now[IPV4_STR_LEN], __uc dest_now[IPV4_STR_LEN], __u32 *port_now
-	@return int 0: SUCCESS, -1: FAIL
-*/
-int generator(__uc *src_ipv4, __uc *dest_ipv4, __u32 src_mask, __u32 dest_mask, __u32 port_start, __u32 port_end, __uc src_now[IPV4_STR_LEN], __uc dest_now[IPV4_STR_LEN], __u32 *port_now);
+//int generator(__uc *src_ipv4, __uc *dest_ipv4, __u32 src_mask, __u32 dest_mask, __u32 port_start, __u32 port_end, __uc src_now[IPV4_STR_LEN], __uc dest_now[IPV4_STR_LEN], __u32 *port_now);
 
+/*!
+ * @brief
+ * split argv to arguments(ipv4, masking, port)
+ * @date		2021/04/03
+ * @param[in]	argv	argument vectors from main(in command mode) or stdin(in prompt mode)
+ * @param[out]	input	InputArguments structure
+ * @return		int
+ * @retval		always 0 (normal exit)
+ */
 int argv_to_input_arguments(char *argv[], InputArguments *input);
+
+/*!
+ * @brief
+ * get next MaskingArguments(ipv4, masking, port) using InputArguments
+ * @date			2021/04/03
+ * @param[in/out]	input	InputArguments structure
+ * @param[out]		now		MaskingArgument structure
+ * @return			int
+ * @retval			always 0 (normal exit)
+ */
 int get_masking_arguments(InputArguments *input, MaskingArguments *now);
 
 #endif	// ifndef SUBNET_MASK

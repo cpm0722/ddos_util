@@ -1,0 +1,417 @@
+.TH "srcs/main.c" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srcs/main.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'header\&.h'\fP
+.br
+\fC#include 'main\&.h'\fP
+.br
+\fC#include 'ddos/get_flood\&.h'\fP
+.br
+\fC#include 'ddos/icmp_flood\&.h'\fP
+.br
+\fC#include 'ddos/syn_flood\&.h'\fP
+.br
+\fC#include 'ddos/udp_flood\&.h'\fP
+.br
+\fC#include 'ddos/conn_flood\&.h'\fP
+.br
+\fC#include 'ddos/hash_dos\&.h'\fP
+.br
+\fC#include 'ddos/header_buffering\&.h'\fP
+.br
+\fC#include 'ddos/body_buffering\&.h'\fP
+.br
+\fC#include 'ddos/response_buffering\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__SIZE_OF_INPUT__\fP   200"
+.br
+.ti -1c
+.RI "#define \fB__MAX_TOKEN_NUM__\fP   20"
+.br
+.ti -1c
+.RI "#define \fB__ATTACK_TYPES__\fP   10"
+.br
+.ti -1c
+.RI "#define \fBDRAW_HEIGHT\fP   7"
+.br
+.ti -1c
+.RI "#define \fBDRAW_WIDTHB\fP   8"
+.br
+.ti -1c
+.RI "#define \fBDRAW_WIDTHS\fP   6"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBsigint_handler\fP (int signo)"
+.br
+.ti -1c
+.RI "void \fBget_input\fP (void)"
+.br
+.RI "read stdin g_input to with printing a prompt character('$') "
+.ti -1c
+.RI "void \fBmake_tokens\fP (void)"
+.br
+.RI "tokenize(seperator ' ') g_input to g_tokens "
+.ti -1c
+.RI "\fBbool\fP \fBcheck_options\fP (char *argv[], int argc)"
+.br
+.RI "read argv[] and handle option (-r, -c, -t, --help), decide program's mode (command mode / prompt mode) "
+.ti -1c
+.RI "\fBattack_type\fP \fBargv_to_tokens\fP (char *argv[], int argc)"
+.br
+.RI "in command mode, convert argv to g_tokens "
+.ti -1c
+.RI "\fBattack_type\fP \fBtype_choose_attack\fP (void)"
+.br
+.RI "print attack types and read stdin for choosing "
+.ti -1c
+.RI "void \fBprint_logo\fP (void)"
+.br
+.RI "print DDoS Util logo "
+.ti -1c
+.RI "void \fBprint_usage\fP (char *argv[])"
+.br
+.RI "print man page when --help option or argument error "
+.ti -1c
+.RI "int \fBmain\fP (int argc, char *argv[])"
+.br
+.RI "program's main function "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "int \fBg_recv_flag\fP = 0"
+.br
+.ti -1c
+.RI "int \fBg_num_threads\fP = 1"
+.br
+.ti -1c
+.RI "int \fBg_num_cores\fP = 1"
+.br
+.ti -1c
+.RI "int \fBg_fork_cnt\fP = 0"
+.br
+.ti -1c
+.RI "int \fBg_pid_list\fP [100]"
+.br
+.ti -1c
+.RI "char \fBg_input\fP [\fB__SIZE_OF_INPUT__\fP]"
+.br
+.ti -1c
+.RI "char * \fBg_tokens\fP [\fB__MAX_TOKEN_NUM__\fP]"
+.br
+.ti -1c
+.RI "void(* \fBg_usage_functions\fP [\fB__ATTACK_TYPES__\fP+1])(void)"
+.br
+.ti -1c
+.RI "void(* \fBg_main_functions\fP [\fB__ATTACK_TYPES__\fP+1])(char *[])"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __ATTACK_TYPES__   10"
+
+.PP
+Definition at line 16 of file main\&.c\&.
+.SS "#define __MAX_TOKEN_NUM__   20"
+
+.PP
+Definition at line 15 of file main\&.c\&.
+.SS "#define __SIZE_OF_INPUT__   200"
+
+.PP
+Definition at line 14 of file main\&.c\&.
+.SS "#define DRAW_HEIGHT   7"
+
+.PP
+Definition at line 209 of file main\&.c\&.
+.SS "#define DRAW_WIDTHB   8"
+
+.PP
+Definition at line 210 of file main\&.c\&.
+.SS "#define DRAW_WIDTHS   6"
+
+.PP
+Definition at line 211 of file main\&.c\&.
+.SH "Function Documentation"
+.PP 
+.SS "\fBattack_type\fP argv_to_tokens (char * argv[], int argc)"
+
+.PP
+in command mode, convert argv to g_tokens 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP main's argv 
+.br
+\fIargc\fP main's argc 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+attack_type 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fI1~10\fP correct atack type (attack_type's enum value) 
+.br
+\fI0\fP NONE (error occured) 
+.RE
+.PP
+
+.PP
+Definition at line 107 of file main\&.c\&.
+.SS "\fBbool\fP check_options (char * argv[], int argc)"
+
+.PP
+read argv[] and handle option (-r, -c, -t, --help), decide program's mode (command mode / prompt mode) 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP main's argv 
+.br
+\fIargc\fP main's argc 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+bool 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fI1(true)\fP is command mode 
+.br
+\fI0(false)\fP is prompt mode 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file main\&.c\&.
+.SS "void get_input (void)"
+
+.PP
+read stdin g_input to with printing a prompt character('$') 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file main\&.c\&.
+.SS "int main (int argc, char * argv[])"
+
+.PP
+program's main function 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP argument vectors 
+.br
+\fIargc\fP argument count 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+int 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fI0\fP normal exit 
+.br
+\fI1\fP error 
+.RE
+.PP
+
+.PP
+Definition at line 320 of file main\&.c\&.
+.SS "void make_tokens (void)"
+
+.PP
+tokenize(seperator ' ') g_input to g_tokens 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 69 of file main\&.c\&.
+.SS "void print_logo (void)"
+
+.PP
+print DDoS Util logo 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 213 of file main\&.c\&.
+.SS "void print_usage (char * argv[])"
+
+.PP
+print man page when --help option or argument error 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 272 of file main\&.c\&.
+.SS "void sigint_handler (int signo)"
+
+.PP
+Definition at line 50 of file main\&.c\&.
+.SS "\fBattack_type\fP type_choose_attack (void)"
+
+.PP
+print attack types and read stdin for choosing 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+int 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fI1~10\fP correct atack type (attack_type's enum value) 
+.br
+\fI0\fP NONE (error occured) 
+.RE
+.PP
+
+.PP
+Definition at line 183 of file main\&.c\&.
+.SH "Variable Documentation"
+.PP 
+.SS "int g_fork_cnt = 0"
+
+.PP
+Definition at line 21 of file main\&.c\&.
+.SS "char g_input[\fB__SIZE_OF_INPUT__\fP]"
+
+.PP
+Definition at line 25 of file main\&.c\&.
+.SS "void(* g_main_functions[\fB__ATTACK_TYPES__\fP + 1])(char *[]) (char *[])"
+\fBInitial value:\fP
+.PP
+.nf
+= { NULL,
+                syn_flood_main,
+                udp_flood_main,
+                icmp_flood_main,
+                conn_flood_main,
+                get_flood_main,
+                header_buffering_main,
+                body_buffering_main,
+                response_buffering_main,
+                hash_dos_main
+            }
+.fi
+.PP
+Definition at line 38 of file main\&.c\&.
+.SS "int g_num_cores = 1"
+
+.PP
+Definition at line 20 of file main\&.c\&.
+.SS "int g_num_threads = 1"
+
+.PP
+Definition at line 19 of file main\&.c\&.
+.SS "int g_pid_list[100]"
+
+.PP
+Definition at line 23 of file main\&.c\&.
+.SS "int g_recv_flag = 0"
+
+.PP
+Definition at line 18 of file main\&.c\&.
+.SS "char* g_tokens[\fB__MAX_TOKEN_NUM__\fP]"
+
+.PP
+Definition at line 26 of file main\&.c\&.
+.SS "void(* g_usage_functions[\fB__ATTACK_TYPES__\fP + 1])(void) (void)"
+\fBInitial value:\fP
+.PP
+.nf
+= { NULL,
+                syn_flood_print_usage,
+                udp_flood_print_usage,
+                icmp_flood_print_usage,
+                conn_flood_print_usage,
+                get_flood_print_usage,
+                header_buffering_print_usage,
+                body_buffering_print_usage,
+                response_buffering_print_usage,
+                hash_dos_print_usage
+            }
+.fi
+.PP
+Definition at line 27 of file main\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

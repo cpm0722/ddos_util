@@ -1,0 +1,288 @@
+.TH "srcs/tcpreplay/tcp_replay.c" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srcs/tcpreplay/tcp_replay.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'header\&.h'\fP
+.br
+\fC#include 'base/make_ipv4\&.h'\fP
+.br
+\fC#include 'base/make_tcp\&.h'\fP
+.br
+\fC#include 'tcp_replay\&.h'\fP
+.br
+\fC#include <pcap\&.h>\fP
+.br
+\fC#include <netinet/in\&.h>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBBUFFER_SIZE\fP   8192"
+.br
+.ti -1c
+.RI "#define \fBSIZE_ETHERNET\fP   14"
+.br
+.ti -1c
+.RI "#define \fBETHER_ADDR_LEN\fP   6"
+.br
+.ti -1c
+.RI "#define \fBPACKET_NUM_MAXIMUM\fP   1024"
+.br
+.ti -1c
+.RI "#define \fBMODIFY_MAXIMUM\fP   512"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmain\fP (int argc, char *argv[])"
+.br
+.RI "program's main function "
+.ti -1c
+.RI "int \fBsession_match_check\fP (struct \fBsession\fP a_session, struct \fBsession\fP b_session)"
+.br
+.ti -1c
+.RI "int \fBsession_exist_check\fP (struct \fBsession\fP *session_list, \fB__u16\fP session_num, struct \fBsession\fP a_session)"
+.br
+.ti -1c
+.RI "int \fBsession_table_check\fP (struct \fBsession\fP *session_list, \fB__u16\fP session_num, struct \fBsession\fP a_session)"
+.br
+.ti -1c
+.RI "int \fBip_pair_match_check\fP (struct \fBip_pair\fP pair1, struct \fBip_pair\fP pair2)"
+.br
+.ti -1c
+.RI "int \fBip_pair_exist_check\fP (struct \fBip_pair\fP *pairs, struct \fBip_pair\fP new_pair, int count)"
+.br
+.ti -1c
+.RI "int \fBip_table_check\fP (struct \fBip_pair\fP *table, char ip[16], int size)"
+.br
+.ti -1c
+.RI "struct \fBip_pair\fP * \fBip_table_element_to_end\fP (struct \fBip_pair\fP *table_p, int index, int size)"
+.br
+.ti -1c
+.RI "int \fBport_pair_match_check\fP (struct \fBport_pair\fP pair1, struct \fBport_pair\fP pair2)"
+.br
+.ti -1c
+.RI "int \fBport_pair_exist_check\fP (struct \fBport_pair\fP *pairs, struct \fBport_pair\fP new_pair, int count)"
+.br
+.ti -1c
+.RI "int \fBport_table_check\fP (struct \fBport_pair\fP *table, \fB__u8\fP port, int size)"
+.br
+.ti -1c
+.RI "struct \fBport_pair\fP * \fBport_table_element_to_end\fP (struct \fBport_pair\fP *table_p, int index, int size)"
+.br
+.ti -1c
+.RI "char * \fBget_masked_ip_addr\fP (char *current, \fB__u8\fP mask)"
+.br
+.ti -1c
+.RI "u_short \fBtcp_get_checksum_for_tcp_replay\fP (struct \fBsniff_tcp\fP *snifftcp, char *data, int datasize)"
+.br
+.ti -1c
+.RI "void * \fBtcpreplay_thread\fP ()"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "pthread_mutex_t \fBtcp_replay_mutex\fP"
+.br
+.ti -1c
+.RI "u_char * \fBpacket_data\fP [\fBPACKET_NUM_MAXIMUM\fP]"
+.br
+.ti -1c
+.RI "\fB__u16\fP \fBpacket_data_size\fP [\fBPACKET_NUM_MAXIMUM\fP]"
+.br
+.ti -1c
+.RI "char \fBsrc_ip_addr\fP [16]"
+.br
+.ti -1c
+.RI "char \fBdest_ip_addr\fP [16]"
+.br
+.ti -1c
+.RI "\fB__u8\fP \fBdest_port\fP"
+.br
+.ti -1c
+.RI "int \fBpacketCount\fP = 0"
+.br
+.ti -1c
+.RI "\fB__u16\fP \fBsend_count\fP =1"
+.br
+.ti -1c
+.RI "\fB__u8\fP \fBthread_count\fP =1"
+.br
+.ti -1c
+.RI "\fB__u16\fP \fBsent_count\fP =0"
+.br
+.ti -1c
+.RI "int \fBloop_index\fP =\-1"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define BUFFER_SIZE   8192"
+
+.PP
+Definition at line 8 of file tcp_replay\&.c\&.
+.SS "#define ETHER_ADDR_LEN   6"
+
+.PP
+Definition at line 10 of file tcp_replay\&.c\&.
+.SS "#define MODIFY_MAXIMUM   512"
+
+.PP
+Definition at line 13 of file tcp_replay\&.c\&.
+.SS "#define PACKET_NUM_MAXIMUM   1024"
+
+.PP
+Definition at line 12 of file tcp_replay\&.c\&.
+.SS "#define SIZE_ETHERNET   14"
+
+.PP
+Definition at line 9 of file tcp_replay\&.c\&.
+.SH "Function Documentation"
+.PP 
+.SS "char* get_masked_ip_addr (char * current, \fB__u8\fP mask)"
+
+.PP
+Definition at line 721 of file tcp_replay\&.c\&.
+.SS "int ip_pair_exist_check (struct \fBip_pair\fP * pairs, struct \fBip_pair\fP new_pair, int count)"
+
+.PP
+Definition at line 615 of file tcp_replay\&.c\&.
+.SS "int ip_pair_match_check (struct \fBip_pair\fP pair1, struct \fBip_pair\fP pair2)"
+
+.PP
+Definition at line 596 of file tcp_replay\&.c\&.
+.SS "int ip_table_check (struct \fBip_pair\fP * table, char ip[16], int size)"
+
+.PP
+Definition at line 627 of file tcp_replay\&.c\&.
+.SS "struct \fBip_pair\fP* ip_table_element_to_end (struct \fBip_pair\fP * table_p, int index, int size)"
+
+.PP
+Definition at line 639 of file tcp_replay\&.c\&.
+.SS "int main (int argc, char * argv[])"
+
+.PP
+program's main function 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP argument vectors 
+.br
+\fIargc\fP argument count 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+int 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fI0\fP normal exit 
+.br
+\fI1\fP error 
+.RE
+.PP
+
+.PP
+Definition at line 30 of file tcp_replay\&.c\&.
+.SS "int port_pair_exist_check (struct \fBport_pair\fP * pairs, struct \fBport_pair\fP new_pair, int count)"
+
+.PP
+Definition at line 675 of file tcp_replay\&.c\&.
+.SS "int port_pair_match_check (struct \fBport_pair\fP pair1, struct \fBport_pair\fP pair2)"
+
+.PP
+Definition at line 657 of file tcp_replay\&.c\&.
+.SS "int port_table_check (struct \fBport_pair\fP * table, \fB__u8\fP port, int size)"
+
+.PP
+Definition at line 688 of file tcp_replay\&.c\&.
+.SS "struct \fBport_pair\fP* port_table_element_to_end (struct \fBport_pair\fP * table_p, int index, int size)"
+
+.PP
+Definition at line 700 of file tcp_replay\&.c\&.
+.SS "int session_exist_check (struct \fBsession\fP * session_list, \fB__u16\fP session_num, struct \fBsession\fP a_session)"
+
+.PP
+Definition at line 566 of file tcp_replay\&.c\&.
+.SS "int session_match_check (struct \fBsession\fP a_session, struct \fBsession\fP b_session)"
+
+.PP
+Definition at line 541 of file tcp_replay\&.c\&.
+.SS "int session_table_check (struct \fBsession\fP * session_list, \fB__u16\fP session_num, struct \fBsession\fP a_session)"
+
+.PP
+Definition at line 583 of file tcp_replay\&.c\&.
+.SS "u_short tcp_get_checksum_for_tcp_replay (struct \fBsniff_tcp\fP * snifftcp, char * data, int datasize)"
+
+.PP
+Definition at line 792 of file tcp_replay\&.c\&.
+.SS "void* tcpreplay_thread ()"
+
+.PP
+Definition at line 828 of file tcp_replay\&.c\&.
+.SH "Variable Documentation"
+.PP 
+.SS "char dest_ip_addr[16]"
+
+.PP
+Definition at line 21 of file tcp_replay\&.c\&.
+.SS "\fB__u8\fP dest_port"
+
+.PP
+Definition at line 22 of file tcp_replay\&.c\&.
+.SS "int loop_index =\-1"
+
+.PP
+Definition at line 28 of file tcp_replay\&.c\&.
+.SS "u_char* packet_data[\fBPACKET_NUM_MAXIMUM\fP]"
+
+.PP
+Definition at line 17 of file tcp_replay\&.c\&.
+.SS "\fB__u16\fP packet_data_size[\fBPACKET_NUM_MAXIMUM\fP]"
+
+.PP
+Definition at line 18 of file tcp_replay\&.c\&.
+.SS "int packetCount = 0"
+
+.PP
+Definition at line 23 of file tcp_replay\&.c\&.
+.SS "\fB__u16\fP send_count =1"
+
+.PP
+Definition at line 25 of file tcp_replay\&.c\&.
+.SS "\fB__u16\fP sent_count =0"
+
+.PP
+Definition at line 27 of file tcp_replay\&.c\&.
+.SS "char src_ip_addr[16]"
+
+.PP
+Definition at line 20 of file tcp_replay\&.c\&.
+.SS "pthread_mutex_t tcp_replay_mutex"
+
+.PP
+Definition at line 15 of file tcp_replay\&.c\&.
+.SS "\fB__u8\fP thread_count =1"
+
+.PP
+Definition at line 26 of file tcp_replay\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

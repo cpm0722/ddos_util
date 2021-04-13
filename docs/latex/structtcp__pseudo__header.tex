@@ -1,0 +1,110 @@
+\hypertarget{structtcp__pseudo__header}{}\doxysection{tcp\+\_\+pseudo\+\_\+header Struct Reference}
+\label{structtcp__pseudo__header}\index{tcp\_pseudo\_header@{tcp\_pseudo\_header}}
+
+
+tcp pseudo header  
+
+
+
+
+{\ttfamily \#include $<$make\+\_\+tcp.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{structtcp__pseudo__header_ae43692ff239e4d41b3109cead61f2961}{source\+\_\+address}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{structtcp__pseudo__header_ad1dfa6f7871245086b831aa281f958d5}{dest\+\_\+address}}
+\begin{DoxyCompactList}\small\item\em src ipv4 address(\+\_\+\+\_\+u32) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{asm__types_8h_a77f8102529baef48621b98012524115d}{\+\_\+\+\_\+u8}} \mbox{\hyperlink{structtcp__pseudo__header_ae4b2c60e0c518e7aec8d55eca6de4d4c}{placeholder}}
+\begin{DoxyCompactList}\small\item\em dest ipv4 address(\+\_\+\+\_\+u32) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{asm__types_8h_a77f8102529baef48621b98012524115d}{\+\_\+\+\_\+u8}} \mbox{\hyperlink{structtcp__pseudo__header_a56a37c755bcacb62a730e595c482fd27}{protocol}}
+\begin{DoxyCompactList}\small\item\em placeholder (always 0) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} \mbox{\hyperlink{structtcp__pseudo__header_a21a0a4cdb18a854d72e4d45339e8623e}{tcp\+\_\+length}}
+\begin{DoxyCompactList}\small\item\em protocol (always IPPROTO\+\_\+\+TCP) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+tcp pseudo header 
+
+\begin{DoxyDate}{Date}
+2021/04/03 
+\end{DoxyDate}
+
+
+Definition at line 13 of file make\+\_\+tcp.\+h.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{structtcp__pseudo__header_ad1dfa6f7871245086b831aa281f958d5}\label{structtcp__pseudo__header_ad1dfa6f7871245086b831aa281f958d5}} 
+\index{tcp\_pseudo\_header@{tcp\_pseudo\_header}!dest\_address@{dest\_address}}
+\index{dest\_address@{dest\_address}!tcp\_pseudo\_header@{tcp\_pseudo\_header}}
+\doxysubsubsection{\texorpdfstring{dest\_address}{dest\_address}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} dest\+\_\+address}
+
+
+
+src ipv4 address(\+\_\+\+\_\+u32) 
+
+
+
+Definition at line 15 of file make\+\_\+tcp.\+h.
+
+\mbox{\Hypertarget{structtcp__pseudo__header_ae4b2c60e0c518e7aec8d55eca6de4d4c}\label{structtcp__pseudo__header_ae4b2c60e0c518e7aec8d55eca6de4d4c}} 
+\index{tcp\_pseudo\_header@{tcp\_pseudo\_header}!placeholder@{placeholder}}
+\index{placeholder@{placeholder}!tcp\_pseudo\_header@{tcp\_pseudo\_header}}
+\doxysubsubsection{\texorpdfstring{placeholder}{placeholder}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a77f8102529baef48621b98012524115d}{\+\_\+\+\_\+u8}} placeholder}
+
+
+
+dest ipv4 address(\+\_\+\+\_\+u32) 
+
+
+
+Definition at line 16 of file make\+\_\+tcp.\+h.
+
+\mbox{\Hypertarget{structtcp__pseudo__header_a56a37c755bcacb62a730e595c482fd27}\label{structtcp__pseudo__header_a56a37c755bcacb62a730e595c482fd27}} 
+\index{tcp\_pseudo\_header@{tcp\_pseudo\_header}!protocol@{protocol}}
+\index{protocol@{protocol}!tcp\_pseudo\_header@{tcp\_pseudo\_header}}
+\doxysubsubsection{\texorpdfstring{protocol}{protocol}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a77f8102529baef48621b98012524115d}{\+\_\+\+\_\+u8}} protocol}
+
+
+
+placeholder (always 0) 
+
+
+
+Definition at line 17 of file make\+\_\+tcp.\+h.
+
+\mbox{\Hypertarget{structtcp__pseudo__header_ae43692ff239e4d41b3109cead61f2961}\label{structtcp__pseudo__header_ae43692ff239e4d41b3109cead61f2961}} 
+\index{tcp\_pseudo\_header@{tcp\_pseudo\_header}!source\_address@{source\_address}}
+\index{source\_address@{source\_address}!tcp\_pseudo\_header@{tcp\_pseudo\_header}}
+\doxysubsubsection{\texorpdfstring{source\_address}{source\_address}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} source\+\_\+address}
+
+
+
+Definition at line 14 of file make\+\_\+tcp.\+h.
+
+\mbox{\Hypertarget{structtcp__pseudo__header_a21a0a4cdb18a854d72e4d45339e8623e}\label{structtcp__pseudo__header_a21a0a4cdb18a854d72e4d45339e8623e}} 
+\index{tcp\_pseudo\_header@{tcp\_pseudo\_header}!tcp\_length@{tcp\_length}}
+\index{tcp\_length@{tcp\_length}!tcp\_pseudo\_header@{tcp\_pseudo\_header}}
+\doxysubsubsection{\texorpdfstring{tcp\_length}{tcp\_length}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_abc70358187152575fd05fbf6d253151f}{\+\_\+\+\_\+u16}} tcp\+\_\+length}
+
+
+
+protocol (always IPPROTO\+\_\+\+TCP) 
+
+
+
+Definition at line 18 of file make\+\_\+tcp.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+includes/base/\mbox{\hyperlink{make__tcp_8h}{make\+\_\+tcp.\+h}}\end{DoxyCompactItemize}

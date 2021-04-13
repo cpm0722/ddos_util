@@ -1,0 +1,61 @@
+.TH "includes/base/time_check.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+includes/base/time_check.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBNANO_PER_SEC\fP   1000000000\&.0"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBtime_check\fP (pthread_cond_t *cond_p, struct timespec *before_time_p, struct timespec *now_time_p, unsigned long *produced_in_sec_p)"
+.br
+.RI "if elapsed time is more than 1 sec, update produced_in_sec and before_time, send condition signal to all waiting threads "
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define NANO_PER_SEC   1000000000\&.0"
+
+.PP
+Definition at line 5 of file time_check\&.h\&.
+.SH "Function Documentation"
+.PP 
+.SS "void time_check (pthread_cond_t * cond_p, struct timespec * before_time_p, struct timespec * now_time_p, unsigned long * produced_in_sec_p)"
+
+.PP
+if elapsed time is more than 1 sec, update produced_in_sec and before_time, send condition signal to all waiting threads 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIcond_p\fP thread condition for synchronizing 
+.br
+\fIbefore_time_p\fP timespec for before call 
+.br
+\fInow_time_p\fP timespec for now call 
+.br
+\fIproduced_in_sec_p\fP number of packets which produced in before time ~ now time, it will be initialized to 0 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

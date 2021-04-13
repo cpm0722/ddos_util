@@ -1,0 +1,478 @@
+\hypertarget{main_8c}{}\doxysection{srcs/main.c File Reference}
+\label{main_8c}\index{srcs/main.c@{srcs/main.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/get\+\_\+flood.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/icmp\+\_\+flood.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/syn\+\_\+flood.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/udp\+\_\+flood.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/conn\+\_\+flood.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/hash\+\_\+dos.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/header\+\_\+buffering.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/body\+\_\+buffering.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/response\+\_\+buffering.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{main_8c_a7d2672a2855ddefbecbf14822f53c18a}{\+\_\+\+\_\+\+SIZE\+\_\+\+OF\+\_\+\+INPUT\+\_\+\+\_\+}}~200
+\item 
+\#define \mbox{\hyperlink{main_8c_a1d8faa2cbe9bdc0caf99949c5e700e53}{\+\_\+\+\_\+\+MAX\+\_\+\+TOKEN\+\_\+\+NUM\+\_\+\+\_\+}}~20
+\item 
+\#define \mbox{\hyperlink{main_8c_abe944eca77980fae644e0747b13d46b8}{\+\_\+\+\_\+\+ATTACK\+\_\+\+TYPES\+\_\+\+\_\+}}~10
+\item 
+\#define \mbox{\hyperlink{main_8c_afc3dd7cf5601e333ece110ae59a71188}{DRAW\+\_\+\+HEIGHT}}~7
+\item 
+\#define \mbox{\hyperlink{main_8c_a2dbae5040f66f5e77011e7d90bdb1aa2}{DRAW\+\_\+\+WIDTHB}}~8
+\item 
+\#define \mbox{\hyperlink{main_8c_a9d31a61dec0155370a058c129d738a4f}{DRAW\+\_\+\+WIDTHS}}~6
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8c_a4b515337891f74ebd79cb307db16bf33}{sigint\+\_\+handler}} (int signo)
+\item 
+void \mbox{\hyperlink{main_8c_aea2cbeba978f3953ad1cf5457cc8d319}{get\+\_\+input}} (void)
+\begin{DoxyCompactList}\small\item\em read stdin g\+\_\+input to with printing a prompt character(\textquotesingle{}\$\textquotesingle{}) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_ae1487e739c1b1b9545ceb1484bb2d6e8}{make\+\_\+tokens}} (void)
+\begin{DoxyCompactList}\small\item\em tokenize(seperator \textquotesingle{} \textquotesingle{}) g\+\_\+input to g\+\_\+tokens \end{DoxyCompactList}\item 
+\mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool}} \mbox{\hyperlink{main_8c_a4906e621f79cc9bdd17cfe61d700d6df}{check\+\_\+options}} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
+\begin{DoxyCompactList}\small\item\em read argv\mbox{[}\mbox{]} and handle option (-\/r, -\/c, -\/t, --help), decide program\textquotesingle{}s mode (command mode / prompt mode) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} \mbox{\hyperlink{main_8c_a4a4a7ef426034748f13219bc6046c7a4}{argv\+\_\+to\+\_\+tokens}} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
+\begin{DoxyCompactList}\small\item\em in command mode, convert argv to g\+\_\+tokens \end{DoxyCompactList}\item 
+\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} \mbox{\hyperlink{main_8c_ae5268f97b08d8529dc69e7cd8a306c1c}{type\+\_\+choose\+\_\+attack}} (void)
+\begin{DoxyCompactList}\small\item\em print attack types and read stdin for choosing \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a73eb533269566775275da2ac91350562}{print\+\_\+logo}} (void)
+\begin{DoxyCompactList}\small\item\em print DDoS Util logo \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8c_a84365b0f701e1f4a7424d21046ae2d24}{print\+\_\+usage}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em print man page when --help option or argument error \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em program\textquotesingle{}s main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8c_a65299e47b1a6f3d37ed4e3da33f9c429}{g\+\_\+recv\+\_\+flag}} = 0
+\item 
+int \mbox{\hyperlink{main_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}} = 1
+\item 
+int \mbox{\hyperlink{main_8c_a5056b03da003fbf4251aef5fead374d9}{g\+\_\+num\+\_\+cores}} = 1
+\item 
+int \mbox{\hyperlink{main_8c_a28cc102e57964484130eb53e99df070c}{g\+\_\+fork\+\_\+cnt}} = 0
+\item 
+int \mbox{\hyperlink{main_8c_a1b3e5ab5c5df8ce8a61aee1e6b8fe8d4}{g\+\_\+pid\+\_\+list}} \mbox{[}100\mbox{]}
+\item 
+char \mbox{\hyperlink{main_8c_a6abc2402fd4f8733a51d3a9e62418469}{g\+\_\+input}} \mbox{[}\mbox{\hyperlink{main_8c_a7d2672a2855ddefbecbf14822f53c18a}{\+\_\+\+\_\+\+SIZE\+\_\+\+OF\+\_\+\+INPUT\+\_\+\+\_\+}}\mbox{]}
+\item 
+char $\ast$ \mbox{\hyperlink{main_8c_a075c95e28b90da39c38f467e0c6cd747}{g\+\_\+tokens}} \mbox{[}\mbox{\hyperlink{main_8c_a1d8faa2cbe9bdc0caf99949c5e700e53}{\+\_\+\+\_\+\+MAX\+\_\+\+TOKEN\+\_\+\+NUM\+\_\+\+\_\+}}\mbox{]}
+\item 
+void($\ast$ \mbox{\hyperlink{main_8c_a1e3f4743612f7de9416ade4389daced2}{g\+\_\+usage\+\_\+functions}} \mbox{[}\mbox{\hyperlink{main_8c_abe944eca77980fae644e0747b13d46b8}{\+\_\+\+\_\+\+ATTACK\+\_\+\+TYPES\+\_\+\+\_\+}}+1\mbox{]})(void)
+\item 
+void($\ast$ \mbox{\hyperlink{main_8c_a3d05a9d434e19decf6504925ba50c536}{g\+\_\+main\+\_\+functions}} \mbox{[}\mbox{\hyperlink{main_8c_abe944eca77980fae644e0747b13d46b8}{\+\_\+\+\_\+\+ATTACK\+\_\+\+TYPES\+\_\+\+\_\+}}+1\mbox{]})(char $\ast$\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{main_8c_abe944eca77980fae644e0747b13d46b8}\label{main_8c_abe944eca77980fae644e0747b13d46b8}} 
+\index{main.c@{main.c}!\_\_ATTACK\_TYPES\_\_@{\_\_ATTACK\_TYPES\_\_}}
+\index{\_\_ATTACK\_TYPES\_\_@{\_\_ATTACK\_TYPES\_\_}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{\_\_ATTACK\_TYPES\_\_}{\_\_ATTACK\_TYPES\_\_}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+ATTACK\+\_\+\+TYPES\+\_\+\+\_\+~10}
+
+
+
+Definition at line 16 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a1d8faa2cbe9bdc0caf99949c5e700e53}\label{main_8c_a1d8faa2cbe9bdc0caf99949c5e700e53}} 
+\index{main.c@{main.c}!\_\_MAX\_TOKEN\_NUM\_\_@{\_\_MAX\_TOKEN\_NUM\_\_}}
+\index{\_\_MAX\_TOKEN\_NUM\_\_@{\_\_MAX\_TOKEN\_NUM\_\_}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{\_\_MAX\_TOKEN\_NUM\_\_}{\_\_MAX\_TOKEN\_NUM\_\_}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+MAX\+\_\+\+TOKEN\+\_\+\+NUM\+\_\+\+\_\+~20}
+
+
+
+Definition at line 15 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a7d2672a2855ddefbecbf14822f53c18a}\label{main_8c_a7d2672a2855ddefbecbf14822f53c18a}} 
+\index{main.c@{main.c}!\_\_SIZE\_OF\_INPUT\_\_@{\_\_SIZE\_OF\_INPUT\_\_}}
+\index{\_\_SIZE\_OF\_INPUT\_\_@{\_\_SIZE\_OF\_INPUT\_\_}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{\_\_SIZE\_OF\_INPUT\_\_}{\_\_SIZE\_OF\_INPUT\_\_}}
+{\footnotesize\ttfamily \#define \+\_\+\+\_\+\+SIZE\+\_\+\+OF\+\_\+\+INPUT\+\_\+\+\_\+~200}
+
+
+
+Definition at line 14 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_afc3dd7cf5601e333ece110ae59a71188}\label{main_8c_afc3dd7cf5601e333ece110ae59a71188}} 
+\index{main.c@{main.c}!DRAW\_HEIGHT@{DRAW\_HEIGHT}}
+\index{DRAW\_HEIGHT@{DRAW\_HEIGHT}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{DRAW\_HEIGHT}{DRAW\_HEIGHT}}
+{\footnotesize\ttfamily \#define DRAW\+\_\+\+HEIGHT~7}
+
+
+
+Definition at line 209 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a2dbae5040f66f5e77011e7d90bdb1aa2}\label{main_8c_a2dbae5040f66f5e77011e7d90bdb1aa2}} 
+\index{main.c@{main.c}!DRAW\_WIDTHB@{DRAW\_WIDTHB}}
+\index{DRAW\_WIDTHB@{DRAW\_WIDTHB}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{DRAW\_WIDTHB}{DRAW\_WIDTHB}}
+{\footnotesize\ttfamily \#define DRAW\+\_\+\+WIDTHB~8}
+
+
+
+Definition at line 210 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a9d31a61dec0155370a058c129d738a4f}\label{main_8c_a9d31a61dec0155370a058c129d738a4f}} 
+\index{main.c@{main.c}!DRAW\_WIDTHS@{DRAW\_WIDTHS}}
+\index{DRAW\_WIDTHS@{DRAW\_WIDTHS}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{DRAW\_WIDTHS}{DRAW\_WIDTHS}}
+{\footnotesize\ttfamily \#define DRAW\+\_\+\+WIDTHS~6}
+
+
+
+Definition at line 211 of file main.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{main_8c_a4a4a7ef426034748f13219bc6046c7a4}\label{main_8c_a4a4a7ef426034748f13219bc6046c7a4}} 
+\index{main.c@{main.c}!argv\_to\_tokens@{argv\_to\_tokens}}
+\index{argv\_to\_tokens@{argv\_to\_tokens}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{argv\_to\_tokens()}{argv\_to\_tokens()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} argv\+\_\+to\+\_\+tokens (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
+
+
+
+in command mode, convert argv to g\+\_\+tokens 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & main\textquotesingle{}s argv \\
+\hline
+\mbox{\texttt{ in}}  & {\em argc} & main\textquotesingle{}s argc \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+attack\+\_\+type 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 1$\sim$10} & correct atack type (attack\+\_\+type\textquotesingle{}s enum value) \\
+\hline
+{\em 0} & NONE (error occured) \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 107 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a4906e621f79cc9bdd17cfe61d700d6df}\label{main_8c_a4906e621f79cc9bdd17cfe61d700d6df}} 
+\index{main.c@{main.c}!check\_options@{check\_options}}
+\index{check\_options@{check\_options}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{check\_options()}{check\_options()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool}} check\+\_\+options (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
+
+
+
+read argv\mbox{[}\mbox{]} and handle option (-\/r, -\/c, -\/t, --help), decide program\textquotesingle{}s mode (command mode / prompt mode) 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & main\textquotesingle{}s argv \\
+\hline
+\mbox{\texttt{ in}}  & {\em argc} & main\textquotesingle{}s argc \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 1(true)} & is command mode \\
+\hline
+{\em 0(false)} & is prompt mode \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 83 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_aea2cbeba978f3953ad1cf5457cc8d319}\label{main_8c_aea2cbeba978f3953ad1cf5457cc8d319}} 
+\index{main.c@{main.c}!get\_input@{get\_input}}
+\index{get\_input@{get\_input}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{get\_input()}{get\_input()}}
+{\footnotesize\ttfamily void get\+\_\+input (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+read stdin g\+\_\+input to with printing a prompt character(\textquotesingle{}\$\textquotesingle{}) 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 62 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a0ddf1224851353fc92bfbff6f499fa97}\label{main_8c_a0ddf1224851353fc92bfbff6f499fa97}} 
+\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+program\textquotesingle{}s main function 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & argument vectors \\
+\hline
+\mbox{\texttt{ in}}  & {\em argc} & argument count \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & normal exit \\
+\hline
+{\em 1} & error \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 320 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ae1487e739c1b1b9545ceb1484bb2d6e8}\label{main_8c_ae1487e739c1b1b9545ceb1484bb2d6e8}} 
+\index{main.c@{main.c}!make\_tokens@{make\_tokens}}
+\index{make\_tokens@{make\_tokens}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{make\_tokens()}{make\_tokens()}}
+{\footnotesize\ttfamily void make\+\_\+tokens (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+tokenize(seperator \textquotesingle{} \textquotesingle{}) g\+\_\+input to g\+\_\+tokens 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 69 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a73eb533269566775275da2ac91350562}\label{main_8c_a73eb533269566775275da2ac91350562}} 
+\index{main.c@{main.c}!print\_logo@{print\_logo}}
+\index{print\_logo@{print\_logo}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{print\_logo()}{print\_logo()}}
+{\footnotesize\ttfamily void print\+\_\+logo (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print DDoS Util logo 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 213 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a84365b0f701e1f4a7424d21046ae2d24}\label{main_8c_a84365b0f701e1f4a7424d21046ae2d24}} 
+\index{main.c@{main.c}!print\_usage@{print\_usage}}
+\index{print\_usage@{print\_usage}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{print\_usage()}{print\_usage()}}
+{\footnotesize\ttfamily void print\+\_\+usage (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+print man page when --help option or argument error 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 272 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a4b515337891f74ebd79cb307db16bf33}\label{main_8c_a4b515337891f74ebd79cb307db16bf33}} 
+\index{main.c@{main.c}!sigint\_handler@{sigint\_handler}}
+\index{sigint\_handler@{sigint\_handler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{sigint\_handler()}{sigint\_handler()}}
+{\footnotesize\ttfamily void sigint\+\_\+handler (\begin{DoxyParamCaption}\item[{int}]{signo }\end{DoxyParamCaption})}
+
+
+
+Definition at line 50 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_ae5268f97b08d8529dc69e7cd8a306c1c}\label{main_8c_ae5268f97b08d8529dc69e7cd8a306c1c}} 
+\index{main.c@{main.c}!type\_choose\_attack@{type\_choose\_attack}}
+\index{type\_choose\_attack@{type\_choose\_attack}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{type\_choose\_attack()}{type\_choose\_attack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} type\+\_\+choose\+\_\+attack (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print attack types and read stdin for choosing 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 1$\sim$10} & correct atack type (attack\+\_\+type\textquotesingle{}s enum value) \\
+\hline
+{\em 0} & NONE (error occured) \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 183 of file main.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{main_8c_a28cc102e57964484130eb53e99df070c}\label{main_8c_a28cc102e57964484130eb53e99df070c}} 
+\index{main.c@{main.c}!g\_fork\_cnt@{g\_fork\_cnt}}
+\index{g\_fork\_cnt@{g\_fork\_cnt}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_fork\_cnt}{g\_fork\_cnt}}
+{\footnotesize\ttfamily int g\+\_\+fork\+\_\+cnt = 0}
+
+
+
+Definition at line 21 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a6abc2402fd4f8733a51d3a9e62418469}\label{main_8c_a6abc2402fd4f8733a51d3a9e62418469}} 
+\index{main.c@{main.c}!g\_input@{g\_input}}
+\index{g\_input@{g\_input}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_input}{g\_input}}
+{\footnotesize\ttfamily char g\+\_\+input\mbox{[}\mbox{\hyperlink{main_8c_a7d2672a2855ddefbecbf14822f53c18a}{\+\_\+\+\_\+\+SIZE\+\_\+\+OF\+\_\+\+INPUT\+\_\+\+\_\+}}\mbox{]}}
+
+
+
+Definition at line 25 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a3d05a9d434e19decf6504925ba50c536}\label{main_8c_a3d05a9d434e19decf6504925ba50c536}} 
+\index{main.c@{main.c}!g\_main\_functions@{g\_main\_functions}}
+\index{g\_main\_functions@{g\_main\_functions}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_main\_functions}{g\_main\_functions}}
+{\footnotesize\ttfamily void($\ast$ g\+\_\+main\+\_\+functions\mbox{[}\mbox{\hyperlink{main_8c_abe944eca77980fae644e0747b13d46b8}{\+\_\+\+\_\+\+ATTACK\+\_\+\+TYPES\+\_\+\+\_\+}} + 1\mbox{]})(char $\ast$\mbox{[}$\,$\mbox{]}) (\begin{DoxyParamCaption}\item[{char $\ast$}]{\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ NULL,}
+\DoxyCodeLine{                \mbox{\hyperlink{syn__flood_8h_a670aa52fc9026a6f773776c28d4670bd}{syn\_flood\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{udp__flood_8h_a4f06252d26a55e3d812ab13b53fde6a0}{udp\_flood\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{icmp__flood_8h_a75aaadf4fe9376da29f576439d073770}{icmp\_flood\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{conn__flood_8h_aa948440c748fd52c6f4fcc84794f6477}{conn\_flood\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{get__flood_8h_a0e09a45dacc8864b97d23052ee2185a7}{get\_flood\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{header__buffering_8h_a774754d5e501331a515f25a0c2dbca92}{header\_buffering\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{body__buffering_8h_a3693943e6e109b1a057b53d66fde17d2}{body\_buffering\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{response__buffering_8h_a44cd1b7e966371572f5655b81dceecd0}{response\_buffering\_main}},}
+\DoxyCodeLine{                \mbox{\hyperlink{hash__dos_8h_a973b8106dc93156420bef114fa600f55}{hash\_dos\_main}}}
+\DoxyCodeLine{            \}}
+
+\end{DoxyCode}
+
+
+Definition at line 38 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a5056b03da003fbf4251aef5fead374d9}\label{main_8c_a5056b03da003fbf4251aef5fead374d9}} 
+\index{main.c@{main.c}!g\_num\_cores@{g\_num\_cores}}
+\index{g\_num\_cores@{g\_num\_cores}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_cores}{g\_num\_cores}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+cores = 1}
+
+
+
+Definition at line 20 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{main_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
+\index{main.c@{main.c}!g\_num\_threads@{g\_num\_threads}}
+\index{g\_num\_threads@{g\_num\_threads}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads = 1}
+
+
+
+Definition at line 19 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a1b3e5ab5c5df8ce8a61aee1e6b8fe8d4}\label{main_8c_a1b3e5ab5c5df8ce8a61aee1e6b8fe8d4}} 
+\index{main.c@{main.c}!g\_pid\_list@{g\_pid\_list}}
+\index{g\_pid\_list@{g\_pid\_list}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_pid\_list}{g\_pid\_list}}
+{\footnotesize\ttfamily int g\+\_\+pid\+\_\+list\mbox{[}100\mbox{]}}
+
+
+
+Definition at line 23 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a65299e47b1a6f3d37ed4e3da33f9c429}\label{main_8c_a65299e47b1a6f3d37ed4e3da33f9c429}} 
+\index{main.c@{main.c}!g\_recv\_flag@{g\_recv\_flag}}
+\index{g\_recv\_flag@{g\_recv\_flag}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_recv\_flag}{g\_recv\_flag}}
+{\footnotesize\ttfamily int g\+\_\+recv\+\_\+flag = 0}
+
+
+
+Definition at line 18 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a075c95e28b90da39c38f467e0c6cd747}\label{main_8c_a075c95e28b90da39c38f467e0c6cd747}} 
+\index{main.c@{main.c}!g\_tokens@{g\_tokens}}
+\index{g\_tokens@{g\_tokens}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_tokens}{g\_tokens}}
+{\footnotesize\ttfamily char$\ast$ g\+\_\+tokens\mbox{[}\mbox{\hyperlink{main_8c_a1d8faa2cbe9bdc0caf99949c5e700e53}{\+\_\+\+\_\+\+MAX\+\_\+\+TOKEN\+\_\+\+NUM\+\_\+\+\_\+}}\mbox{]}}
+
+
+
+Definition at line 26 of file main.\+c.
+
+\mbox{\Hypertarget{main_8c_a1e3f4743612f7de9416ade4389daced2}\label{main_8c_a1e3f4743612f7de9416ade4389daced2}} 
+\index{main.c@{main.c}!g\_usage\_functions@{g\_usage\_functions}}
+\index{g\_usage\_functions@{g\_usage\_functions}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{g\_usage\_functions}{g\_usage\_functions}}
+{\footnotesize\ttfamily void($\ast$ g\+\_\+usage\+\_\+functions\mbox{[}\mbox{\hyperlink{main_8c_abe944eca77980fae644e0747b13d46b8}{\+\_\+\+\_\+\+ATTACK\+\_\+\+TYPES\+\_\+\+\_\+}} + 1\mbox{]})(void) (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ NULL,}
+\DoxyCodeLine{                \mbox{\hyperlink{syn__flood_8h_a9d0f3d700b5f9990a85d322268efacf2}{syn\_flood\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{udp__flood_8h_adc140a8603028537ec491c4611f9f1aa}{udp\_flood\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{icmp__flood_8h_a27e5366f4ba1296d750766fbf734f755}{icmp\_flood\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{conn__flood_8h_a14379e8617955f4c9fcf390b08c9832b}{conn\_flood\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{get__flood_8h_a3e1d6f753ec94b192058958b907633e5}{get\_flood\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{header__buffering_8h_adb2a36f3a98f44a3c8ffccaa9926f8a8}{header\_buffering\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{body__buffering_8h_a8e0f80c10e004cbc9024df91b7e741c5}{body\_buffering\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{response__buffering_8h_a8833da69a24e9f277677326a07009ca7}{response\_buffering\_print\_usage}},}
+\DoxyCodeLine{                \mbox{\hyperlink{hash__dos_8h_a612349463e8e3b7dc8ca1c76897c59d1}{hash\_dos\_print\_usage}}}
+\DoxyCodeLine{            \}}
+
+\end{DoxyCode}
+
+
+Definition at line 27 of file main.\+c.
+

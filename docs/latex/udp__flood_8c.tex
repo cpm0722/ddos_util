@@ -1,0 +1,270 @@
+\hypertarget{udp__flood_8c}{}\doxysection{srcs/ddos/udp\+\_\+flood.c File Reference}
+\label{udp__flood_8c}\index{srcs/ddos/udp\_flood.c@{srcs/ddos/udp\_flood.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/subnet\+\_\+mask.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/time\+\_\+check.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/udp\+\_\+flood.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{udp__flood_8c_aad9ae913bdfab20dd94ad04ee2d5b045}{DATA}}~\char`\"{}Hello, This is Data!\char`\"{}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{udp__flood_8c_adc140a8603028537ec491c4611f9f1aa}{udp\+\_\+flood\+\_\+print\+\_\+usage}} (void)
+\begin{DoxyCompactList}\small\item\em print udp flooding usage \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{udp__flood_8c_a4d3cbf16e578a07d94f12dc71c720a2b}{generate\+\_\+udp\+\_\+flood}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em udp flooding generate thread \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{udp__flood_8c_a482656442ff46f2afd837bdc6b321940}{udp\+\_\+flood\+\_\+time\+\_\+check}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em udp flooding time check thread \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{udp__flood_8c_a4f06252d26a55e3d812ab13b53fde6a0}{udp\+\_\+flood\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em udp flooding main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{udp__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{udp__flood_8c_aab59729e1b03427a36a68282d8eb4e3a}{g\+\_\+udp\+\_\+num\+\_\+total}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{udp__flood_8c_a03664dbff5d3d3c02e0a371c8759e22f}{g\+\_\+udp\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \mbox{\hyperlink{udp__flood_8c_aeafaf5273d3f3a6ca9b7a8bf70c1a380}{g\+\_\+udp\+\_\+input}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{udp__flood_8c_ab2306a280c7e36a9c579fdc8a845a26a}{g\+\_\+udp\+\_\+request\+\_\+per\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} \mbox{\hyperlink{udp__flood_8c_a26371738c735a5d64e9940835336490d}{g\+\_\+udp\+\_\+now}}
+\item 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{udp__flood_8c_a1d3ac61704e23409c227a3f19bfa49be}{g\+\_\+udp\+\_\+mutex}} = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER
+\item 
+pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{udp__flood_8c_a506f2544217f7aec56f44a0801c3f0fd}{g\+\_\+udp\+\_\+cond}} = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER
+\item 
+struct timespec \mbox{\hyperlink{udp__flood_8c_a00e4bccfad775af95f44cdd3202e2a25}{g\+\_\+udp\+\_\+before\+\_\+time}}
+\item 
+struct timespec \mbox{\hyperlink{udp__flood_8c_ac4cfb8bd4d05e92c6adce1f43b7f66b2}{g\+\_\+udp\+\_\+now\+\_\+time}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{udp__flood_8c_aad9ae913bdfab20dd94ad04ee2d5b045}\label{udp__flood_8c_aad9ae913bdfab20dd94ad04ee2d5b045}} 
+\index{udp\_flood.c@{udp\_flood.c}!DATA@{DATA}}
+\index{DATA@{DATA}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{DATA}{DATA}}
+{\footnotesize\ttfamily \#define DATA~\char`\"{}Hello, This is Data!\char`\"{}}
+
+
+
+Definition at line 7 of file udp\+\_\+flood.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{udp__flood_8c_a4d3cbf16e578a07d94f12dc71c720a2b}\label{udp__flood_8c_a4d3cbf16e578a07d94f12dc71c720a2b}} 
+\index{udp\_flood.c@{udp\_flood.c}!generate\_udp\_flood@{generate\_udp\_flood}}
+\index{generate\_udp\_flood@{generate\_udp\_flood}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{generate\_udp\_flood()}{generate\_udp\_flood()}}
+{\footnotesize\ttfamily void$\ast$ generate\+\_\+udp\+\_\+flood (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+udp flooding generate thread 
+
+\begin{DoxyDate}{Date}
+2021/02/13 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 33 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a4f06252d26a55e3d812ab13b53fde6a0}\label{udp__flood_8c_a4f06252d26a55e3d812ab13b53fde6a0}} 
+\index{udp\_flood.c@{udp\_flood.c}!udp\_flood\_main@{udp\_flood\_main}}
+\index{udp\_flood\_main@{udp\_flood\_main}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{udp\_flood\_main()}{udp\_flood\_main()}}
+{\footnotesize\ttfamily void udp\+\_\+flood\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+udp flooding main function 
+
+\begin{DoxyDate}{Date}
+2021/02/13 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 97 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_adc140a8603028537ec491c4611f9f1aa}\label{udp__flood_8c_adc140a8603028537ec491c4611f9f1aa}} 
+\index{udp\_flood.c@{udp\_flood.c}!udp\_flood\_print\_usage@{udp\_flood\_print\_usage}}
+\index{udp\_flood\_print\_usage@{udp\_flood\_print\_usage}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{udp\_flood\_print\_usage()}{udp\_flood\_print\_usage()}}
+{\footnotesize\ttfamily void udp\+\_\+flood\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print udp flooding usage 
+
+\begin{DoxyDate}{Date}
+2021/02/13 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 26 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a482656442ff46f2afd837bdc6b321940}\label{udp__flood_8c_a482656442ff46f2afd837bdc6b321940}} 
+\index{udp\_flood.c@{udp\_flood.c}!udp\_flood\_time\_check@{udp\_flood\_time\_check}}
+\index{udp\_flood\_time\_check@{udp\_flood\_time\_check}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{udp\_flood\_time\_check()}{udp\_flood\_time\_check()}}
+{\footnotesize\ttfamily void$\ast$ udp\+\_\+flood\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+udp flooding time check thread 
+
+\begin{DoxyDate}{Date}
+2021/02/13 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 83 of file udp\+\_\+flood.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{udp__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{udp__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_num\_threads@{g\_num\_threads}}
+\index{g\_num\_threads@{g\_num\_threads}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 19 of file main.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a00e4bccfad775af95f44cdd3202e2a25}\label{udp__flood_8c_a00e4bccfad775af95f44cdd3202e2a25}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_before\_time@{g\_udp\_before\_time}}
+\index{g\_udp\_before\_time@{g\_udp\_before\_time}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_before\_time}{g\_udp\_before\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+udp\+\_\+before\+\_\+time}
+
+
+
+Definition at line 21 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a506f2544217f7aec56f44a0801c3f0fd}\label{udp__flood_8c_a506f2544217f7aec56f44a0801c3f0fd}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_cond@{g\_udp\_cond}}
+\index{g\_udp\_cond@{g\_udp\_cond}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_cond}{g\_udp\_cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+udp\+\_\+cond = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 21 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_aeafaf5273d3f3a6ca9b7a8bf70c1a380}\label{udp__flood_8c_aeafaf5273d3f3a6ca9b7a8bf70c1a380}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_input@{g\_udp\_input}}
+\index{g\_udp\_input@{g\_udp\_input}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_input}{g\_udp\_input}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} g\+\_\+udp\+\_\+input}
+
+
+
+Definition at line 15 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a1d3ac61704e23409c227a3f19bfa49be}\label{udp__flood_8c_a1d3ac61704e23409c227a3f19bfa49be}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_mutex@{g\_udp\_mutex}}
+\index{g\_udp\_mutex@{g\_udp\_mutex}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_mutex}{g\_udp\_mutex}}
+{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+udp\+\_\+mutex = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 20 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a26371738c735a5d64e9940835336490d}\label{udp__flood_8c_a26371738c735a5d64e9940835336490d}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_now@{g\_udp\_now}}
+\index{g\_udp\_now@{g\_udp\_now}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_now}{g\_udp\_now}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} g\+\_\+udp\+\_\+now}
+
+
+
+Definition at line 18 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_ac4cfb8bd4d05e92c6adce1f43b7f66b2}\label{udp__flood_8c_ac4cfb8bd4d05e92c6adce1f43b7f66b2}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_now\_time@{g\_udp\_now\_time}}
+\index{g\_udp\_now\_time@{g\_udp\_now\_time}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_now\_time}{g\_udp\_now\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+udp\+\_\+now\+\_\+time}
+
+
+
+Definition at line 21 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_a03664dbff5d3d3c02e0a371c8759e22f}\label{udp__flood_8c_a03664dbff5d3d3c02e0a371c8759e22f}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_num\_generated\_in\_sec@{g\_udp\_num\_generated\_in\_sec}}
+\index{g\_udp\_num\_generated\_in\_sec@{g\_udp\_num\_generated\_in\_sec}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_num\_generated\_in\_sec}{g\_udp\_num\_generated\_in\_sec}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+udp\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
+
+
+
+Definition at line 13 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_aab59729e1b03427a36a68282d8eb4e3a}\label{udp__flood_8c_aab59729e1b03427a36a68282d8eb4e3a}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_num\_total@{g\_udp\_num\_total}}
+\index{g\_udp\_num\_total@{g\_udp\_num\_total}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_num\_total}{g\_udp\_num\_total}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+udp\+\_\+num\+\_\+total}
+
+
+
+Definition at line 12 of file udp\+\_\+flood.\+c.
+
+\mbox{\Hypertarget{udp__flood_8c_ab2306a280c7e36a9c579fdc8a845a26a}\label{udp__flood_8c_ab2306a280c7e36a9c579fdc8a845a26a}} 
+\index{udp\_flood.c@{udp\_flood.c}!g\_udp\_request\_per\_sec@{g\_udp\_request\_per\_sec}}
+\index{g\_udp\_request\_per\_sec@{g\_udp\_request\_per\_sec}!udp\_flood.c@{udp\_flood.c}}
+\doxysubsubsection{\texorpdfstring{g\_udp\_request\_per\_sec}{g\_udp\_request\_per\_sec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} g\+\_\+udp\+\_\+request\+\_\+per\+\_\+sec}
+
+
+
+Definition at line 16 of file udp\+\_\+flood.\+c.
+

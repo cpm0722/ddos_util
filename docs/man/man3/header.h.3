@@ -1,0 +1,156 @@
+.TH "includes/header.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+includes/header.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <unistd\&.h>\fP
+.br
+\fC#include <signal\&.h>\fP
+.br
+\fC#include <errno\&.h>\fP
+.br
+\fC#include <wait\&.h>\fP
+.br
+\fC#include <time\&.h>\fP
+.br
+\fC#include <math\&.h>\fP
+.br
+\fC#include <pthread\&.h>\fP
+.br
+\fC#include <sys/socket\&.h>\fP
+.br
+\fC#include <netinet/ip\&.h>\fP
+.br
+\fC#include <netinet/tcp\&.h>\fP
+.br
+\fC#include <netinet/ip_icmp\&.h>\fP
+.br
+\fC#include <arpa/inet\&.h>\fP
+.br
+\fC#include <fcntl\&.h>\fP
+.br
+\fC#include 'base/asm_types\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBInputArguments\fP"
+.br
+.RI "ip, port, subnet masking values "
+.ti -1c
+.RI "struct \fBMaskingArguments\fP"
+.br
+.RI "now values(ip, port) in subnet masking "
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__UINT_MAXIMUM__\fP   (1L << (31)) \- 1"
+.br
+.RI "maximum value of unsigned integer "
+.ti -1c
+.RI "#define \fBIPV4_STRLEN\fP   20"
+.br
+.RI "ipv4 string's length "
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBattack_type\fP { \fBNONE\fP, \fBSYN\fP, \fBUDP\fP, \fBICMP\fP, \fBCONN\fP, \fBGET\fP, \fBHEAD\fP, \fBBODY\fP, \fBRESP\fP, \fBHASH\fP, \fBREF\fP }"
+.br
+.RI "attack types "
+.ti -1c
+.RI "enum \fBbool\fP { \fBfalse\fP, \fBtrue\fP }"
+.br
+.RI "boolean "
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __UINT_MAXIMUM__   (1L << (31)) \- 1"
+
+.PP
+maximum value of unsigned integer 
+.PP
+Definition at line 6 of file header\&.h\&.
+.SS "#define IPV4_STRLEN   20"
+
+.PP
+ipv4 string's length 
+.PP
+Definition at line 8 of file header\&.h\&.
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBattack_type\fP"
+
+.PP
+attack types 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fINONE \fP\fP
+.TP
+\fB\fISYN \fP\fP
+.TP
+\fB\fIUDP \fP\fP
+.TP
+\fB\fIICMP \fP\fP
+.TP
+\fB\fICONN \fP\fP
+.TP
+\fB\fIGET \fP\fP
+.TP
+\fB\fIHEAD \fP\fP
+.TP
+\fB\fIBODY \fP\fP
+.TP
+\fB\fIRESP \fP\fP
+.TP
+\fB\fIHASH \fP\fP
+.TP
+\fB\fIREF \fP\fP
+.PP
+Definition at line 32 of file header\&.h\&.
+.SS "enum \fBbool\fP"
+
+.PP
+boolean 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/12 
+.RE
+.PP
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIfalse \fP\fP
+.TP
+\fB\fItrue \fP\fP
+.PP
+Definition at line 41 of file header\&.h\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

@@ -1,0 +1,281 @@
+.TH "includes/base/subnet_mask.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+includes/base/subnet_mask.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBBIT_32_MAX_VAL\fP   0xffffffff"
+.br
+.RI "32bit maximum value "
+.ti -1c
+.RI "#define \fBBYTE_MAX_VAL\fP   0xff"
+.br
+.RI "1byte maximum value "
+.ti -1c
+.RI "#define \fBBYTE_LEN\fP   8"
+.br
+.RI "bit per byte "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB__u32\fP \fBget_addr_val\fP (\fB__uc\fP *str)"
+.br
+.RI "change ipv4 format: string(XXX\&.XXX\&.XXX\&.XXX) -> __u32 "
+.ti -1c
+.RI "void \fBget_addr_str\fP (\fB__u32\fP val, \fB__uc\fP str[IPV4_STR_LEN])"
+.br
+.RI "change ipv4 format: __32 -> string(XXX\&.XXX\&.XXX\&.XXX) "
+.ti -1c
+.RI "int \fBmasking_next_ip_addr\fP (\fB__uc\fP *ipv4, \fB__uc\fP now[IPV4_STR_LEN], \fB__u32\fP mask)"
+.br
+.RI "update now ipv4 to next ipv4 with subnet masking value "
+.ti -1c
+.RI "\fB__u32\fP \fBget_mask_from_ip_addr\fP (\fB__uc\fP *ipv4)"
+.br
+.RI "get subnet masking value from masking ipv4 string(XXX\&.XXX\&.XXX\&.XXX/XX) "
+.ti -1c
+.RI "void \fBget_ip_from_ip_addr\fP (\fB__uc\fP *ipv4, \fB__uc\fP *now)"
+.br
+.RI "get ipv4 str(XXX\&.XXX\&.XXX\&.XXX) from masking ipv4 str(XXX\&.XXX\&.XXX\&.XXX/XX) "
+.ti -1c
+.RI "int \fBargv_to_input_arguments\fP (char *argv[], \fBInputArguments\fP *input)"
+.br
+.RI "split argv to arguments(ipv4, masking, port) "
+.ti -1c
+.RI "int \fBget_masking_arguments\fP (\fBInputArguments\fP *input, \fBMaskingArguments\fP *now)"
+.br
+.RI "get next \fBMaskingArguments(ipv4, masking, port)\fP using \fBInputArguments\fP "
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define BIT_32_MAX_VAL   0xffffffff"
+
+.PP
+32bit maximum value 
+.PP
+Definition at line 6 of file subnet_mask\&.h\&.
+.SS "#define BYTE_LEN   8"
+
+.PP
+bit per byte 
+.PP
+Definition at line 10 of file subnet_mask\&.h\&.
+.SS "#define BYTE_MAX_VAL   0xff"
+
+.PP
+1byte maximum value 
+.PP
+Definition at line 8 of file subnet_mask\&.h\&.
+.SH "Function Documentation"
+.PP 
+.SS "int argv_to_input_arguments (char * argv[], \fBInputArguments\fP * input)"
+
+.PP
+split argv to arguments(ipv4, masking, port) 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP argument vectors from main(in command mode) or stdin(in prompt mode) 
+.br
+\fIinput\fP \fBInputArguments\fP structure 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+int 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fIalways\fP 0 (normal exit) 
+.RE
+.PP
+
+.PP
+Definition at line 144 of file subnet_mask\&.c\&.
+.SS "void get_addr_str (\fB__u32\fP val, \fB__uc\fP str[IPV4_STR_LEN])"
+
+.PP
+change ipv4 format: __32 -> string(XXX\&.XXX\&.XXX\&.XXX) 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIval\fP ipv4 32bit value 
+.br
+\fIstr\fP ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 19 of file subnet_mask\&.c\&.
+.SS "\fB__u32\fP get_addr_val (\fB__uc\fP * str)"
+
+.PP
+change ipv4 format: string(XXX\&.XXX\&.XXX\&.XXX) -> __u32 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIstr\fP ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+__u32 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fIipv4\fP 32bit value 
+.RE
+.PP
+
+.PP
+Definition at line 4 of file subnet_mask\&.c\&.
+.SS "void get_ip_from_ip_addr (\fB__uc\fP * ipv4, \fB__uc\fP * now)"
+
+.PP
+get ipv4 str(XXX\&.XXX\&.XXX\&.XXX) from masking ipv4 str(XXX\&.XXX\&.XXX\&.XXX/XX) 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIipv4\fP initial input of ipv4/mask string(XXX\&.XXX\&.XXX\&.XXX/XX) 
+.br
+\fInow\fP now ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file subnet_mask\&.c\&.
+.SS "\fB__u32\fP get_mask_from_ip_addr (\fB__uc\fP * ipv4)"
+
+.PP
+get subnet masking value from masking ipv4 string(XXX\&.XXX\&.XXX\&.XXX/XX) 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIipv4\fP initial input of ipv4/mask string(XXX\&.XXX\&.XXX\&.XXX/XX) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+__u32 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fIsubnet\fP masking value 
+.RE
+.PP
+
+.PP
+Definition at line 58 of file subnet_mask\&.c\&.
+.SS "int get_masking_arguments (\fBInputArguments\fP * input, \fBMaskingArguments\fP * now)"
+
+.PP
+get next \fBMaskingArguments(ipv4, masking, port)\fP using \fBInputArguments\fP 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fI[in/out]\fP input \fBInputArguments\fP structure 
+.br
+\fInow\fP MaskingArgument structure 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+int 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fIalways\fP 0 (normal exit) 
+.RE
+.PP
+
+.PP
+Definition at line 165 of file subnet_mask\&.c\&.
+.SS "int masking_next_ip_addr (\fB__uc\fP * ipv4, \fB__uc\fP now[IPV4_STR_LEN], \fB__u32\fP mask)"
+
+.PP
+update now ipv4 to next ipv4 with subnet masking value 
+.PP
+\fBDate\fP
+.RS 4
+2021/04/03 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIipv4\fP initial input of ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
+.br
+\fInow\fP now ipv4 string(XXX\&.XXX\&.XXX\&.XXX), it will be updated to next ipv4\&. 
+.br
+\fImask\fP initial input of subnet masking value(0~32) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+int 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fI-1\fP now parameter was empty string 
+.br
+\fI1\fP there is no next ipv4 address in subnet masking @reval 0: else 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file subnet_mask\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

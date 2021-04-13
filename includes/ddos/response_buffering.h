@@ -2,40 +2,41 @@
 
 #define RESPONSE_BUFFERING
 
-/**
-	@fn void response_buffering_print_usage(void);
-	@brief function: print response_buffering usage
-	@date 2021/03/15
-	@param void
-	@return void
-*/
+/*!
+ * @brief
+ * print response buffering usage
+ * @date		2021/03/15
+ * @return		void
+ */
 void response_buffering_print_usage(void);
 
-/**
-	@fn void *generate_response_buffering(void *);
-	@brief function: response_buffering generate thread
-	@date 2021/03/15
-	@param void *data NULL
-	@return void * NULL
-*/
+/*!
+ * @brief
+ * response buffering generate thread
+ * @date		2021/03/15
+ * @param[in]	data	thread input, default: NULL
+ * @return		void *
+ * @retval		NULL: always
+ */
 void *generate_response_buffering(void *data);
 
-/**
-	@fn void *response_buffering_time_check(void *);
-	@brief function: response_buffering time check thread
-	@date 2021/03/15
-	@param void *data NULL
-	@return void * NULL
-*/
+/*!
+ * @brief
+ * response buffering time check thread
+ * @date		2021/03/15
+ * @param[in]	data	thread input, default: NULL
+ * @return		void *
+ * @retval		NULL: always
+ */
 void *response_buffering_time_check(void *data);
 
-/**
-	@fn void *response_buffering_main(char *argv[]);
-	@brief function: response_buffering main function
-	@date 2021/03/15
-	@param argv char *argv[]: arguments
-	@return void
-*/
+/*!
+ * @brief
+ * response buffering main function
+ * @date		2021/03/15
+ * @param[in]	argv	arguments
+ * @return		void
+ */
 void response_buffering_main(char *argv[]);
 
 #endif // ifndef RESPONSE_BUFFERING

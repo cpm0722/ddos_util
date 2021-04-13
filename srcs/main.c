@@ -10,6 +10,7 @@
 #include "ddos/header_buffering.h"
 #include "ddos/body_buffering.h"
 #include "ddos/response_buffering.h"
+
 #define __SIZE_OF_INPUT__ 200
 #define __MAX_TOKEN_NUM__ 20
 #define __ATTACK_TYPES__ 10
@@ -179,22 +180,6 @@ attack_type argv_to_tokens(char *argv[], int argc)
 	return type;
 }
 
-int choose_running_type(void)
-{
-	printf("== Choose Running Type\n");
-	printf("== 1. Number Based\n"
-			"== 2. Over Time\n");
-	printf("== ");
-	get_input();
-	int t = atoi(g_input);
-	while (t <= 0 || t > 2) {
-		printf("Input should be over 0 AND <=2\n");
-		get_input();
-		t = atoi(g_input);
-	}
-	return t;
-}
-
 attack_type type_choose_attack(void)
 {
 	printf("\n"
@@ -225,7 +210,7 @@ attack_type type_choose_attack(void)
 #define DRAW_WIDTHB 8
 #define DRAW_WIDTHS 6
 
-void print_main(void)
+void print_logo(void)
 {
 	char num[11];  // here too one extra room is needed for the '\0'
 	char c;  // for option
@@ -340,7 +325,7 @@ int main(int argc, char *argv[])
 
 	is_command = check_options(argv, argc);
 	if (!is_command) {
-		print_main();
+		print_logo();
 		type = type_choose_attack();
 		g_usage_functions[type]();
 		get_input();

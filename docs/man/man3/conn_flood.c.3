@@ -1,0 +1,219 @@
+.TH "srcs/ddos/conn_flood.c" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srcs/ddos/conn_flood.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'header\&.h'\fP
+.br
+\fC#include 'base/make_ipv4\&.h'\fP
+.br
+\fC#include 'base/make_tcp\&.h'\fP
+.br
+\fC#include 'base/subnet_mask\&.h'\fP
+.br
+\fC#include 'base/time_check\&.h'\fP
+.br
+\fC#include 'ddos/conn_flood\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBconn_flood_print_usage\fP (void)"
+.br
+.RI "print connection flooding usage "
+.ti -1c
+.RI "void * \fBgenerate_conn_flood\fP (void *data)"
+.br
+.RI "connection flooding generate thread "
+.ti -1c
+.RI "void * \fBconn_flood_time_check\fP (void *data)"
+.br
+.RI "connection flooding time check thread "
+.ti -1c
+.RI "void \fBconn_flood_main\fP (char *argv[])"
+.br
+.RI "connection flooding main function "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "int \fBg_num_threads\fP"
+.br
+.ti -1c
+.RI "__u64 \fBg_conn_num_total\fP"
+.br
+.ti -1c
+.RI "__u64 \fBg_conn_num_generated_in_sec\fP"
+.br
+.ti -1c
+.RI "\fBInputArguments\fP \fBg_conn_input\fP"
+.br
+.ti -1c
+.RI "\fB__u32\fP \fBg_conn_request_per_sec\fP"
+.br
+.ti -1c
+.RI "\fBMaskingArguments\fP \fBg_conn_now\fP"
+.br
+.ti -1c
+.RI "pthread_mutex_t \fBg_conn_mutex\fP = PTHREAD_MUTEX_INITIALIZER"
+.br
+.ti -1c
+.RI "pthread_cond_t \fBg_conn_cond\fP = PTHREAD_COND_INITIALIZER"
+.br
+.ti -1c
+.RI "struct timespec \fBg_conn_before_time\fP"
+.br
+.ti -1c
+.RI "struct timespec \fBg_conn_now_time\fP"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void conn_flood_main (char * argv[])"
+
+.PP
+connection flooding main function 
+.PP
+\fBDate\fP
+.RS 4
+2021/03/08 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIargv\fP arguments 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file conn_flood\&.c\&.
+.SS "void conn_flood_print_usage (void)"
+
+.PP
+print connection flooding usage 
+.PP
+\fBDate\fP
+.RS 4
+2021/03/08 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void 
+.RE
+.PP
+
+.PP
+Definition at line 25 of file conn_flood\&.c\&.
+.SS "void* conn_flood_time_check (void * data)"
+
+.PP
+connection flooding time check thread 
+.PP
+\fBDate\fP
+.RS 4
+2021/03/08 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP thread input, default: NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void * 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINULL\fP always 
+.RE
+.PP
+
+.PP
+Definition at line 74 of file conn_flood\&.c\&.
+.SS "void* generate_conn_flood (void * data)"
+
+.PP
+connection flooding generate thread 
+.PP
+\fBDate\fP
+.RS 4
+2021/03/08 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP thread input, default: NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+void * 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINULL\fP always 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file conn_flood\&.c\&.
+.SH "Variable Documentation"
+.PP 
+.SS "struct timespec g_conn_before_time"
+
+.PP
+Definition at line 20 of file conn_flood\&.c\&.
+.SS "pthread_cond_t g_conn_cond = PTHREAD_COND_INITIALIZER"
+
+.PP
+Definition at line 20 of file conn_flood\&.c\&.
+.SS "\fBInputArguments\fP g_conn_input"
+
+.PP
+Definition at line 14 of file conn_flood\&.c\&.
+.SS "pthread_mutex_t g_conn_mutex = PTHREAD_MUTEX_INITIALIZER"
+
+.PP
+Definition at line 19 of file conn_flood\&.c\&.
+.SS "\fBMaskingArguments\fP g_conn_now"
+
+.PP
+Definition at line 17 of file conn_flood\&.c\&.
+.SS "struct timespec g_conn_now_time"
+
+.PP
+Definition at line 20 of file conn_flood\&.c\&.
+.SS "__u64 g_conn_num_generated_in_sec"
+
+.PP
+Definition at line 12 of file conn_flood\&.c\&.
+.SS "__u64 g_conn_num_total"
+
+.PP
+Definition at line 11 of file conn_flood\&.c\&.
+.SS "\fB__u32\fP g_conn_request_per_sec"
+
+.PP
+Definition at line 15 of file conn_flood\&.c\&.
+.SS "int g_num_threads\fC [extern]\fP"
+
+.PP
+Definition at line 19 of file main\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for ddos_util from the source code\&.

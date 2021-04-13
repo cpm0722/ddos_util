@@ -2,40 +2,41 @@
 
 #define HASH_DOS
 
-/**
-	@fn void hash_dos_print_usage(void);
-	@brief function: print hash_dos usage
-	@date 2021/03/15
-	@param void
-	@return void
-*/
+/*!
+ * @brief
+ * print hash dos usage
+ * @date		2021/03/15
+ * @return		void
+ */
 void hash_dos_print_usage(void);
 
-/**
-	@fn void *generate_hash_dos(void *);
-	@brief function: hash_dos generate thread
-	@date 2021/03/15
-	@param void *data NULL
-	@return void * NULL
-*/
+/*!
+ * @brief
+ * hash dos generate thread
+ * @date		2021/03/15
+ * @param[in]	data	thread input, default: NULL
+ * @return		void *
+ * @retval		NULL: always
+ */
 void *generate_hash_dos(void *data);
 
-/**
-	@fn void *hash_dos_check(void *);
-	@brief function: hash_dos time check thread
-	@date 2021/03/15
-	@param void *data NULL
-	@return void * NULL
-*/
+/*!
+ * @brief
+ * hash dos time check thread
+ * @date		2021/03/15
+ * @param[in]	data	thread input, default: NULL
+ * @return		void *
+ * @retval		NULL: always
+ */
 void *hash_dos_time_check(void *data);
 
-/**
-	@fn void *hash_dos_main(char *argv[]);
-	@brief function: hash_dos main function
-	@date 2021/03/15
-	@param argv char *argv[]: arguments
-	@return void
-*/
+/*!
+ * @brief
+ * hash dos main function
+ * @date		2021/03/15
+ * @param[in]	argv	arguments
+ * @return		void
+ */
 void hash_dos_main(char *argv[]);
 
 #endif // ifndef HASH_DOS

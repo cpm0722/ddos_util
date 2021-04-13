@@ -1,0 +1,283 @@
+\hypertarget{body__buffering_8c}{}\doxysection{srcs/ddos/body\+\_\+buffering.c File Reference}
+\label{body__buffering_8c}\index{srcs/ddos/body\_buffering.c@{srcs/ddos/body\_buffering.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+tcp.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/subnet\+\_\+mask.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/time\+\_\+check.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/body\+\_\+buffering.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{body__buffering_8c_ab2e8a18a8b1cfe5c391fd1824e9e53dd}{GET\+\_\+\+METHOD}}~\char`\"{}GET / HTTP/1.\+1\textbackslash{}r\textbackslash{}n\+Host\+: localhost\textbackslash{}r\textbackslash{}n\textbackslash{}r\textbackslash{}n\char`\"{}
+\item 
+\#define \mbox{\hyperlink{body__buffering_8c_a59325cfe60670a0101fd6c3fa97693f6}{BODY\+\_\+\+BUFFERING\+\_\+\+CNT}}~2000
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{body__buffering_8c_a8e0f80c10e004cbc9024df91b7e741c5}{body\+\_\+buffering\+\_\+print\+\_\+usage}} (void)
+\begin{DoxyCompactList}\small\item\em print body buffering usage \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{body__buffering_8c_a0b823133ba38e9dc93a518cf41d80fe2}{generate\+\_\+body\+\_\+buffering}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em body buffering generate thread \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{body__buffering_8c_ac14b6bbc91753d9660dc372957fdd87d}{body\+\_\+buffering\+\_\+time\+\_\+check}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em body buffering time check thread \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{body__buffering_8c_a3693943e6e109b1a057b53d66fde17d2}{body\+\_\+buffering\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em body buffering main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{body__buffering_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{body__buffering_8c_afe28ac54ae45c820b10fb95812ab00a7}{g\+\_\+bodybuf\+\_\+num\+\_\+total}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{body__buffering_8c_a396ded68eed26f15fa9d03fc9397219f}{g\+\_\+bodybuf\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \mbox{\hyperlink{body__buffering_8c_acd6d4e1e1ceaba45eb7d4a700265184e}{g\+\_\+bodybuf\+\_\+input}}
+\item 
+\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} \mbox{\hyperlink{body__buffering_8c_aec2153a086af1636be3506b8c9f267cd}{g\+\_\+bodybuf\+\_\+now}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{body__buffering_8c_af1c33c10b1fa6d55a52e467749759676}{g\+\_\+bodybuf\+\_\+request\+\_\+per\+\_\+sec}}
+\item 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{body__buffering_8c_abfdfbb3d54509dff5d67c6b83d2ed3a4}{g\+\_\+bodybuf\+\_\+mutex}} = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER
+\item 
+pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{body__buffering_8c_a5b6ba52c5971fb260b80cc367e805c8e}{g\+\_\+bodybuf\+\_\+cond}} = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER
+\item 
+struct timespec \mbox{\hyperlink{body__buffering_8c_aa4969331e873e8dc34b20c4d648ebdde}{g\+\_\+bodybuf\+\_\+before\+\_\+time}}
+\item 
+struct timespec \mbox{\hyperlink{body__buffering_8c_a9902e5dd84f231622ddaa2ab31fd7b4c}{g\+\_\+bodybuf\+\_\+now\+\_\+time}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{body__buffering_8c_a59325cfe60670a0101fd6c3fa97693f6}\label{body__buffering_8c_a59325cfe60670a0101fd6c3fa97693f6}} 
+\index{body\_buffering.c@{body\_buffering.c}!BODY\_BUFFERING\_CNT@{BODY\_BUFFERING\_CNT}}
+\index{BODY\_BUFFERING\_CNT@{BODY\_BUFFERING\_CNT}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{BODY\_BUFFERING\_CNT}{BODY\_BUFFERING\_CNT}}
+{\footnotesize\ttfamily \#define BODY\+\_\+\+BUFFERING\+\_\+\+CNT~2000}
+
+
+
+Definition at line 9 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_ab2e8a18a8b1cfe5c391fd1824e9e53dd}\label{body__buffering_8c_ab2e8a18a8b1cfe5c391fd1824e9e53dd}} 
+\index{body\_buffering.c@{body\_buffering.c}!GET\_METHOD@{GET\_METHOD}}
+\index{GET\_METHOD@{GET\_METHOD}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{GET\_METHOD}{GET\_METHOD}}
+{\footnotesize\ttfamily \#define GET\+\_\+\+METHOD~\char`\"{}GET / HTTP/1.\+1\textbackslash{}r\textbackslash{}n\+Host\+: localhost\textbackslash{}r\textbackslash{}n\textbackslash{}r\textbackslash{}n\char`\"{}}
+
+
+
+Definition at line 8 of file body\+\_\+buffering.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{body__buffering_8c_a3693943e6e109b1a057b53d66fde17d2}\label{body__buffering_8c_a3693943e6e109b1a057b53d66fde17d2}} 
+\index{body\_buffering.c@{body\_buffering.c}!body\_buffering\_main@{body\_buffering\_main}}
+\index{body\_buffering\_main@{body\_buffering\_main}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{body\_buffering\_main()}{body\_buffering\_main()}}
+{\footnotesize\ttfamily void body\+\_\+buffering\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+body buffering main function 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 121 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_a8e0f80c10e004cbc9024df91b7e741c5}\label{body__buffering_8c_a8e0f80c10e004cbc9024df91b7e741c5}} 
+\index{body\_buffering.c@{body\_buffering.c}!body\_buffering\_print\_usage@{body\_buffering\_print\_usage}}
+\index{body\_buffering\_print\_usage@{body\_buffering\_print\_usage}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{body\_buffering\_print\_usage()}{body\_buffering\_print\_usage()}}
+{\footnotesize\ttfamily void body\+\_\+buffering\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print body buffering usage 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 28 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_ac14b6bbc91753d9660dc372957fdd87d}\label{body__buffering_8c_ac14b6bbc91753d9660dc372957fdd87d}} 
+\index{body\_buffering.c@{body\_buffering.c}!body\_buffering\_time\_check@{body\_buffering\_time\_check}}
+\index{body\_buffering\_time\_check@{body\_buffering\_time\_check}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{body\_buffering\_time\_check()}{body\_buffering\_time\_check()}}
+{\footnotesize\ttfamily void$\ast$ body\+\_\+buffering\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+body buffering time check thread 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 107 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_a0b823133ba38e9dc93a518cf41d80fe2}\label{body__buffering_8c_a0b823133ba38e9dc93a518cf41d80fe2}} 
+\index{body\_buffering.c@{body\_buffering.c}!generate\_body\_buffering@{generate\_body\_buffering}}
+\index{generate\_body\_buffering@{generate\_body\_buffering}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{generate\_body\_buffering()}{generate\_body\_buffering()}}
+{\footnotesize\ttfamily void$\ast$ generate\+\_\+body\+\_\+buffering (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+body buffering generate thread 
+
+\begin{DoxyDate}{Date}
+2021/02/20 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 36 of file body\+\_\+buffering.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{body__buffering_8c_aa4969331e873e8dc34b20c4d648ebdde}\label{body__buffering_8c_aa4969331e873e8dc34b20c4d648ebdde}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_before\_time@{g\_bodybuf\_before\_time}}
+\index{g\_bodybuf\_before\_time@{g\_bodybuf\_before\_time}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_before\_time}{g\_bodybuf\_before\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+bodybuf\+\_\+before\+\_\+time}
+
+
+
+Definition at line 23 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_a5b6ba52c5971fb260b80cc367e805c8e}\label{body__buffering_8c_a5b6ba52c5971fb260b80cc367e805c8e}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_cond@{g\_bodybuf\_cond}}
+\index{g\_bodybuf\_cond@{g\_bodybuf\_cond}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_cond}{g\_bodybuf\_cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+bodybuf\+\_\+cond = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 23 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_acd6d4e1e1ceaba45eb7d4a700265184e}\label{body__buffering_8c_acd6d4e1e1ceaba45eb7d4a700265184e}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_input@{g\_bodybuf\_input}}
+\index{g\_bodybuf\_input@{g\_bodybuf\_input}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_input}{g\_bodybuf\_input}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} g\+\_\+bodybuf\+\_\+input}
+
+
+
+Definition at line 17 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_abfdfbb3d54509dff5d67c6b83d2ed3a4}\label{body__buffering_8c_abfdfbb3d54509dff5d67c6b83d2ed3a4}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_mutex@{g\_bodybuf\_mutex}}
+\index{g\_bodybuf\_mutex@{g\_bodybuf\_mutex}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_mutex}{g\_bodybuf\_mutex}}
+{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+bodybuf\+\_\+mutex = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 22 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_aec2153a086af1636be3506b8c9f267cd}\label{body__buffering_8c_aec2153a086af1636be3506b8c9f267cd}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_now@{g\_bodybuf\_now}}
+\index{g\_bodybuf\_now@{g\_bodybuf\_now}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_now}{g\_bodybuf\_now}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} g\+\_\+bodybuf\+\_\+now}
+
+
+
+Definition at line 19 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_a9902e5dd84f231622ddaa2ab31fd7b4c}\label{body__buffering_8c_a9902e5dd84f231622ddaa2ab31fd7b4c}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_now\_time@{g\_bodybuf\_now\_time}}
+\index{g\_bodybuf\_now\_time@{g\_bodybuf\_now\_time}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_now\_time}{g\_bodybuf\_now\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+bodybuf\+\_\+now\+\_\+time}
+
+
+
+Definition at line 23 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_a396ded68eed26f15fa9d03fc9397219f}\label{body__buffering_8c_a396ded68eed26f15fa9d03fc9397219f}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_num\_generated\_in\_sec@{g\_bodybuf\_num\_generated\_in\_sec}}
+\index{g\_bodybuf\_num\_generated\_in\_sec@{g\_bodybuf\_num\_generated\_in\_sec}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_num\_generated\_in\_sec}{g\_bodybuf\_num\_generated\_in\_sec}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+bodybuf\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
+
+
+
+Definition at line 15 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_afe28ac54ae45c820b10fb95812ab00a7}\label{body__buffering_8c_afe28ac54ae45c820b10fb95812ab00a7}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_num\_total@{g\_bodybuf\_num\_total}}
+\index{g\_bodybuf\_num\_total@{g\_bodybuf\_num\_total}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_num\_total}{g\_bodybuf\_num\_total}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+bodybuf\+\_\+num\+\_\+total}
+
+
+
+Definition at line 14 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_af1c33c10b1fa6d55a52e467749759676}\label{body__buffering_8c_af1c33c10b1fa6d55a52e467749759676}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_bodybuf\_request\_per\_sec@{g\_bodybuf\_request\_per\_sec}}
+\index{g\_bodybuf\_request\_per\_sec@{g\_bodybuf\_request\_per\_sec}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_bodybuf\_request\_per\_sec}{g\_bodybuf\_request\_per\_sec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} g\+\_\+bodybuf\+\_\+request\+\_\+per\+\_\+sec}
+
+
+
+Definition at line 20 of file body\+\_\+buffering.\+c.
+
+\mbox{\Hypertarget{body__buffering_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{body__buffering_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
+\index{body\_buffering.c@{body\_buffering.c}!g\_num\_threads@{g\_num\_threads}}
+\index{g\_num\_threads@{g\_num\_threads}!body\_buffering.c@{body\_buffering.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 19 of file main.\+c.
+

@@ -1,0 +1,55 @@
+\hypertarget{time__check_8h}{}\doxysection{includes/base/time\+\_\+check.h File Reference}
+\label{time__check_8h}\index{includes/base/time\_check.h@{includes/base/time\_check.h}}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{time__check_8h_a4aa012ed433c9fb88a3d9cac34060fe7}{NANO\+\_\+\+PER\+\_\+\+SEC}}~1000000000.\+0
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{time__check_8h_a3f418354cc34e1236a677e0d244242c7}{time\+\_\+check}} (pthread\+\_\+cond\+\_\+t $\ast$cond\+\_\+p, struct timespec $\ast$before\+\_\+time\+\_\+p, struct timespec $\ast$now\+\_\+time\+\_\+p, unsigned long $\ast$produced\+\_\+in\+\_\+sec\+\_\+p)
+\begin{DoxyCompactList}\small\item\em if elapsed time is more than 1 sec, update produced\+\_\+in\+\_\+sec and before\+\_\+time, send condition signal to all waiting threads \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{time__check_8h_a4aa012ed433c9fb88a3d9cac34060fe7}\label{time__check_8h_a4aa012ed433c9fb88a3d9cac34060fe7}} 
+\index{time\_check.h@{time\_check.h}!NANO\_PER\_SEC@{NANO\_PER\_SEC}}
+\index{NANO\_PER\_SEC@{NANO\_PER\_SEC}!time\_check.h@{time\_check.h}}
+\doxysubsubsection{\texorpdfstring{NANO\_PER\_SEC}{NANO\_PER\_SEC}}
+{\footnotesize\ttfamily \#define NANO\+\_\+\+PER\+\_\+\+SEC~1000000000.\+0}
+
+
+
+Definition at line 5 of file time\+\_\+check.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{time__check_8h_a3f418354cc34e1236a677e0d244242c7}\label{time__check_8h_a3f418354cc34e1236a677e0d244242c7}} 
+\index{time\_check.h@{time\_check.h}!time\_check@{time\_check}}
+\index{time\_check@{time\_check}!time\_check.h@{time\_check.h}}
+\doxysubsubsection{\texorpdfstring{time\_check()}{time\_check()}}
+{\footnotesize\ttfamily void time\+\_\+check (\begin{DoxyParamCaption}\item[{pthread\+\_\+cond\+\_\+t $\ast$}]{cond\+\_\+p,  }\item[{struct timespec $\ast$}]{before\+\_\+time\+\_\+p,  }\item[{struct timespec $\ast$}]{now\+\_\+time\+\_\+p,  }\item[{unsigned long $\ast$}]{produced\+\_\+in\+\_\+sec\+\_\+p }\end{DoxyParamCaption})}
+
+
+
+if elapsed time is more than 1 sec, update produced\+\_\+in\+\_\+sec and before\+\_\+time, send condition signal to all waiting threads 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em cond\+\_\+p} & thread condition for synchronizing \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em before\+\_\+time\+\_\+p} & timespec for before call \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em now\+\_\+time\+\_\+p} & timespec for now call \\
+\hline
+\mbox{\texttt{ out}}  & {\em produced\+\_\+in\+\_\+sec\+\_\+p} & number of packets which produced in before time $\sim$ now time, it will be initialized to 0 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}

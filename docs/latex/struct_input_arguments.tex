@@ -1,0 +1,106 @@
+\hypertarget{struct_input_arguments}{}\doxysection{Input\+Arguments Struct Reference}
+\label{struct_input_arguments}\index{InputArguments@{InputArguments}}
+
+
+ip, port, subnet masking values  
+
+
+
+
+{\ttfamily \#include $<$header.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+unsigned char \mbox{\hyperlink{struct_input_arguments_a70b9300e7d151f7aadcba8a1c81f3fd9}{src}} \mbox{[}\mbox{\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{IPV4\+\_\+\+STRLEN}}\mbox{]}
+\item 
+unsigned char \mbox{\hyperlink{struct_input_arguments_a2fbdfdcfd2976c224421d481d0935d8d}{dest}} \mbox{[}\mbox{\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{IPV4\+\_\+\+STRLEN}}\mbox{]}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{struct_input_arguments_a4fc0f7b36bc43c7590cb0843282368aa}{src\+\_\+mask}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{struct_input_arguments_a63b8e9efc215ebefa3d898701531e296}{dest\+\_\+mask}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{struct_input_arguments_a5465bae0b80139c3aab02aadda37a2ec}{port\+\_\+start}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{struct_input_arguments_ac3c6eeaeb713047db039592d5c1f0f01}{port\+\_\+end}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+ip, port, subnet masking values 
+
+\begin{DoxyDate}{Date}
+2021/04/12 
+\end{DoxyDate}
+
+
+Definition at line 50 of file header.\+h.
+
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{struct_input_arguments_a2fbdfdcfd2976c224421d481d0935d8d}\label{struct_input_arguments_a2fbdfdcfd2976c224421d481d0935d8d}} 
+\index{InputArguments@{InputArguments}!dest@{dest}}
+\index{dest@{dest}!InputArguments@{InputArguments}}
+\doxysubsubsection{\texorpdfstring{dest}{dest}}
+{\footnotesize\ttfamily unsigned char dest\mbox{[}\mbox{\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{IPV4\+\_\+\+STRLEN}}\mbox{]}}
+
+source ipv4 string, format\+: XXX.\+XXX.\+XXX.\+XXX 
+
+Definition at line 53 of file header.\+h.
+
+\mbox{\Hypertarget{struct_input_arguments_a63b8e9efc215ebefa3d898701531e296}\label{struct_input_arguments_a63b8e9efc215ebefa3d898701531e296}} 
+\index{InputArguments@{InputArguments}!dest\_mask@{dest\_mask}}
+\index{dest\_mask@{dest\_mask}!InputArguments@{InputArguments}}
+\doxysubsubsection{\texorpdfstring{dest\_mask}{dest\_mask}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} dest\+\_\+mask}
+
+source ipv4 mask, range\+: 0$\sim$32, default\+: 32 
+
+Definition at line 55 of file header.\+h.
+
+\mbox{\Hypertarget{struct_input_arguments_ac3c6eeaeb713047db039592d5c1f0f01}\label{struct_input_arguments_ac3c6eeaeb713047db039592d5c1f0f01}} 
+\index{InputArguments@{InputArguments}!port\_end@{port\_end}}
+\index{port\_end@{port\_end}!InputArguments@{InputArguments}}
+\doxysubsubsection{\texorpdfstring{port\_end}{port\_end}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} port\+\_\+end}
+
+destination port start, range\+: 0$\sim$65535 
+
+Definition at line 57 of file header.\+h.
+
+\mbox{\Hypertarget{struct_input_arguments_a5465bae0b80139c3aab02aadda37a2ec}\label{struct_input_arguments_a5465bae0b80139c3aab02aadda37a2ec}} 
+\index{InputArguments@{InputArguments}!port\_start@{port\_start}}
+\index{port\_start@{port\_start}!InputArguments@{InputArguments}}
+\doxysubsubsection{\texorpdfstring{port\_start}{port\_start}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} port\+\_\+start}
+
+destination ipv4 mask, range\+: 0$\sim$32, default\+: 32 
+
+Definition at line 56 of file header.\+h.
+
+\mbox{\Hypertarget{struct_input_arguments_a70b9300e7d151f7aadcba8a1c81f3fd9}\label{struct_input_arguments_a70b9300e7d151f7aadcba8a1c81f3fd9}} 
+\index{InputArguments@{InputArguments}!src@{src}}
+\index{src@{src}!InputArguments@{InputArguments}}
+\doxysubsubsection{\texorpdfstring{src}{src}}
+{\footnotesize\ttfamily unsigned char src\mbox{[}\mbox{\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{IPV4\+\_\+\+STRLEN}}\mbox{]}}
+
+
+
+Definition at line 52 of file header.\+h.
+
+\mbox{\Hypertarget{struct_input_arguments_a4fc0f7b36bc43c7590cb0843282368aa}\label{struct_input_arguments_a4fc0f7b36bc43c7590cb0843282368aa}} 
+\index{InputArguments@{InputArguments}!src\_mask@{src\_mask}}
+\index{src\_mask@{src\_mask}!InputArguments@{InputArguments}}
+\doxysubsubsection{\texorpdfstring{src\_mask}{src\_mask}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} src\+\_\+mask}
+
+destination ipv4 string, format\+: XXX.\+XXX.\+XXX.\+XXX 
+
+Definition at line 54 of file header.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+includes/\mbox{\hyperlink{header_8h}{header.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,276 @@
+\hypertarget{hash__dos_8c}{}\doxysection{srcs/ddos/hash\+\_\+dos.c File Reference}
+\label{hash__dos_8c}\index{srcs/ddos/hash\_dos.c@{srcs/ddos/hash\_dos.c}}
+{\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/subnet\+\_\+mask.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}base/time\+\_\+check.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ddos/hash\+\_\+dos.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{hash__dos_8c_a612349463e8e3b7dc8ca1c76897c59d1}{hash\+\_\+dos\+\_\+print\+\_\+usage}} (void)
+\begin{DoxyCompactList}\small\item\em print hash dos usage \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{hash__dos_8c_a61edbf4a1af9f1519c38ea9e165279fc}{generate\+\_\+hash\+\_\+dos}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em hash dos generate thread \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{hash__dos_8c_abe70ad5ae95eb51a3581b0a669af8eb2}{hash\+\_\+dos\+\_\+time\+\_\+check}} (void $\ast$data)
+\begin{DoxyCompactList}\small\item\em hash dos time check thread \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{hash__dos_8c_a973b8106dc93156420bef114fa600f55}{hash\+\_\+dos\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em hash dos main function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{hash__dos_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{hash__dos_8c_a054922e89b406ce7ea26ab7d634d4560}{g\+\_\+hash\+\_\+dos\+\_\+num\+\_\+total}}
+\item 
+\+\_\+\+\_\+u64 \mbox{\hyperlink{hash__dos_8c_ad49dde650e25481e9153c0ac93143c53}{g\+\_\+hash\+\_\+dos\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \mbox{\hyperlink{hash__dos_8c_a87d5c70ca60fcc295a810044ee920907}{g\+\_\+hash\+\_\+dos\+\_\+input}}
+\item 
+\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{hash__dos_8c_aaa8bda0026ffbece6a6e7d7ff63ffaec}{g\+\_\+hash\+\_\+dos\+\_\+request\+\_\+per\+\_\+sec}}
+\item 
+\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} \mbox{\hyperlink{hash__dos_8c_a01d4f821bbf167a5863d190d79d24938}{g\+\_\+hash\+\_\+dos\+\_\+now}}
+\item 
+pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{hash__dos_8c_a910bc361b3131a0dabc701e1432b84ec}{g\+\_\+hash\+\_\+dos\+\_\+mutex}} = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER
+\item 
+pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{hash__dos_8c_a05a31733a7c5412220d648cde2c916dd}{g\+\_\+hash\+\_\+dos\+\_\+cond}}
+\item 
+struct timespec \mbox{\hyperlink{hash__dos_8c_a208676e4cb4b4fc9f13bf907f4d3bd87}{g\+\_\+hash\+\_\+dos\+\_\+before\+\_\+time}}
+\item 
+struct timespec \mbox{\hyperlink{hash__dos_8c_a73bcd6bb13f1f7da813ef1c41d343b27}{g\+\_\+hash\+\_\+dos\+\_\+now\+\_\+time}}
+\item 
+char \mbox{\hyperlink{hash__dos_8c_aae2c811608b9f518ed3f1acf2443ffac}{hash\+\_\+dos\+\_\+content}} \mbox{[}1001\mbox{]}
+\item 
+char \mbox{\hyperlink{hash__dos_8c_a1431b584c676d95f910c6a01b88d35e7}{hash\+\_\+dos\+\_\+method}} \mbox{[}1300\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{hash__dos_8c_a61edbf4a1af9f1519c38ea9e165279fc}\label{hash__dos_8c_a61edbf4a1af9f1519c38ea9e165279fc}} 
+\index{hash\_dos.c@{hash\_dos.c}!generate\_hash\_dos@{generate\_hash\_dos}}
+\index{generate\_hash\_dos@{generate\_hash\_dos}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{generate\_hash\_dos()}{generate\_hash\_dos()}}
+{\footnotesize\ttfamily void$\ast$ generate\+\_\+hash\+\_\+dos (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+hash dos generate thread 
+
+\begin{DoxyDate}{Date}
+2021/03/15 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 34 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a973b8106dc93156420bef114fa600f55}\label{hash__dos_8c_a973b8106dc93156420bef114fa600f55}} 
+\index{hash\_dos.c@{hash\_dos.c}!hash\_dos\_main@{hash\_dos\_main}}
+\index{hash\_dos\_main@{hash\_dos\_main}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{hash\_dos\_main()}{hash\_dos\_main()}}
+{\footnotesize\ttfamily void hash\+\_\+dos\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+hash dos main function 
+
+\begin{DoxyDate}{Date}
+2021/03/15 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 115 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a612349463e8e3b7dc8ca1c76897c59d1}\label{hash__dos_8c_a612349463e8e3b7dc8ca1c76897c59d1}} 
+\index{hash\_dos.c@{hash\_dos.c}!hash\_dos\_print\_usage@{hash\_dos\_print\_usage}}
+\index{hash\_dos\_print\_usage@{hash\_dos\_print\_usage}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{hash\_dos\_print\_usage()}{hash\_dos\_print\_usage()}}
+{\footnotesize\ttfamily void hash\+\_\+dos\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+print hash dos usage 
+
+\begin{DoxyDate}{Date}
+2021/03/15 
+\end{DoxyDate}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+Definition at line 27 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_abe70ad5ae95eb51a3581b0a669af8eb2}\label{hash__dos_8c_abe70ad5ae95eb51a3581b0a669af8eb2}} 
+\index{hash\_dos.c@{hash\_dos.c}!hash\_dos\_time\_check@{hash\_dos\_time\_check}}
+\index{hash\_dos\_time\_check@{hash\_dos\_time\_check}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{hash\_dos\_time\_check()}{hash\_dos\_time\_check()}}
+{\footnotesize\ttfamily void$\ast$ hash\+\_\+dos\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+hash dos time check thread 
+
+\begin{DoxyDate}{Date}
+2021/03/15 
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void $\ast$ 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em NULL} & always \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 101 of file hash\+\_\+dos.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{hash__dos_8c_a208676e4cb4b4fc9f13bf907f4d3bd87}\label{hash__dos_8c_a208676e4cb4b4fc9f13bf907f4d3bd87}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_before\_time@{g\_hash\_dos\_before\_time}}
+\index{g\_hash\_dos\_before\_time@{g\_hash\_dos\_before\_time}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_before\_time}{g\_hash\_dos\_before\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+hash\+\_\+dos\+\_\+before\+\_\+time}
+
+
+
+Definition at line 19 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a05a31733a7c5412220d648cde2c916dd}\label{hash__dos_8c_a05a31733a7c5412220d648cde2c916dd}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_cond@{g\_hash\_dos\_cond}}
+\index{g\_hash\_dos\_cond@{g\_hash\_dos\_cond}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_cond}{g\_hash\_dos\_cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+hash\+\_\+dos\+\_\+cond}
+
+
+
+Definition at line 19 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a87d5c70ca60fcc295a810044ee920907}\label{hash__dos_8c_a87d5c70ca60fcc295a810044ee920907}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_input@{g\_hash\_dos\_input}}
+\index{g\_hash\_dos\_input@{g\_hash\_dos\_input}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_input}{g\_hash\_dos\_input}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} g\+\_\+hash\+\_\+dos\+\_\+input}
+
+
+
+Definition at line 13 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a910bc361b3131a0dabc701e1432b84ec}\label{hash__dos_8c_a910bc361b3131a0dabc701e1432b84ec}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_mutex@{g\_hash\_dos\_mutex}}
+\index{g\_hash\_dos\_mutex@{g\_hash\_dos\_mutex}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_mutex}{g\_hash\_dos\_mutex}}
+{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+hash\+\_\+dos\+\_\+mutex = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER}
+
+
+
+Definition at line 18 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a01d4f821bbf167a5863d190d79d24938}\label{hash__dos_8c_a01d4f821bbf167a5863d190d79d24938}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_now@{g\_hash\_dos\_now}}
+\index{g\_hash\_dos\_now@{g\_hash\_dos\_now}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_now}{g\_hash\_dos\_now}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} g\+\_\+hash\+\_\+dos\+\_\+now}
+
+
+
+Definition at line 16 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a73bcd6bb13f1f7da813ef1c41d343b27}\label{hash__dos_8c_a73bcd6bb13f1f7da813ef1c41d343b27}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_now\_time@{g\_hash\_dos\_now\_time}}
+\index{g\_hash\_dos\_now\_time@{g\_hash\_dos\_now\_time}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_now\_time}{g\_hash\_dos\_now\_time}}
+{\footnotesize\ttfamily struct timespec g\+\_\+hash\+\_\+dos\+\_\+now\+\_\+time}
+
+
+
+Definition at line 19 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_ad49dde650e25481e9153c0ac93143c53}\label{hash__dos_8c_ad49dde650e25481e9153c0ac93143c53}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_num\_generated\_in\_sec@{g\_hash\_dos\_num\_generated\_in\_sec}}
+\index{g\_hash\_dos\_num\_generated\_in\_sec@{g\_hash\_dos\_num\_generated\_in\_sec}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_num\_generated\_in\_sec}{g\_hash\_dos\_num\_generated\_in\_sec}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+hash\+\_\+dos\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
+
+
+
+Definition at line 11 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a054922e89b406ce7ea26ab7d634d4560}\label{hash__dos_8c_a054922e89b406ce7ea26ab7d634d4560}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_num\_total@{g\_hash\_dos\_num\_total}}
+\index{g\_hash\_dos\_num\_total@{g\_hash\_dos\_num\_total}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_num\_total}{g\_hash\_dos\_num\_total}}
+{\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+hash\+\_\+dos\+\_\+num\+\_\+total}
+
+
+
+Definition at line 10 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_aaa8bda0026ffbece6a6e7d7ff63ffaec}\label{hash__dos_8c_aaa8bda0026ffbece6a6e7d7ff63ffaec}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_hash\_dos\_request\_per\_sec@{g\_hash\_dos\_request\_per\_sec}}
+\index{g\_hash\_dos\_request\_per\_sec@{g\_hash\_dos\_request\_per\_sec}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_hash\_dos\_request\_per\_sec}{g\_hash\_dos\_request\_per\_sec}}
+{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} g\+\_\+hash\+\_\+dos\+\_\+request\+\_\+per\+\_\+sec}
+
+
+
+Definition at line 14 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{hash__dos_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
+\index{hash\_dos.c@{hash\_dos.c}!g\_num\_threads@{g\_num\_threads}}
+\index{g\_num\_threads@{g\_num\_threads}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line 19 of file main.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_aae2c811608b9f518ed3f1acf2443ffac}\label{hash__dos_8c_aae2c811608b9f518ed3f1acf2443ffac}} 
+\index{hash\_dos.c@{hash\_dos.c}!hash\_dos\_content@{hash\_dos\_content}}
+\index{hash\_dos\_content@{hash\_dos\_content}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{hash\_dos\_content}{hash\_dos\_content}}
+{\footnotesize\ttfamily char hash\+\_\+dos\+\_\+content\mbox{[}1001\mbox{]}}
+
+
+
+Definition at line 24 of file hash\+\_\+dos.\+c.
+
+\mbox{\Hypertarget{hash__dos_8c_a1431b584c676d95f910c6a01b88d35e7}\label{hash__dos_8c_a1431b584c676d95f910c6a01b88d35e7}} 
+\index{hash\_dos.c@{hash\_dos.c}!hash\_dos\_method@{hash\_dos\_method}}
+\index{hash\_dos\_method@{hash\_dos\_method}!hash\_dos.c@{hash\_dos.c}}
+\doxysubsubsection{\texorpdfstring{hash\_dos\_method}{hash\_dos\_method}}
+{\footnotesize\ttfamily char hash\+\_\+dos\+\_\+method\mbox{[}1300\mbox{]}}
+
+
+
+Definition at line 25 of file hash\+\_\+dos.\+c.
+

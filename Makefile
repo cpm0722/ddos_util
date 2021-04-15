@@ -5,6 +5,7 @@ INCLUDE_DIR = includes
 SRC_DIR = srcs
 OBJ_DIR = objs
 LIB_DIR = libs
+DOC_DIR = docs
 BASE_DIR = base
 DDOS_DIR = ddos
 
@@ -35,6 +36,7 @@ BASE_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(BASE_FNAMES)))
 DDOS_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(DDOS_FNAMES)))
 MAIN_C = $(SRC_DIR)/main.c
 MAIN_O = $(OBJ_DIR)/main.o
+DOC_HTML = man.html
 
 #################
 #     RULES     #
@@ -47,6 +49,7 @@ MKDIR_LIBS = mkdir_libs
 CLEAN = clean
 ERASE = erase
 FCLEAN = fclean
+DOXYGEN = docs
 
 #################
 #  TCP  REPLAY  #
@@ -55,7 +58,7 @@ FCLEAN = fclean
 TCP_REPLAY = tcp_replay
 
 .SUFFIXES : .c.o
-.PHONY: .c.o $(ALL) $(MKDIR_OBJS) $(CLEAN)
+.PHONY: .c.o $(ALL) $(RE) $(MKDIR_OBJS) $(MKDIR_LIBS) $(CLEAN) $(ERASE) $(DOXYGEN)
 
 $(ALL): $(TARGET) $(TCP_REPLAY)
 
@@ -98,3 +101,7 @@ $(CLEAN):
 $(TCP_REPLAY):
 	rm -f ./tmp/tcpreplay.out
 	$(CC) $(INCLUDE_OPT) $(LIBOPTS) srcs/tcpreplay/tcp_replay.c -l$(BASE_LIB_NAME) -lpthread -lpcap -lm -o tmp/a.out
+
+$(DOXYGEN):
+	doxygen Doxyfile
+	ln -s $(DOC_DIR)/index.html $(DOC_HTML) 

@@ -196,7 +196,7 @@ attack_type type_choose_attack(void)
 			"7. Body buffering\n"
 			"8. Response buffering\n"
 			"9. Hash Dos\n"
-			"10. RefRef\n\n");
+			"\n");
 	get_input();
 	attack_type t = atoi(g_input);
 	while (t <= 0 || t > 10) {
@@ -295,8 +295,7 @@ void print_usage(char *argv[])
 				 "    head, HEAD,  6        Header Buffering Attack\n"
 				 "    body, BODY,  7        Body Buffering Attack\n"
 				 "    resp, RESP,  8        Response Buffering Attack\n"
-				 "    hash, HASH,  9        Hash Dos Attack\n"
-				 "    ref,  REF,  10        RefRef Attack\n");
+				 "    hash, HASH,  9        Hash Dos Attack\n");
 	printf("\n");
 	printf("\e[1mSOURCE IP ADDRESS\e[0m \n"
 				 "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"

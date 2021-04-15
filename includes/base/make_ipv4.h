@@ -2,6 +2,9 @@
 
 #define MAKE_IPV4
 
+
+void prepare_pid(int *pid_list, int num);
+
 /**
 	@fn struct iphdr prepare_empty_ipv4(void);
 	@brief function: get empty iphdr

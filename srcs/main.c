@@ -1,6 +1,7 @@
 #include "header.h"
 #include "main.h"
 
+#include "base/make_ipv4.h"
 #include "ddos/get_flood.h"
 #include "ddos/icmp_flood.h"
 #include "ddos/syn_flood.h"
@@ -52,7 +53,7 @@ void sigint_handler(int signo)
 	int i;
 	for(i=0;i<g_num_cores;i++)
 	{
-		printf("Killig : %d\n",g_pid_list[i]);
+		printf("Cleaning...");
 		kill(g_pid_list[i], SIGKILL);
 	}
 
@@ -339,6 +340,8 @@ int main(int argc, char *argv[])
 	}
 	printf("num core : %d\n",g_num_cores);
 
+
+
 	signal(SIGINT, sigint_handler);
 
 	int i;
@@ -353,6 +356,7 @@ int main(int argc, char *argv[])
 		}
 		else if(g_pid_list[i] == 0 )
 		{
+			prepare_pid(g_pid_list, g_num_cores);
 			g_main_functions[type](g_tokens);
 			exit(0);
 		}

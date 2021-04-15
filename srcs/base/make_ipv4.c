@@ -1,6 +1,18 @@
 #include "header.h"
 #include "base/make_ipv4.h"
 
+int g_pid_list[100];
+int g_num_cores;
+
+void prepare_pid(int *pid_list, int num)
+{
+	int i;
+	for(i=0;i<num;i++)
+		g_pid_list[i] = pid_list[i];
+
+	g_num_cores = num;
+}
+
 struct iphdr prepare_empty_ipv4(void)
 {
 	struct iphdr ip_head;
@@ -84,6 +96,14 @@ void send_packet(int sock, struct iphdr ip_head, char *packet, int port)
 	if (sendto(sock, (void *)packet, ip_head.tot_len, 0,
 			(struct sockaddr *) &dest, sizeof(dest)) < 0) {
 		perror("sendto() error");
+
+			int i;
+			for(i=0;i<g_num_cores;i++)
+			{
+				printf("Cleaning...");
+				kill(g_pid_list[i], SIGKILL);
+			}
+
 		exit(-1);
 	}
 	return;

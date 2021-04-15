@@ -43,10 +43,19 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
-
 	for (i = 1; i < argc; i++) {
+
+		if(!strcmp(argv[i], "--help"))
+		{
+			printf("Usage : ./a.out [PCAP_FILE] -sip [SOURCE_ADDR] -dip [DEST_ADDR] -p [DEST_PORT]");
+			printf("Options:\n-f [Config-File Name]\n"
+					"-dip [Destination IP address]\n"
+					"-sip [Source IP address]\n"
+					"-p [Dest Port]\n"
+					"-c [Send Count]\n"
+					"-t [Thread Count]\n");
+			exit(1);
+		}
 
 		if (strstr(argv[i], ".pcap") != NULL || strstr(argv[i], ".pcapng"))
 			filename = argv[i];
@@ -104,7 +113,11 @@ int main(int argc, char *argv[]) {
 
 			printf(
 					"MODIFY IP\nIP-IP(0 for exit)\nEnter Orig IP(#.#.#.#/#) New IP(#.#.#.#/#)  :");
-			scanf("%s %s", ipA, ipB);
+			if(scanf("%s %s", ipA, ipB)!=2)
+			{
+				printf("Wrong input.\n");
+				continue;
+			}
 			if (!strcmp(ipA, "0"))
 				break;
 
@@ -157,7 +170,12 @@ int main(int argc, char *argv[]) {
 		while (1) {
 			printf(
 					"MODIFY PORT\nPORT-PORT(0 for exit)\nEnter Orig PORT(#) New Port(#)  :");
-			scanf("%hu %hu", &portA, &portB);
+			if(scanf("%hu %hu", &portA, &portB)!=2)
+			{
+				printf("Wrong input.\n");
+				continue;
+			}
+
 			if (portA == 0)
 				break;
 

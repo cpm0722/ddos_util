@@ -33,24 +33,26 @@ int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask)
 		__u32 ipv4_addr = get_addr_val(ipv4);
 		now_addr = ipv4_addr;
 		__u32 max_val = BIT_32_MAX_VAL;
+		if ((now_addr & 0xff) == 0x00)
+			now_addr += 1;
 		now_addr = (__u32) now_addr & (max_val << (32 - mask));
 		get_addr_str(now_addr, now);
 		return -1;
 	}
 	now_addr = get_addr_val(now);
 	__u32 max_val = (__u32) pow(2, (32 - mask)) - 1;
-	if ((now_addr & max_val) == max_val) {  // finish
+	if (((now_addr & max_val) == max_val) ||
+		   (((now_addr + 1) & 0xff) == 0xff)) {  // finish
 		__u32 ipv4_addr = get_addr_val(ipv4);
 		now_addr = ipv4_addr;
+		if ((now_addr & 0xff) == 0x00)
+			now_addr += 1;
 		__u32 max_val = BIT_32_MAX_VAL;
 		now_addr = (__u32) now_addr & (max_val << (32 - mask));
 		get_addr_str(now_addr, now);
 		return 1;
 	}
 	now_addr++;
-	if (now_addr && 0xff == 0) {
-		now_addr++;
-	}
 	get_addr_str(now_addr, now);
 	return 0;
 }

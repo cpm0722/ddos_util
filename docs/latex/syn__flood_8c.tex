@@ -1,52 +1,52 @@
-\hypertarget{syn__flood_8c}{}\doxysection{srcs/ddos/syn\+\_\+flood.c File Reference}
-\label{syn__flood_8c}\index{srcs/ddos/syn\_flood.c@{srcs/ddos/syn\_flood.c}}
+\hypertarget{syn__flood_8c}{}\section{srcs/ddos/syn\+\_\+flood.c File Reference}
+\label{syn__flood_8c}\index{srcs/ddos/syn\+\_\+flood.\+c@{srcs/ddos/syn\+\_\+flood.\+c}}
 {\ttfamily \#include \char`\"{}header.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}base/make\+\_\+ipv4.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}base/make\+\_\+tcp.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}base/subnet\+\_\+mask.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}base/time\+\_\+check.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}ddos/syn\+\_\+flood.\+h\char`\"{}}\newline
-\doxysubsection*{Functions}
+\subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{syn__flood_8c_a9d0f3d700b5f9990a85d322268efacf2}{syn\+\_\+flood\+\_\+print\+\_\+usage}} (void)
+void \hyperlink{syn__flood_8c_a9d0f3d700b5f9990a85d322268efacf2}{syn\+\_\+flood\+\_\+print\+\_\+usage} (void)
 \begin{DoxyCompactList}\small\item\em print syn flooding usage \end{DoxyCompactList}\item 
-void $\ast$ \mbox{\hyperlink{syn__flood_8c_afe8dd5010cbd514c89c7c6676744a51c}{generate\+\_\+syn\+\_\+flood}} (void $\ast$data)
+void $\ast$ \hyperlink{syn__flood_8c_afe8dd5010cbd514c89c7c6676744a51c}{generate\+\_\+syn\+\_\+flood} (void $\ast$data)
 \begin{DoxyCompactList}\small\item\em syn flooding generate thread \end{DoxyCompactList}\item 
-void $\ast$ \mbox{\hyperlink{syn__flood_8c_acbc3c0f669d530aace96d0db95266597}{syn\+\_\+flood\+\_\+time\+\_\+check}} (void $\ast$data)
+void $\ast$ \hyperlink{syn__flood_8c_acbc3c0f669d530aace96d0db95266597}{syn\+\_\+flood\+\_\+time\+\_\+check} (void $\ast$data)
 \begin{DoxyCompactList}\small\item\em syn flooding time check thread \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{syn__flood_8c_a670aa52fc9026a6f773776c28d4670bd}{syn\+\_\+flood\+\_\+main}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+void \hyperlink{syn__flood_8c_a670aa52fc9026a6f773776c28d4670bd}{syn\+\_\+flood\+\_\+main} (char $\ast$argv\mbox{[}$\,$\mbox{]})
 \begin{DoxyCompactList}\small\item\em syn flooding main function \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsection*{Variables}
+\subsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{syn__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}}
+int \hyperlink{syn__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}{g\+\_\+num\+\_\+threads}
 \item 
-\+\_\+\+\_\+u64 \mbox{\hyperlink{syn__flood_8c_a9e73648766ccc080c6e2f37943254a1e}{g\+\_\+syn\+\_\+num\+\_\+total}}
+\+\_\+\+\_\+u64 \hyperlink{syn__flood_8c_a9e73648766ccc080c6e2f37943254a1e}{g\+\_\+syn\+\_\+num\+\_\+total}
 \item 
-\+\_\+\+\_\+u64 \mbox{\hyperlink{syn__flood_8c_a32eb1b17a1b5a0a1990dfc66cb68a4c6}{g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\+\_\+\+\_\+u64 \hyperlink{syn__flood_8c_a32eb1b17a1b5a0a1990dfc66cb68a4c6}{g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
 \item 
-\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \mbox{\hyperlink{syn__flood_8c_acb8517b8d6509bf2ab919e12bc92a683}{g\+\_\+syn\+\_\+input}}
+\hyperlink{struct_input_arguments}{Input\+Arguments} \hyperlink{syn__flood_8c_acb8517b8d6509bf2ab919e12bc92a683}{g\+\_\+syn\+\_\+input}
 \item 
-\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{syn__flood_8c_addc3cf567dceae2af26fa922b37a5721}{g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}}
+\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} \hyperlink{syn__flood_8c_addc3cf567dceae2af26fa922b37a5721}{g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}
 \item 
-\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} \mbox{\hyperlink{syn__flood_8c_a611f1bdafa0ab713538af39dbb06a310}{g\+\_\+syn\+\_\+now}}
+\hyperlink{struct_masking_arguments}{Masking\+Arguments} \hyperlink{syn__flood_8c_a611f1bdafa0ab713538af39dbb06a310}{g\+\_\+syn\+\_\+now}
 \item 
-pthread\+\_\+mutex\+\_\+t \mbox{\hyperlink{syn__flood_8c_af0082c293a0baa125a361fe2a52fc105}{g\+\_\+syn\+\_\+mutex}} = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER
+pthread\+\_\+mutex\+\_\+t \hyperlink{syn__flood_8c_af0082c293a0baa125a361fe2a52fc105}{g\+\_\+syn\+\_\+mutex} = P\+T\+H\+R\+E\+A\+D\+\_\+\+M\+U\+T\+E\+X\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER
 \item 
-pthread\+\_\+cond\+\_\+t \mbox{\hyperlink{syn__flood_8c_a96c882bb9d0f2dc10303e270f4b9416b}{g\+\_\+syn\+\_\+cond}} = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER
+pthread\+\_\+cond\+\_\+t \hyperlink{syn__flood_8c_a96c882bb9d0f2dc10303e270f4b9416b}{g\+\_\+syn\+\_\+cond} = P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER
 \item 
-struct timespec \mbox{\hyperlink{syn__flood_8c_ac55062a1eff6b24b3d0c6b6a5c554c66}{g\+\_\+syn\+\_\+before\+\_\+time}}
+struct timespec \hyperlink{syn__flood_8c_ac55062a1eff6b24b3d0c6b6a5c554c66}{g\+\_\+syn\+\_\+before\+\_\+time}
 \item 
-struct timespec \mbox{\hyperlink{syn__flood_8c_af8903dc0e0cb87f344ddb92b5b768bb9}{g\+\_\+syn\+\_\+now\+\_\+time}}
+struct timespec \hyperlink{syn__flood_8c_af8903dc0e0cb87f344ddb92b5b768bb9}{g\+\_\+syn\+\_\+now\+\_\+time}
 \end{DoxyCompactItemize}
 
 
-\doxysubsection{Function Documentation}
+\subsection{Function Documentation}
 \mbox{\Hypertarget{syn__flood_8c_afe8dd5010cbd514c89c7c6676744a51c}\label{syn__flood_8c_afe8dd5010cbd514c89c7c6676744a51c}} 
-\index{syn\_flood.c@{syn\_flood.c}!generate\_syn\_flood@{generate\_syn\_flood}}
-\index{generate\_syn\_flood@{generate\_syn\_flood}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{generate\_syn\_flood()}{generate\_syn\_flood()}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!generate\+\_\+syn\+\_\+flood@{generate\+\_\+syn\+\_\+flood}}
+\index{generate\+\_\+syn\+\_\+flood@{generate\+\_\+syn\+\_\+flood}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{generate\+\_\+syn\+\_\+flood()}{generate\_syn\_flood()}}
 {\footnotesize\ttfamily void$\ast$ generate\+\_\+syn\+\_\+flood (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
 
 
@@ -58,7 +58,7 @@ syn flooding generate thread
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\mbox{\tt in}  & {\em data} & thread input, default\+: N\+U\+LL \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -66,7 +66,7 @@ void $\ast$
 \end{DoxyReturn}
 
 \begin{DoxyRetVals}{Return values}
-{\em NULL} & always \\
+{\em N\+U\+LL} & always \\
 \hline
 \end{DoxyRetVals}
 
@@ -74,9 +74,9 @@ void $\ast$
 Definition at line 32 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_a670aa52fc9026a6f773776c28d4670bd}\label{syn__flood_8c_a670aa52fc9026a6f773776c28d4670bd}} 
-\index{syn\_flood.c@{syn\_flood.c}!syn\_flood\_main@{syn\_flood\_main}}
-\index{syn\_flood\_main@{syn\_flood\_main}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{syn\_flood\_main()}{syn\_flood\_main()}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!syn\+\_\+flood\+\_\+main@{syn\+\_\+flood\+\_\+main}}
+\index{syn\+\_\+flood\+\_\+main@{syn\+\_\+flood\+\_\+main}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{syn\+\_\+flood\+\_\+main()}{syn\_flood\_main()}}
 {\footnotesize\ttfamily void syn\+\_\+flood\+\_\+main (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
 
 
@@ -88,7 +88,7 @@ syn flooding main function
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em argv} & arguments \\
+\mbox{\tt in}  & {\em argv} & arguments \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -99,9 +99,9 @@ void
 Definition at line 98 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_a9d0f3d700b5f9990a85d322268efacf2}\label{syn__flood_8c_a9d0f3d700b5f9990a85d322268efacf2}} 
-\index{syn\_flood.c@{syn\_flood.c}!syn\_flood\_print\_usage@{syn\_flood\_print\_usage}}
-\index{syn\_flood\_print\_usage@{syn\_flood\_print\_usage}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{syn\_flood\_print\_usage()}{syn\_flood\_print\_usage()}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!syn\+\_\+flood\+\_\+print\+\_\+usage@{syn\+\_\+flood\+\_\+print\+\_\+usage}}
+\index{syn\+\_\+flood\+\_\+print\+\_\+usage@{syn\+\_\+flood\+\_\+print\+\_\+usage}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{syn\+\_\+flood\+\_\+print\+\_\+usage()}{syn\_flood\_print\_usage()}}
 {\footnotesize\ttfamily void syn\+\_\+flood\+\_\+print\+\_\+usage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
@@ -119,9 +119,9 @@ void
 Definition at line 25 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_acbc3c0f669d530aace96d0db95266597}\label{syn__flood_8c_acbc3c0f669d530aace96d0db95266597}} 
-\index{syn\_flood.c@{syn\_flood.c}!syn\_flood\_time\_check@{syn\_flood\_time\_check}}
-\index{syn\_flood\_time\_check@{syn\_flood\_time\_check}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{syn\_flood\_time\_check()}{syn\_flood\_time\_check()}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!syn\+\_\+flood\+\_\+time\+\_\+check@{syn\+\_\+flood\+\_\+time\+\_\+check}}
+\index{syn\+\_\+flood\+\_\+time\+\_\+check@{syn\+\_\+flood\+\_\+time\+\_\+check}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{syn\+\_\+flood\+\_\+time\+\_\+check()}{syn\_flood\_time\_check()}}
 {\footnotesize\ttfamily void$\ast$ syn\+\_\+flood\+\_\+time\+\_\+check (\begin{DoxyParamCaption}\item[{void $\ast$}]{data }\end{DoxyParamCaption})}
 
 
@@ -133,7 +133,7 @@ syn flooding time check thread
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em data} & thread input, default\+: NULL \\
+\mbox{\tt in}  & {\em data} & thread input, default\+: N\+U\+LL \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -141,7 +141,7 @@ void $\ast$
 \end{DoxyReturn}
 
 \begin{DoxyRetVals}{Return values}
-{\em NULL} & always \\
+{\em N\+U\+LL} & always \\
 \hline
 \end{DoxyRetVals}
 
@@ -150,81 +150,81 @@ Definition at line 84 of file syn\+\_\+flood.\+c.
 
 
 
-\doxysubsection{Variable Documentation}
+\subsection{Variable Documentation}
 \mbox{\Hypertarget{syn__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}\label{syn__flood_8c_a3bf77bbe5d25ed7435e759b80410546f}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_num\_threads@{g\_num\_threads}}
-\index{g\_num\_threads@{g\_num\_threads}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_num\_threads}{g\_num\_threads}}
-{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads\hspace{0.3cm}{\ttfamily [extern]}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+num\+\_\+threads@{g\+\_\+num\+\_\+threads}}
+\index{g\+\_\+num\+\_\+threads@{g\+\_\+num\+\_\+threads}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+num\+\_\+threads}{g\_num\_threads}}
+{\footnotesize\ttfamily int g\+\_\+num\+\_\+threads}
 
 
 
-Definition at line 19 of file main.\+c.
+Definition at line 20 of file main.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_ac55062a1eff6b24b3d0c6b6a5c554c66}\label{syn__flood_8c_ac55062a1eff6b24b3d0c6b6a5c554c66}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_before\_time@{g\_syn\_before\_time}}
-\index{g\_syn\_before\_time@{g\_syn\_before\_time}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_before\_time}{g\_syn\_before\_time}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+before\+\_\+time@{g\+\_\+syn\+\_\+before\+\_\+time}}
+\index{g\+\_\+syn\+\_\+before\+\_\+time@{g\+\_\+syn\+\_\+before\+\_\+time}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+before\+\_\+time}{g\_syn\_before\_time}}
 {\footnotesize\ttfamily struct timespec g\+\_\+syn\+\_\+before\+\_\+time}
 
 
 
-Definition at line 20 of file syn\+\_\+flood.\+c.
+Definition at line 22 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_a96c882bb9d0f2dc10303e270f4b9416b}\label{syn__flood_8c_a96c882bb9d0f2dc10303e270f4b9416b}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_cond@{g\_syn\_cond}}
-\index{g\_syn\_cond@{g\_syn\_cond}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_cond}{g\_syn\_cond}}
-{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+syn\+\_\+cond = PTHREAD\+\_\+\+COND\+\_\+\+INITIALIZER}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+cond@{g\+\_\+syn\+\_\+cond}}
+\index{g\+\_\+syn\+\_\+cond@{g\+\_\+syn\+\_\+cond}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+cond}{g\_syn\_cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t g\+\_\+syn\+\_\+cond = P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER}
 
 
 
 Definition at line 20 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_acb8517b8d6509bf2ab919e12bc92a683}\label{syn__flood_8c_acb8517b8d6509bf2ab919e12bc92a683}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_input@{g\_syn\_input}}
-\index{g\_syn\_input@{g\_syn\_input}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_input}{g\_syn\_input}}
-{\footnotesize\ttfamily \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} g\+\_\+syn\+\_\+input}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+input@{g\+\_\+syn\+\_\+input}}
+\index{g\+\_\+syn\+\_\+input@{g\+\_\+syn\+\_\+input}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+input}{g\_syn\_input}}
+{\footnotesize\ttfamily \hyperlink{struct_input_arguments}{Input\+Arguments} g\+\_\+syn\+\_\+input}
 
 
 
 Definition at line 14 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_af0082c293a0baa125a361fe2a52fc105}\label{syn__flood_8c_af0082c293a0baa125a361fe2a52fc105}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_mutex@{g\_syn\_mutex}}
-\index{g\_syn\_mutex@{g\_syn\_mutex}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_mutex}{g\_syn\_mutex}}
-{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+syn\+\_\+mutex = PTHREAD\+\_\+\+MUTEX\+\_\+\+INITIALIZER}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+mutex@{g\+\_\+syn\+\_\+mutex}}
+\index{g\+\_\+syn\+\_\+mutex@{g\+\_\+syn\+\_\+mutex}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+mutex}{g\_syn\_mutex}}
+{\footnotesize\ttfamily pthread\+\_\+mutex\+\_\+t g\+\_\+syn\+\_\+mutex = P\+T\+H\+R\+E\+A\+D\+\_\+\+M\+U\+T\+E\+X\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER}
 
 
 
 Definition at line 19 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_a611f1bdafa0ab713538af39dbb06a310}\label{syn__flood_8c_a611f1bdafa0ab713538af39dbb06a310}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_now@{g\_syn\_now}}
-\index{g\_syn\_now@{g\_syn\_now}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_now}{g\_syn\_now}}
-{\footnotesize\ttfamily \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} g\+\_\+syn\+\_\+now}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+now@{g\+\_\+syn\+\_\+now}}
+\index{g\+\_\+syn\+\_\+now@{g\+\_\+syn\+\_\+now}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+now}{g\_syn\_now}}
+{\footnotesize\ttfamily \hyperlink{struct_masking_arguments}{Masking\+Arguments} g\+\_\+syn\+\_\+now}
 
 
 
 Definition at line 17 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_af8903dc0e0cb87f344ddb92b5b768bb9}\label{syn__flood_8c_af8903dc0e0cb87f344ddb92b5b768bb9}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_now\_time@{g\_syn\_now\_time}}
-\index{g\_syn\_now\_time@{g\_syn\_now\_time}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_now\_time}{g\_syn\_now\_time}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+now\+\_\+time@{g\+\_\+syn\+\_\+now\+\_\+time}}
+\index{g\+\_\+syn\+\_\+now\+\_\+time@{g\+\_\+syn\+\_\+now\+\_\+time}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+now\+\_\+time}{g\_syn\_now\_time}}
 {\footnotesize\ttfamily struct timespec g\+\_\+syn\+\_\+now\+\_\+time}
 
 
 
-Definition at line 20 of file syn\+\_\+flood.\+c.
+Definition at line 23 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_a32eb1b17a1b5a0a1990dfc66cb68a4c6}\label{syn__flood_8c_a32eb1b17a1b5a0a1990dfc66cb68a4c6}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_num\_generated\_in\_sec@{g\_syn\_num\_generated\_in\_sec}}
-\index{g\_syn\_num\_generated\_in\_sec@{g\_syn\_num\_generated\_in\_sec}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_num\_generated\_in\_sec}{g\_syn\_num\_generated\_in\_sec}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec@{g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}}
+\index{g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec@{g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}{g\_syn\_num\_generated\_in\_sec}}
 {\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+syn\+\_\+num\+\_\+generated\+\_\+in\+\_\+sec}
 
 
@@ -232,9 +232,9 @@ Definition at line 20 of file syn\+\_\+flood.\+c.
 Definition at line 12 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_a9e73648766ccc080c6e2f37943254a1e}\label{syn__flood_8c_a9e73648766ccc080c6e2f37943254a1e}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_num\_total@{g\_syn\_num\_total}}
-\index{g\_syn\_num\_total@{g\_syn\_num\_total}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_num\_total}{g\_syn\_num\_total}}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+num\+\_\+total@{g\+\_\+syn\+\_\+num\+\_\+total}}
+\index{g\+\_\+syn\+\_\+num\+\_\+total@{g\+\_\+syn\+\_\+num\+\_\+total}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+num\+\_\+total}{g\_syn\_num\_total}}
 {\footnotesize\ttfamily \+\_\+\+\_\+u64 g\+\_\+syn\+\_\+num\+\_\+total}
 
 
@@ -242,10 +242,10 @@ Definition at line 12 of file syn\+\_\+flood.\+c.
 Definition at line 11 of file syn\+\_\+flood.\+c.
 
 \mbox{\Hypertarget{syn__flood_8c_addc3cf567dceae2af26fa922b37a5721}\label{syn__flood_8c_addc3cf567dceae2af26fa922b37a5721}} 
-\index{syn\_flood.c@{syn\_flood.c}!g\_syn\_request\_per\_sec@{g\_syn\_request\_per\_sec}}
-\index{g\_syn\_request\_per\_sec@{g\_syn\_request\_per\_sec}!syn\_flood.c@{syn\_flood.c}}
-\doxysubsubsection{\texorpdfstring{g\_syn\_request\_per\_sec}{g\_syn\_request\_per\_sec}}
-{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}
+\index{syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}!g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec@{g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}}
+\index{g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec@{g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}!syn\+\_\+flood.\+c@{syn\+\_\+flood.\+c}}
+\subsubsection{\texorpdfstring{g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}{g\_syn\_request\_per\_sec}}
+{\footnotesize\ttfamily \hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} g\+\_\+syn\+\_\+request\+\_\+per\+\_\+sec}
 
 
 

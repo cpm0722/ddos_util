@@ -1,4 +1,4 @@
-.TH "srcs/ddos/conn_flood.c" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.TH "srcs/ddos/conn_flood.c" 3 "Thu Apr 15 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -80,17 +80,17 @@ srcs/ddos/conn_flood.c
 .PP
 connection flooding main function 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIargv\fP arguments 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -103,12 +103,12 @@ Definition at line 88 of file conn_flood\&.c\&.
 .PP
 print connection flooding usage 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -121,22 +121,22 @@ Definition at line 25 of file conn_flood\&.c\&.
 .PP
 connection flooding time check thread 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIdata\fP thread input, default: NULL 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void * 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fINULL\fP always 
 .RE
@@ -149,22 +149,22 @@ Definition at line 74 of file conn_flood\&.c\&.
 .PP
 connection flooding generate thread 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIdata\fP thread input, default: NULL 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void * 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fINULL\fP always 
 .RE
@@ -177,7 +177,7 @@ Definition at line 33 of file conn_flood\&.c\&.
 .SS "struct timespec g_conn_before_time"
 
 .PP
-Definition at line 20 of file conn_flood\&.c\&.
+Definition at line 22 of file conn_flood\&.c\&.
 .SS "pthread_cond_t g_conn_cond = PTHREAD_COND_INITIALIZER"
 
 .PP
@@ -197,7 +197,7 @@ Definition at line 17 of file conn_flood\&.c\&.
 .SS "struct timespec g_conn_now_time"
 
 .PP
-Definition at line 20 of file conn_flood\&.c\&.
+Definition at line 23 of file conn_flood\&.c\&.
 .SS "__u64 g_conn_num_generated_in_sec"
 
 .PP
@@ -210,10 +210,10 @@ Definition at line 11 of file conn_flood\&.c\&.
 
 .PP
 Definition at line 15 of file conn_flood\&.c\&.
-.SS "int g_num_threads\fC [extern]\fP"
+.SS "int g_num_threads"
 
 .PP
-Definition at line 19 of file main\&.c\&.
+Definition at line 20 of file main\&.c\&.
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for ddos_util from the source code\&.

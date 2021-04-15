@@ -46,7 +46,6 @@ void *generate_header_buffering(void *data)
 	strcpy(get_method,"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
 	int get_method_len = strlen(get_method);
-	printf("LEN : %d\n",get_method_len);
 
 	while (1) {
 		// *** begin of critical section ***

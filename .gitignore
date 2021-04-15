@@ -3,4 +3,5 @@
 *.tmp
 *.a
 *.swp
-.DS_Store
+docs/
+./**/.DS_Store

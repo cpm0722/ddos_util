@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 	struct ip_pair ip_table[MODIFY_MAXIMUM];
 	struct port_pair port_table[MODIFY_MAXIMUM];
 
-
+	short must_args_count = 0;
 
 	for (i = 1; i < argc; i++) {
 
@@ -58,17 +58,23 @@ int main(int argc, char *argv[]) {
 		}
 
 		if (strstr(argv[i], ".pcap") != NULL || strstr(argv[i], ".pcapng"))
+		{
+			filename = argv[i];
+			must_args_count++;
+		}
 			filename = argv[i];
 
 		if (!strcmp(argv[i], "-f")) {
 			manual_mode = 0;
 			i++;
 			modify_filename = argv[i];
+			must_args_count++;
 		}
 
 		if (!strcmp(argv[i], "-dip")) {
 			i++;
 			strcpy(dest_ip_addr, argv[i]);
+			must_args_count++;
 		}
 
 		if (!strcmp(argv[i], "-sip")) {
@@ -79,6 +85,7 @@ int main(int argc, char *argv[]) {
 		if (!strcmp(argv[i], "-p")) {
 			i++;
 			dest_port = atoi(argv[i]);
+			must_args_count++;
 		}
 
 		if(!strcmp(argv[i],"-c"))
@@ -94,6 +101,13 @@ int main(int argc, char *argv[]) {
 		}
 
 	}
+
+	if(must_args_count<3 || must_args_count>4)
+	{
+		printf("Wrong # of arguments, view manual\nUse : ./a.out --help\n");
+		exit(1);
+	}
+
 	char ipA[20];
 	char ipB[20];
 	__u16 portA;

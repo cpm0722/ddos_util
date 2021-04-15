@@ -1,32 +1,32 @@
-\hypertarget{main_8h}{}\doxysection{includes/main.h File Reference}
-\label{main_8h}\index{includes/main.h@{includes/main.h}}
-\doxysubsection*{Functions}
+\hypertarget{main_8h}{}\section{includes/main.h File Reference}
+\label{main_8h}\index{includes/main.\+h@{includes/main.\+h}}
+\subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{main_8h_aea2cbeba978f3953ad1cf5457cc8d319}{get\+\_\+input}} (void)
+void \hyperlink{main_8h_aea2cbeba978f3953ad1cf5457cc8d319}{get\+\_\+input} (void)
 \begin{DoxyCompactList}\small\item\em read stdin g\+\_\+input to with printing a prompt character(\textquotesingle{}\$\textquotesingle{}) \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{main_8h_ae1487e739c1b1b9545ceb1484bb2d6e8}{make\+\_\+tokens}} (void)
+void \hyperlink{main_8h_ae1487e739c1b1b9545ceb1484bb2d6e8}{make\+\_\+tokens} (void)
 \begin{DoxyCompactList}\small\item\em tokenize(seperator \textquotesingle{} \textquotesingle{}) g\+\_\+input to g\+\_\+tokens \end{DoxyCompactList}\item 
-\mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool}} \mbox{\hyperlink{main_8h_a4906e621f79cc9bdd17cfe61d700d6df}{check\+\_\+options}} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
+\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool} \hyperlink{main_8h_a4906e621f79cc9bdd17cfe61d700d6df}{check\+\_\+options} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
 \begin{DoxyCompactList}\small\item\em read argv\mbox{[}\mbox{]} and handle option (-\/r, -\/c, -\/t, --help), decide program\textquotesingle{}s mode (command mode / prompt mode) \end{DoxyCompactList}\item 
-\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} \mbox{\hyperlink{main_8h_a4a4a7ef426034748f13219bc6046c7a4}{argv\+\_\+to\+\_\+tokens}} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
+\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type} \hyperlink{main_8h_a4a4a7ef426034748f13219bc6046c7a4}{argv\+\_\+to\+\_\+tokens} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
 \begin{DoxyCompactList}\small\item\em in command mode, convert argv to g\+\_\+tokens \end{DoxyCompactList}\item 
-\mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} \mbox{\hyperlink{main_8h_ae5268f97b08d8529dc69e7cd8a306c1c}{type\+\_\+choose\+\_\+attack}} (void)
+\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type} \hyperlink{main_8h_ae5268f97b08d8529dc69e7cd8a306c1c}{type\+\_\+choose\+\_\+attack} (void)
 \begin{DoxyCompactList}\small\item\em print attack types and read stdin for choosing \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{main_8h_a73eb533269566775275da2ac91350562}{print\+\_\+logo}} (void)
-\begin{DoxyCompactList}\small\item\em print DDoS Util logo \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{main_8h_a84365b0f701e1f4a7424d21046ae2d24}{print\+\_\+usage}} (char $\ast$argv\mbox{[}$\,$\mbox{]})
+void \hyperlink{main_8h_a73eb533269566775275da2ac91350562}{print\+\_\+logo} (void)
+\begin{DoxyCompactList}\small\item\em print D\+DoS Util logo \end{DoxyCompactList}\item 
+void \hyperlink{main_8h_a84365b0f701e1f4a7424d21046ae2d24}{print\+\_\+usage} (char $\ast$argv\mbox{[}$\,$\mbox{]})
 \begin{DoxyCompactList}\small\item\em print man page when --help option or argument error \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{main_8h_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+int \hyperlink{main_8h_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
 \begin{DoxyCompactList}\small\item\em program\textquotesingle{}s main function \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\doxysubsection{Function Documentation}
+\subsection{Function Documentation}
 \mbox{\Hypertarget{main_8h_a4a4a7ef426034748f13219bc6046c7a4}\label{main_8h_a4a4a7ef426034748f13219bc6046c7a4}} 
-\index{main.h@{main.h}!argv\_to\_tokens@{argv\_to\_tokens}}
-\index{argv\_to\_tokens@{argv\_to\_tokens}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{argv\_to\_tokens()}{argv\_to\_tokens()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} argv\+\_\+to\+\_\+tokens (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
+\index{main.\+h@{main.\+h}!argv\+\_\+to\+\_\+tokens@{argv\+\_\+to\+\_\+tokens}}
+\index{argv\+\_\+to\+\_\+tokens@{argv\+\_\+to\+\_\+tokens}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{argv\+\_\+to\+\_\+tokens()}{argv\_to\_tokens()}}
+{\footnotesize\ttfamily \hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type} argv\+\_\+to\+\_\+tokens (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
 
 
 
@@ -37,9 +37,9 @@ in command mode, convert argv to g\+\_\+tokens
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em argv} & main\textquotesingle{}s argv \\
+\mbox{\tt in}  & {\em argv} & main\textquotesingle{}s argv \\
 \hline
-\mbox{\texttt{ in}}  & {\em argc} & main\textquotesingle{}s argc \\
+\mbox{\tt in}  & {\em argc} & main\textquotesingle{}s argc \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -49,18 +49,18 @@ attack\+\_\+type
 \begin{DoxyRetVals}{Return values}
 {\em 1$\sim$10} & correct atack type (attack\+\_\+type\textquotesingle{}s enum value) \\
 \hline
-{\em 0} & NONE (error occured) \\
+{\em 0} & N\+O\+NE (error occured) \\
 \hline
 \end{DoxyRetVals}
 
 
-Definition at line 107 of file main.\+c.
+Definition at line 108 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_a4906e621f79cc9bdd17cfe61d700d6df}\label{main_8h_a4906e621f79cc9bdd17cfe61d700d6df}} 
-\index{main.h@{main.h}!check\_options@{check\_options}}
-\index{check\_options@{check\_options}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{check\_options()}{check\_options()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool}} check\+\_\+options (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
+\index{main.\+h@{main.\+h}!check\+\_\+options@{check\+\_\+options}}
+\index{check\+\_\+options@{check\+\_\+options}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{check\+\_\+options()}{check\_options()}}
+{\footnotesize\ttfamily \hyperlink{header_8h_af6a258d8f3ee5206d682d799316314b1}{bool} check\+\_\+options (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
 
 
 
@@ -71,9 +71,9 @@ read argv\mbox{[}\mbox{]} and handle option (-\/r, -\/c, -\/t, --help), decide p
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em argv} & main\textquotesingle{}s argv \\
+\mbox{\tt in}  & {\em argv} & main\textquotesingle{}s argv \\
 \hline
-\mbox{\texttt{ in}}  & {\em argc} & main\textquotesingle{}s argc \\
+\mbox{\tt in}  & {\em argc} & main\textquotesingle{}s argc \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -88,12 +88,12 @@ bool
 \end{DoxyRetVals}
 
 
-Definition at line 83 of file main.\+c.
+Definition at line 84 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_aea2cbeba978f3953ad1cf5457cc8d319}\label{main_8h_aea2cbeba978f3953ad1cf5457cc8d319}} 
-\index{main.h@{main.h}!get\_input@{get\_input}}
-\index{get\_input@{get\_input}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{get\_input()}{get\_input()}}
+\index{main.\+h@{main.\+h}!get\+\_\+input@{get\+\_\+input}}
+\index{get\+\_\+input@{get\+\_\+input}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+input()}{get\_input()}}
 {\footnotesize\ttfamily void get\+\_\+input (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
@@ -108,12 +108,12 @@ void
 \end{DoxyReturn}
 
 
-Definition at line 62 of file main.\+c.
+Definition at line 63 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_a0ddf1224851353fc92bfbff6f499fa97}\label{main_8h_a0ddf1224851353fc92bfbff6f499fa97}} 
-\index{main.h@{main.h}!main@{main}}
-\index{main@{main}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{main()}{main()}}
+\index{main.\+h@{main.\+h}!main@{main}}
+\index{main@{main}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{main()}{main()}}
 {\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
 
 
@@ -125,9 +125,9 @@ program\textquotesingle{}s main function
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em argv} & argument vectors \\
+\mbox{\tt in}  & {\em argv} & argument vectors \\
 \hline
-\mbox{\texttt{ in}}  & {\em argc} & argument count \\
+\mbox{\tt in}  & {\em argc} & argument count \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -142,12 +142,12 @@ int
 \end{DoxyRetVals}
 
 
-Definition at line 320 of file main.\+c.
+Definition at line 321 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_ae1487e739c1b1b9545ceb1484bb2d6e8}\label{main_8h_ae1487e739c1b1b9545ceb1484bb2d6e8}} 
-\index{main.h@{main.h}!make\_tokens@{make\_tokens}}
-\index{make\_tokens@{make\_tokens}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{make\_tokens()}{make\_tokens()}}
+\index{main.\+h@{main.\+h}!make\+\_\+tokens@{make\+\_\+tokens}}
+\index{make\+\_\+tokens@{make\+\_\+tokens}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{make\+\_\+tokens()}{make\_tokens()}}
 {\footnotesize\ttfamily void make\+\_\+tokens (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
@@ -162,17 +162,17 @@ void
 \end{DoxyReturn}
 
 
-Definition at line 69 of file main.\+c.
+Definition at line 70 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_a73eb533269566775275da2ac91350562}\label{main_8h_a73eb533269566775275da2ac91350562}} 
-\index{main.h@{main.h}!print\_logo@{print\_logo}}
-\index{print\_logo@{print\_logo}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{print\_logo()}{print\_logo()}}
+\index{main.\+h@{main.\+h}!print\+\_\+logo@{print\+\_\+logo}}
+\index{print\+\_\+logo@{print\+\_\+logo}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{print\+\_\+logo()}{print\_logo()}}
 {\footnotesize\ttfamily void print\+\_\+logo (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
 
-print DDoS Util logo 
+print D\+DoS Util logo 
 
 \begin{DoxyDate}{Date}
 2021/04/12 
@@ -182,12 +182,12 @@ void
 \end{DoxyReturn}
 
 
-Definition at line 213 of file main.\+c.
+Definition at line 214 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_a84365b0f701e1f4a7424d21046ae2d24}\label{main_8h_a84365b0f701e1f4a7424d21046ae2d24}} 
-\index{main.h@{main.h}!print\_usage@{print\_usage}}
-\index{print\_usage@{print\_usage}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{print\_usage()}{print\_usage()}}
+\index{main.\+h@{main.\+h}!print\+\_\+usage@{print\+\_\+usage}}
+\index{print\+\_\+usage@{print\+\_\+usage}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{print\+\_\+usage()}{print\_usage()}}
 {\footnotesize\ttfamily void print\+\_\+usage (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
 
 
@@ -202,13 +202,13 @@ void
 \end{DoxyReturn}
 
 
-Definition at line 272 of file main.\+c.
+Definition at line 273 of file main.\+c.
 
 \mbox{\Hypertarget{main_8h_ae5268f97b08d8529dc69e7cd8a306c1c}\label{main_8h_ae5268f97b08d8529dc69e7cd8a306c1c}} 
-\index{main.h@{main.h}!type\_choose\_attack@{type\_choose\_attack}}
-\index{type\_choose\_attack@{type\_choose\_attack}!main.h@{main.h}}
-\doxysubsubsection{\texorpdfstring{type\_choose\_attack()}{type\_choose\_attack()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type}} type\+\_\+choose\+\_\+attack (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+\index{main.\+h@{main.\+h}!type\+\_\+choose\+\_\+attack@{type\+\_\+choose\+\_\+attack}}
+\index{type\+\_\+choose\+\_\+attack@{type\+\_\+choose\+\_\+attack}!main.\+h@{main.\+h}}
+\subsubsection{\texorpdfstring{type\+\_\+choose\+\_\+attack()}{type\_choose\_attack()}}
+{\footnotesize\ttfamily \hyperlink{header_8h_ad63626a764d821e818fb2d3e23e6993e}{attack\+\_\+type} type\+\_\+choose\+\_\+attack (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
 
@@ -224,10 +224,10 @@ int
 \begin{DoxyRetVals}{Return values}
 {\em 1$\sim$10} & correct atack type (attack\+\_\+type\textquotesingle{}s enum value) \\
 \hline
-{\em 0} & NONE (error occured) \\
+{\em 0} & N\+O\+NE (error occured) \\
 \hline
 \end{DoxyRetVals}
 
 
-Definition at line 183 of file main.\+c.
+Definition at line 184 of file main.\+c.
 

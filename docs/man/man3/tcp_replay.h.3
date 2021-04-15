@@ -1,4 +1,4 @@
-.TH "srcs/tcpreplay/tcp_replay.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.TH "srcs/tcpreplay/tcp_replay.h" 3 "Thu Apr 15 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -206,59 +206,59 @@ Definition at line 87 of file tcp_replay\&.h\&.
 .SS "char* get_masked_ip_addr (char * current, \fB__u8\fP mask)"
 
 .PP
-Definition at line 721 of file tcp_replay\&.c\&.
+Definition at line 739 of file tcp_replay\&.c\&.
 .SS "int ip_pair_exist_check (struct \fBip_pair\fP * pairs, struct \fBip_pair\fP new_pair, int count)"
 
 .PP
-Definition at line 615 of file tcp_replay\&.c\&.
+Definition at line 633 of file tcp_replay\&.c\&.
 .SS "int ip_pair_match_check (struct \fBip_pair\fP pair1, struct \fBip_pair\fP pair2)"
 
 .PP
-Definition at line 596 of file tcp_replay\&.c\&.
+Definition at line 614 of file tcp_replay\&.c\&.
 .SS "int ip_table_check (struct \fBip_pair\fP * table, char ip[16], int size)"
 
 .PP
-Definition at line 627 of file tcp_replay\&.c\&.
+Definition at line 645 of file tcp_replay\&.c\&.
 .SS "struct \fBip_pair\fP* ip_table_element_to_end (struct \fBip_pair\fP * table_p, int index, int size)"
 
 .PP
-Definition at line 639 of file tcp_replay\&.c\&.
+Definition at line 657 of file tcp_replay\&.c\&.
 .SS "int port_pair_exist_check (struct \fBport_pair\fP * pairs, struct \fBport_pair\fP new_pair, int count)"
 
 .PP
-Definition at line 675 of file tcp_replay\&.c\&.
+Definition at line 693 of file tcp_replay\&.c\&.
 .SS "int port_pair_match_check (struct \fBport_pair\fP pair1, struct \fBport_pair\fP pair2)"
 
 .PP
-Definition at line 657 of file tcp_replay\&.c\&.
+Definition at line 675 of file tcp_replay\&.c\&.
 .SS "int port_table_check (struct \fBport_pair\fP * table, \fB__u8\fP port, int size)"
 
 .PP
-Definition at line 688 of file tcp_replay\&.c\&.
+Definition at line 706 of file tcp_replay\&.c\&.
 .SS "struct \fBport_pair\fP* port_table_element_to_end (struct \fBport_pair\fP * table_p, int index, int size)"
 
 .PP
-Definition at line 700 of file tcp_replay\&.c\&.
+Definition at line 718 of file tcp_replay\&.c\&.
 .SS "int session_exist_check (struct \fBsession\fP * session_list, \fB__u16\fP session_num, struct \fBsession\fP a_session)"
 
 .PP
-Definition at line 566 of file tcp_replay\&.c\&.
+Definition at line 584 of file tcp_replay\&.c\&.
 .SS "int session_match_check (struct \fBsession\fP a_session, struct \fBsession\fP b_session)"
 
 .PP
-Definition at line 541 of file tcp_replay\&.c\&.
+Definition at line 559 of file tcp_replay\&.c\&.
 .SS "int session_table_check (struct \fBsession\fP * session_list, \fB__u16\fP session_num, struct \fBsession\fP a_session)"
 
 .PP
-Definition at line 583 of file tcp_replay\&.c\&.
-.SS "u_short tcp_get_checksum_for_tcp_replay (struct \fBsniff_tcp\fP * snifftcp, char * data, int datasize)"
+Definition at line 601 of file tcp_replay\&.c\&.
+.SS "u_short tcp_get_checksum_for_tcp_replay (struct \fBsniff_tcp\fP *, char * data, int datasize)"
 
 .PP
-Definition at line 792 of file tcp_replay\&.c\&.
+Definition at line 810 of file tcp_replay\&.c\&.
 .SS "void* tcpreplay_thread ()"
 
 .PP
-Definition at line 828 of file tcp_replay\&.c\&.
+Definition at line 846 of file tcp_replay\&.c\&.
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for ddos_util from the source code\&.

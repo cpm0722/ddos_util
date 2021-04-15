@@ -44,8 +44,8 @@ void *generate_syn_flood(void *data)
 		struct iphdr ipv4_h;
 		ipv4_h = prepare_empty_ipv4();
 		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_syn_input.src));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_syn_input.dest));
+		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_syn_now.src));
+		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_syn_now.dest));
 		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct tcphdr));
 		// make tcp header.
 		struct tcphdr tcp_h;

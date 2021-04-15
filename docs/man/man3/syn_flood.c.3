@@ -1,4 +1,4 @@
-.TH "srcs/ddos/syn_flood.c" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.TH "srcs/ddos/syn_flood.c" 3 "Thu Apr 15 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -80,22 +80,22 @@ srcs/ddos/syn_flood.c
 .PP
 syn flooding generate thread 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIdata\fP thread input, default: NULL 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void * 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fINULL\fP always 
 .RE
@@ -108,17 +108,17 @@ Definition at line 32 of file syn_flood\&.c\&.
 .PP
 syn flooding main function 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIargv\fP arguments 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -131,12 +131,12 @@ Definition at line 98 of file syn_flood\&.c\&.
 .PP
 print syn flooding usage 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -149,22 +149,22 @@ Definition at line 25 of file syn_flood\&.c\&.
 .PP
 syn flooding time check thread 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/03/08 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIdata\fP thread input, default: NULL 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void * 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fINULL\fP always 
 .RE
@@ -174,14 +174,14 @@ void *
 Definition at line 84 of file syn_flood\&.c\&.
 .SH "Variable Documentation"
 .PP 
-.SS "int g_num_threads\fC [extern]\fP"
+.SS "int g_num_threads"
 
 .PP
-Definition at line 19 of file main\&.c\&.
+Definition at line 20 of file main\&.c\&.
 .SS "struct timespec g_syn_before_time"
 
 .PP
-Definition at line 20 of file syn_flood\&.c\&.
+Definition at line 22 of file syn_flood\&.c\&.
 .SS "pthread_cond_t g_syn_cond = PTHREAD_COND_INITIALIZER"
 
 .PP
@@ -201,7 +201,7 @@ Definition at line 17 of file syn_flood\&.c\&.
 .SS "struct timespec g_syn_now_time"
 
 .PP
-Definition at line 20 of file syn_flood\&.c\&.
+Definition at line 23 of file syn_flood\&.c\&.
 .SS "__u64 g_syn_num_generated_in_sec"
 
 .PP

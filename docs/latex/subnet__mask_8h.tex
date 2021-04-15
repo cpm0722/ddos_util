@@ -1,39 +1,39 @@
-\hypertarget{subnet__mask_8h}{}\doxysection{includes/base/subnet\+\_\+mask.h File Reference}
-\label{subnet__mask_8h}\index{includes/base/subnet\_mask.h@{includes/base/subnet\_mask.h}}
-\doxysubsection*{Macros}
+\hypertarget{subnet__mask_8h}{}\section{includes/base/subnet\+\_\+mask.h File Reference}
+\label{subnet__mask_8h}\index{includes/base/subnet\+\_\+mask.\+h@{includes/base/subnet\+\_\+mask.\+h}}
+\subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \mbox{\hyperlink{subnet__mask_8h_acd23e7d6f54f5c0b0a7fe347fc25b4f0}{BIT\+\_\+32\+\_\+\+MAX\+\_\+\+VAL}}~0xffffffff
+\#define \hyperlink{subnet__mask_8h_acd23e7d6f54f5c0b0a7fe347fc25b4f0}{B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL}~0xffffffff
 \begin{DoxyCompactList}\small\item\em 32bit maximum value \end{DoxyCompactList}\item 
-\#define \mbox{\hyperlink{subnet__mask_8h_ae3216b158d380cd2fe257d8bd66f27aa}{BYTE\+\_\+\+MAX\+\_\+\+VAL}}~0xff
+\#define \hyperlink{subnet__mask_8h_ae3216b158d380cd2fe257d8bd66f27aa}{B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL}~0xff
 \begin{DoxyCompactList}\small\item\em 1byte maximum value \end{DoxyCompactList}\item 
-\#define \mbox{\hyperlink{subnet__mask_8h_ab8fb6d43460108df25e10bd72c627f7b}{BYTE\+\_\+\+LEN}}~8
+\#define \hyperlink{subnet__mask_8h_ab8fb6d43460108df25e10bd72c627f7b}{B\+Y\+T\+E\+\_\+\+L\+EN}~8
 \begin{DoxyCompactList}\small\item\em bit per byte \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsection*{Functions}
+\subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{subnet__mask_8h_a3f5d40f2bc7f170f6dbd0949810c1958}{get\+\_\+addr\+\_\+val}} (\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$str)
-\begin{DoxyCompactList}\small\item\em change ipv4 format\+: string(XXX.\+XXX.\+XXX.\+XXX) -\/$>$ \+\_\+\+\_\+u32 \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{subnet__mask_8h_a5ad316d7e8a66599dfcc780cde12f2d1}{get\+\_\+addr\+\_\+str}} (\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} val, \mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} str\mbox{[}IPV4\+\_\+\+STR\+\_\+\+LEN\mbox{]})
-\begin{DoxyCompactList}\small\item\em change ipv4 format\+: \+\_\+\+\_\+32 -\/$>$ string(XXX.\+XXX.\+XXX.\+XXX) \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{subnet__mask_8h_a07a2aab119730de0c50c9f55d4e49078}{masking\+\_\+next\+\_\+ip\+\_\+addr}} (\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$ipv4, \mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} now\mbox{[}IPV4\+\_\+\+STR\+\_\+\+LEN\mbox{]}, \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} mask)
+\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} \hyperlink{subnet__mask_8h_a3f5d40f2bc7f170f6dbd0949810c1958}{get\+\_\+addr\+\_\+val} (\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$str)
+\begin{DoxyCompactList}\small\item\em change ipv4 format\+: string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) -\/$>$ \+\_\+\+\_\+u32 \end{DoxyCompactList}\item 
+void \hyperlink{subnet__mask_8h_ab56ed53cf9bc6750a42820d643c8455c}{get\+\_\+addr\+\_\+str} (\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} val, \hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} str\mbox{[}\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{I\+P\+V4\+\_\+\+S\+T\+R\+L\+EN}\mbox{]})
+\begin{DoxyCompactList}\small\item\em change ipv4 format\+: \+\_\+\+\_\+32 -\/$>$ string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) \end{DoxyCompactList}\item 
+int \hyperlink{subnet__mask_8h_aea3b82bca98f23fe5ce670703dd18db4}{masking\+\_\+next\+\_\+ip\+\_\+addr} (\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$ipv4, \hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} now\mbox{[}\hyperlink{header_8h_ad5057f0ae40bc5ff36e7c9e65ea6c457}{I\+P\+V4\+\_\+\+S\+T\+R\+L\+EN}\mbox{]}, \hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} mask)
 \begin{DoxyCompactList}\small\item\em update now ipv4 to next ipv4 with subnet masking value \end{DoxyCompactList}\item 
-\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} \mbox{\hyperlink{subnet__mask_8h_affa6d6fe3904c0cca14f4e5ea318f281}{get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr}} (\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$ipv4)
-\begin{DoxyCompactList}\small\item\em get subnet masking value from masking ipv4 string(XXX.\+XXX.\+XXX.\+XXX/\+XX) \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{subnet__mask_8h_a647800f827aeef6de50ed3c5ba292be3}{get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr}} (\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$ipv4, \mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$now)
-\begin{DoxyCompactList}\small\item\em get ipv4 str(XXX.\+XXX.\+XXX.\+XXX) from masking ipv4 str(XXX.\+XXX.\+XXX.\+XXX/\+XX) \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{subnet__mask_8h_a5d35b26314a810825ca70617367f7c53}{argv\+\_\+to\+\_\+input\+\_\+arguments}} (char $\ast$argv\mbox{[}$\,$\mbox{]}, \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} $\ast$input)
+\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} \hyperlink{subnet__mask_8h_affa6d6fe3904c0cca14f4e5ea318f281}{get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr} (\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$ipv4)
+\begin{DoxyCompactList}\small\item\em get subnet masking value from masking ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX/\+XX) \end{DoxyCompactList}\item 
+void \hyperlink{subnet__mask_8h_a647800f827aeef6de50ed3c5ba292be3}{get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr} (\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$ipv4, \hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$now)
+\begin{DoxyCompactList}\small\item\em get ipv4 str(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) from masking ipv4 str(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX/\+XX) \end{DoxyCompactList}\item 
+int \hyperlink{subnet__mask_8h_a5d35b26314a810825ca70617367f7c53}{argv\+\_\+to\+\_\+input\+\_\+arguments} (char $\ast$argv\mbox{[}$\,$\mbox{]}, \hyperlink{struct_input_arguments}{Input\+Arguments} $\ast$input)
 \begin{DoxyCompactList}\small\item\em split argv to arguments(ipv4, masking, port) \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{subnet__mask_8h_a7fe907cdface46e9b0cde3703749ad8b}{get\+\_\+masking\+\_\+arguments}} (\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} $\ast$input, \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} $\ast$now)
-\begin{DoxyCompactList}\small\item\em get next \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments(ipv4, masking, port)}} using \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+int \hyperlink{subnet__mask_8h_a7fe907cdface46e9b0cde3703749ad8b}{get\+\_\+masking\+\_\+arguments} (\hyperlink{struct_input_arguments}{Input\+Arguments} $\ast$input, \hyperlink{struct_masking_arguments}{Masking\+Arguments} $\ast$now)
+\begin{DoxyCompactList}\small\item\em get next \hyperlink{struct_masking_arguments}{Masking\+Arguments(ipv4, masking, port)} using \hyperlink{struct_input_arguments}{Input\+Arguments} \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\doxysubsection{Macro Definition Documentation}
+\subsection{Macro Definition Documentation}
 \mbox{\Hypertarget{subnet__mask_8h_acd23e7d6f54f5c0b0a7fe347fc25b4f0}\label{subnet__mask_8h_acd23e7d6f54f5c0b0a7fe347fc25b4f0}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!BIT\_32\_MAX\_VAL@{BIT\_32\_MAX\_VAL}}
-\index{BIT\_32\_MAX\_VAL@{BIT\_32\_MAX\_VAL}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{BIT\_32\_MAX\_VAL}{BIT\_32\_MAX\_VAL}}
-{\footnotesize\ttfamily \#define BIT\+\_\+32\+\_\+\+MAX\+\_\+\+VAL~0xffffffff}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL@{B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL}}
+\index{B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL@{B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL}{BIT\_32\_MAX\_VAL}}
+{\footnotesize\ttfamily \#define B\+I\+T\+\_\+32\+\_\+\+M\+A\+X\+\_\+\+V\+AL~0xffffffff}
 
 
 
@@ -44,10 +44,10 @@ int \mbox{\hyperlink{subnet__mask_8h_a7fe907cdface46e9b0cde3703749ad8b}{get\+\_\
 Definition at line 6 of file subnet\+\_\+mask.\+h.
 
 \mbox{\Hypertarget{subnet__mask_8h_ab8fb6d43460108df25e10bd72c627f7b}\label{subnet__mask_8h_ab8fb6d43460108df25e10bd72c627f7b}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!BYTE\_LEN@{BYTE\_LEN}}
-\index{BYTE\_LEN@{BYTE\_LEN}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{BYTE\_LEN}{BYTE\_LEN}}
-{\footnotesize\ttfamily \#define BYTE\+\_\+\+LEN~8}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!B\+Y\+T\+E\+\_\+\+L\+EN@{B\+Y\+T\+E\+\_\+\+L\+EN}}
+\index{B\+Y\+T\+E\+\_\+\+L\+EN@{B\+Y\+T\+E\+\_\+\+L\+EN}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{B\+Y\+T\+E\+\_\+\+L\+EN}{BYTE\_LEN}}
+{\footnotesize\ttfamily \#define B\+Y\+T\+E\+\_\+\+L\+EN~8}
 
 
 
@@ -58,10 +58,10 @@ bit per byte
 Definition at line 10 of file subnet\+\_\+mask.\+h.
 
 \mbox{\Hypertarget{subnet__mask_8h_ae3216b158d380cd2fe257d8bd66f27aa}\label{subnet__mask_8h_ae3216b158d380cd2fe257d8bd66f27aa}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!BYTE\_MAX\_VAL@{BYTE\_MAX\_VAL}}
-\index{BYTE\_MAX\_VAL@{BYTE\_MAX\_VAL}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{BYTE\_MAX\_VAL}{BYTE\_MAX\_VAL}}
-{\footnotesize\ttfamily \#define BYTE\+\_\+\+MAX\+\_\+\+VAL~0xff}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL@{B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL}}
+\index{B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL@{B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL}{BYTE\_MAX\_VAL}}
+{\footnotesize\ttfamily \#define B\+Y\+T\+E\+\_\+\+M\+A\+X\+\_\+\+V\+AL~0xff}
 
 
 
@@ -73,12 +73,12 @@ Definition at line 8 of file subnet\+\_\+mask.\+h.
 
 
 
-\doxysubsection{Function Documentation}
+\subsection{Function Documentation}
 \mbox{\Hypertarget{subnet__mask_8h_a5d35b26314a810825ca70617367f7c53}\label{subnet__mask_8h_a5d35b26314a810825ca70617367f7c53}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!argv\_to\_input\_arguments@{argv\_to\_input\_arguments}}
-\index{argv\_to\_input\_arguments@{argv\_to\_input\_arguments}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{argv\_to\_input\_arguments()}{argv\_to\_input\_arguments()}}
-{\footnotesize\ttfamily int argv\+\_\+to\+\_\+input\+\_\+arguments (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} $\ast$}]{input }\end{DoxyParamCaption})}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!argv\+\_\+to\+\_\+input\+\_\+arguments@{argv\+\_\+to\+\_\+input\+\_\+arguments}}
+\index{argv\+\_\+to\+\_\+input\+\_\+arguments@{argv\+\_\+to\+\_\+input\+\_\+arguments}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{argv\+\_\+to\+\_\+input\+\_\+arguments()}{argv\_to\_input\_arguments()}}
+{\footnotesize\ttfamily int argv\+\_\+to\+\_\+input\+\_\+arguments (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{\hyperlink{struct_input_arguments}{Input\+Arguments} $\ast$}]{input }\end{DoxyParamCaption})}
 
 
 
@@ -89,9 +89,9 @@ split argv to arguments(ipv4, masking, port)
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em argv} & argument vectors from main(in command mode) or stdin(in prompt mode) \\
+\mbox{\tt in}  & {\em argv} & argument vectors from main(in command mode) or stdin(in prompt mode) \\
 \hline
-\mbox{\texttt{ out}}  & {\em input} & \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} structure \\
+\mbox{\tt out}  & {\em input} & \hyperlink{struct_input_arguments}{Input\+Arguments} structure \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -106,24 +106,24 @@ int
 
 Definition at line 144 of file subnet\+\_\+mask.\+c.
 
-\mbox{\Hypertarget{subnet__mask_8h_a5ad316d7e8a66599dfcc780cde12f2d1}\label{subnet__mask_8h_a5ad316d7e8a66599dfcc780cde12f2d1}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!get\_addr\_str@{get\_addr\_str}}
-\index{get\_addr\_str@{get\_addr\_str}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{get\_addr\_str()}{get\_addr\_str()}}
-{\footnotesize\ttfamily void get\+\_\+addr\+\_\+str (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{val,  }\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}}}]{str\mbox{[}\+IPV4\+\_\+\+STR\+\_\+\+LEN\mbox{]} }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{subnet__mask_8h_ab56ed53cf9bc6750a42820d643c8455c}\label{subnet__mask_8h_ab56ed53cf9bc6750a42820d643c8455c}} 
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!get\+\_\+addr\+\_\+str@{get\+\_\+addr\+\_\+str}}
+\index{get\+\_\+addr\+\_\+str@{get\+\_\+addr\+\_\+str}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+addr\+\_\+str()}{get\_addr\_str()}}
+{\footnotesize\ttfamily void get\+\_\+addr\+\_\+str (\begin{DoxyParamCaption}\item[{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}]{val,  }\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}}]{str\mbox{[}\+I\+P\+V4\+\_\+\+S\+T\+R\+L\+E\+N\mbox{]} }\end{DoxyParamCaption})}
 
 
 
-change ipv4 format\+: \+\_\+\+\_\+32 -\/$>$ string(XXX.\+XXX.\+XXX.\+XXX) 
+change ipv4 format\+: \+\_\+\+\_\+32 -\/$>$ string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) 
 
 \begin{DoxyDate}{Date}
 2021/04/03 
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em val} & ipv4 32bit value \\
+\mbox{\tt in}  & {\em val} & ipv4 32bit value \\
 \hline
-\mbox{\texttt{ out}}  & {\em str} & ipv4 string(XXX.\+XXX.\+XXX.\+XXX) \\
+\mbox{\tt out}  & {\em str} & ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -134,21 +134,21 @@ void
 Definition at line 19 of file subnet\+\_\+mask.\+c.
 
 \mbox{\Hypertarget{subnet__mask_8h_a3f5d40f2bc7f170f6dbd0949810c1958}\label{subnet__mask_8h_a3f5d40f2bc7f170f6dbd0949810c1958}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!get\_addr\_val@{get\_addr\_val}}
-\index{get\_addr\_val@{get\_addr\_val}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{get\_addr\_val()}{get\_addr\_val()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} get\+\_\+addr\+\_\+val (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$}]{str }\end{DoxyParamCaption})}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!get\+\_\+addr\+\_\+val@{get\+\_\+addr\+\_\+val}}
+\index{get\+\_\+addr\+\_\+val@{get\+\_\+addr\+\_\+val}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+addr\+\_\+val()}{get\_addr\_val()}}
+{\footnotesize\ttfamily \hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} get\+\_\+addr\+\_\+val (\begin{DoxyParamCaption}\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$}]{str }\end{DoxyParamCaption})}
 
 
 
-change ipv4 format\+: string(XXX.\+XXX.\+XXX.\+XXX) -\/$>$ \+\_\+\+\_\+u32 
+change ipv4 format\+: string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) -\/$>$ \+\_\+\+\_\+u32 
 
 \begin{DoxyDate}{Date}
 2021/04/03 
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em str} & ipv4 string(XXX.\+XXX.\+XXX.\+XXX) \\
+\mbox{\tt in}  & {\em str} & ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -164,23 +164,23 @@ change ipv4 format\+: string(XXX.\+XXX.\+XXX.\+XXX) -\/$>$ \+\_\+\+\_\+u32
 Definition at line 4 of file subnet\+\_\+mask.\+c.
 
 \mbox{\Hypertarget{subnet__mask_8h_a647800f827aeef6de50ed3c5ba292be3}\label{subnet__mask_8h_a647800f827aeef6de50ed3c5ba292be3}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!get\_ip\_from\_ip\_addr@{get\_ip\_from\_ip\_addr}}
-\index{get\_ip\_from\_ip\_addr@{get\_ip\_from\_ip\_addr}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{get\_ip\_from\_ip\_addr()}{get\_ip\_from\_ip\_addr()}}
-{\footnotesize\ttfamily void get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$}]{ipv4,  }\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$}]{now }\end{DoxyParamCaption})}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr@{get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr}}
+\index{get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr@{get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr()}{get\_ip\_from\_ip\_addr()}}
+{\footnotesize\ttfamily void get\+\_\+ip\+\_\+from\+\_\+ip\+\_\+addr (\begin{DoxyParamCaption}\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$}]{ipv4,  }\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$}]{now }\end{DoxyParamCaption})}
 
 
 
-get ipv4 str(XXX.\+XXX.\+XXX.\+XXX) from masking ipv4 str(XXX.\+XXX.\+XXX.\+XXX/\+XX) 
+get ipv4 str(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) from masking ipv4 str(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX/\+XX) 
 
 \begin{DoxyDate}{Date}
 2021/04/03 
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em ipv4} & initial input of ipv4/mask string(XXX.\+XXX.\+XXX.\+XXX/\+XX) \\
+\mbox{\tt in}  & {\em ipv4} & initial input of ipv4/mask string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX/\+XX) \\
 \hline
-\mbox{\texttt{ out}}  & {\em now} & now ipv4 string(XXX.\+XXX.\+XXX.\+XXX) \\
+\mbox{\tt out}  & {\em now} & now ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -191,21 +191,21 @@ void
 Definition at line 75 of file subnet\+\_\+mask.\+c.
 
 \mbox{\Hypertarget{subnet__mask_8h_affa6d6fe3904c0cca14f4e5ea318f281}\label{subnet__mask_8h_affa6d6fe3904c0cca14f4e5ea318f281}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!get\_mask\_from\_ip\_addr@{get\_mask\_from\_ip\_addr}}
-\index{get\_mask\_from\_ip\_addr@{get\_mask\_from\_ip\_addr}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{get\_mask\_from\_ip\_addr()}{get\_mask\_from\_ip\_addr()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}} get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$}]{ipv4 }\end{DoxyParamCaption})}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr@{get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr}}
+\index{get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr@{get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr()}{get\_mask\_from\_ip\_addr()}}
+{\footnotesize\ttfamily \hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32} get\+\_\+mask\+\_\+from\+\_\+ip\+\_\+addr (\begin{DoxyParamCaption}\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$}]{ipv4 }\end{DoxyParamCaption})}
 
 
 
-get subnet masking value from masking ipv4 string(XXX.\+XXX.\+XXX.\+XXX/\+XX) 
+get subnet masking value from masking ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX/\+XX) 
 
 \begin{DoxyDate}{Date}
 2021/04/03 
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em ipv4} & initial input of ipv4/mask string(XXX.\+XXX.\+XXX.\+XXX/\+XX) \\
+\mbox{\tt in}  & {\em ipv4} & initial input of ipv4/mask string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX/\+XX) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -221,42 +221,32 @@ get subnet masking value from masking ipv4 string(XXX.\+XXX.\+XXX.\+XXX/\+XX)
 Definition at line 58 of file subnet\+\_\+mask.\+c.
 
 \mbox{\Hypertarget{subnet__mask_8h_a7fe907cdface46e9b0cde3703749ad8b}\label{subnet__mask_8h_a7fe907cdface46e9b0cde3703749ad8b}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!get\_masking\_arguments@{get\_masking\_arguments}}
-\index{get\_masking\_arguments@{get\_masking\_arguments}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{get\_masking\_arguments()}{get\_masking\_arguments()}}
-{\footnotesize\ttfamily int get\+\_\+masking\+\_\+arguments (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} $\ast$}]{input,  }\item[{\mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments}} $\ast$}]{now }\end{DoxyParamCaption})}
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!get\+\_\+masking\+\_\+arguments@{get\+\_\+masking\+\_\+arguments}}
+\index{get\+\_\+masking\+\_\+arguments@{get\+\_\+masking\+\_\+arguments}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+masking\+\_\+arguments()}{get\_masking\_arguments()}}
+{\footnotesize\ttfamily int get\+\_\+masking\+\_\+arguments (\begin{DoxyParamCaption}\item[{\hyperlink{struct_input_arguments}{Input\+Arguments} $\ast$}]{input,  }\item[{\hyperlink{struct_masking_arguments}{Masking\+Arguments} $\ast$}]{now }\end{DoxyParamCaption})}
 
 
 
-get next \mbox{\hyperlink{struct_masking_arguments}{Masking\+Arguments(ipv4, masking, port)}} using \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} 
+get next \hyperlink{struct_masking_arguments}{Masking\+Arguments(ipv4, masking, port)} using \hyperlink{struct_input_arguments}{Input\+Arguments} 
 
 \begin{DoxyDate}{Date}
 2021/04/03 
 \end{DoxyDate}
 
-\begin{DoxyParams}[1]{Parameters}
- & {\em \mbox{[}in/out\mbox{]}} & input \mbox{\hyperlink{struct_input_arguments}{Input\+Arguments}} structure \\
-\hline
-\mbox{\texttt{ out}}  & {\em now} & Masking\+Argument structure \\
+\begin{DoxyParams}{Parameters}
+{\em } & \\
 \hline
 \end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-int 
-\end{DoxyReturn}
-
-\begin{DoxyRetVals}{Return values}
-{\em always} & 0 (normal exit) \\
-\hline
-\end{DoxyRetVals}
 
 
 Definition at line 165 of file subnet\+\_\+mask.\+c.
 
-\mbox{\Hypertarget{subnet__mask_8h_a07a2aab119730de0c50c9f55d4e49078}\label{subnet__mask_8h_a07a2aab119730de0c50c9f55d4e49078}} 
-\index{subnet\_mask.h@{subnet\_mask.h}!masking\_next\_ip\_addr@{masking\_next\_ip\_addr}}
-\index{masking\_next\_ip\_addr@{masking\_next\_ip\_addr}!subnet\_mask.h@{subnet\_mask.h}}
-\doxysubsubsection{\texorpdfstring{masking\_next\_ip\_addr()}{masking\_next\_ip\_addr()}}
-{\footnotesize\ttfamily int masking\+\_\+next\+\_\+ip\+\_\+addr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}} $\ast$}]{ipv4,  }\item[{\mbox{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}}}]{now\mbox{[}\+IPV4\+\_\+\+STR\+\_\+\+LEN\mbox{]},  }\item[{\mbox{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}}]{mask }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{subnet__mask_8h_aea3b82bca98f23fe5ce670703dd18db4}\label{subnet__mask_8h_aea3b82bca98f23fe5ce670703dd18db4}} 
+\index{subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}!masking\+\_\+next\+\_\+ip\+\_\+addr@{masking\+\_\+next\+\_\+ip\+\_\+addr}}
+\index{masking\+\_\+next\+\_\+ip\+\_\+addr@{masking\+\_\+next\+\_\+ip\+\_\+addr}!subnet\+\_\+mask.\+h@{subnet\+\_\+mask.\+h}}
+\subsubsection{\texorpdfstring{masking\+\_\+next\+\_\+ip\+\_\+addr()}{masking\_next\_ip\_addr()}}
+{\footnotesize\ttfamily int masking\+\_\+next\+\_\+ip\+\_\+addr (\begin{DoxyParamCaption}\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc} $\ast$}]{ipv4,  }\item[{\hyperlink{asm__types_8h_a007081c42ea471b5c389dd590754af96}{\+\_\+\+\_\+uc}}]{now\mbox{[}\+I\+P\+V4\+\_\+\+S\+T\+R\+L\+E\+N\mbox{]},  }\item[{\hyperlink{asm__types_8h_a3acae9310e2c2e411e800a8a369171c6}{\+\_\+\+\_\+u32}}]{mask }\end{DoxyParamCaption})}
 
 
 
@@ -267,11 +257,11 @@ update now ipv4 to next ipv4 with subnet masking value
 \end{DoxyDate}
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\texttt{ in}}  & {\em ipv4} & initial input of ipv4 string(XXX.\+XXX.\+XXX.\+XXX) \\
+\mbox{\tt in}  & {\em ipv4} & initial input of ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX) \\
 \hline
-\mbox{\texttt{ out}}  & {\em now} & now ipv4 string(XXX.\+XXX.\+XXX.\+XXX), it will be updated to next ipv4. \\
+\mbox{\tt out}  & {\em now} & now ipv4 string(X\+X\+X.\+X\+X\+X.\+X\+X\+X.\+X\+XX), it will be updated to next ipv4. \\
 \hline
-\mbox{\texttt{ in}}  & {\em mask} & initial input of subnet masking value(0$\sim$32) \\
+\mbox{\tt in}  & {\em mask} & initial input of subnet masking value(0$\sim$32) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -281,7 +271,7 @@ int
 \begin{DoxyRetVals}{Return values}
 {\em -\/1} & now parameter was empty string \\
 \hline
-{\em 1} & there is no next ipv4 address in subnet masking @reval 0\+: else \\
+{\em 1} & there is no next ipv4 address in subnet masking  0\+: else \\
 \hline
 \end{DoxyRetVals}
 

@@ -1,4 +1,4 @@
-.TH "includes/base/subnet_mask.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.TH "includes/base/subnet_mask.h" 3 "Thu Apr 15 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -30,11 +30,11 @@ includes/base/subnet_mask.h
 .br
 .RI "change ipv4 format: string(XXX\&.XXX\&.XXX\&.XXX) -> __u32 "
 .ti -1c
-.RI "void \fBget_addr_str\fP (\fB__u32\fP val, \fB__uc\fP str[IPV4_STR_LEN])"
+.RI "void \fBget_addr_str\fP (\fB__u32\fP val, \fB__uc\fP str[\fBIPV4_STRLEN\fP])"
 .br
 .RI "change ipv4 format: __32 -> string(XXX\&.XXX\&.XXX\&.XXX) "
 .ti -1c
-.RI "int \fBmasking_next_ip_addr\fP (\fB__uc\fP *ipv4, \fB__uc\fP now[IPV4_STR_LEN], \fB__u32\fP mask)"
+.RI "int \fBmasking_next_ip_addr\fP (\fB__uc\fP *ipv4, \fB__uc\fP now[\fBIPV4_STRLEN\fP], \fB__u32\fP mask)"
 .br
 .RI "update now ipv4 to next ipv4 with subnet masking value "
 .ti -1c
@@ -81,24 +81,24 @@ Definition at line 8 of file subnet_mask\&.h\&.
 .PP
 split argv to arguments(ipv4, masking, port) 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIargv\fP argument vectors from main(in command mode) or stdin(in prompt mode) 
 .br
 \fIinput\fP \fBInputArguments\fP structure 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 int 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fIalways\fP 0 (normal exit) 
 .RE
@@ -106,24 +106,24 @@ int
 
 .PP
 Definition at line 144 of file subnet_mask\&.c\&.
-.SS "void get_addr_str (\fB__u32\fP val, \fB__uc\fP str[IPV4_STR_LEN])"
+.SS "void get_addr_str (\fB__u32\fP val, \fB__uc\fP str[IPV4_STRLEN])"
 
 .PP
 change ipv4 format: __32 -> string(XXX\&.XXX\&.XXX\&.XXX) 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIval\fP ipv4 32bit value 
 .br
 \fIstr\fP ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -136,22 +136,22 @@ Definition at line 19 of file subnet_mask\&.c\&.
 .PP
 change ipv4 format: string(XXX\&.XXX\&.XXX\&.XXX) -> __u32 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstr\fP ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 __u32 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fIipv4\fP 32bit value 
 .RE
@@ -164,19 +164,19 @@ Definition at line 4 of file subnet_mask\&.c\&.
 .PP
 get ipv4 str(XXX\&.XXX\&.XXX\&.XXX) from masking ipv4 str(XXX\&.XXX\&.XXX\&.XXX/XX) 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIipv4\fP initial input of ipv4/mask string(XXX\&.XXX\&.XXX\&.XXX/XX) 
 .br
 \fInow\fP now ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -189,22 +189,22 @@ Definition at line 75 of file subnet_mask\&.c\&.
 .PP
 get subnet masking value from masking ipv4 string(XXX\&.XXX\&.XXX\&.XXX/XX) 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIipv4\fP initial input of ipv4/mask string(XXX\&.XXX\&.XXX\&.XXX/XX) 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 __u32 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fIsubnet\fP masking value 
 .RE
@@ -217,42 +217,29 @@ Definition at line 58 of file subnet_mask\&.c\&.
 .PP
 get next \fBMaskingArguments(ipv4, masking, port)\fP using \fBInputArguments\fP 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
-\fI[in/out]\fP input \fBInputArguments\fP structure 
-.br
-\fInow\fP MaskingArgument structure 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-int 
-.RE
-.PP
-\fBReturn values\fP
-.RS 4
-\fIalways\fP 0 (normal exit) 
-.RE
+\fI\fP .RE
 .PP
 
 .PP
 Definition at line 165 of file subnet_mask\&.c\&.
-.SS "int masking_next_ip_addr (\fB__uc\fP * ipv4, \fB__uc\fP now[IPV4_STR_LEN], \fB__u32\fP mask)"
+.SS "int masking_next_ip_addr (\fB__uc\fP * ipv4, \fB__uc\fP now[IPV4_STRLEN], \fB__u32\fP mask)"
 
 .PP
 update now ipv4 to next ipv4 with subnet masking value 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIipv4\fP initial input of ipv4 string(XXX\&.XXX\&.XXX\&.XXX) 
 .br
@@ -261,16 +248,16 @@ update now ipv4 to next ipv4 with subnet masking value
 \fImask\fP initial input of subnet masking value(0~32) 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 int 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fI-1\fP now parameter was empty string 
 .br
-\fI1\fP there is no next ipv4 address in subnet masking @reval 0: else 
+\fI1\fP there is no next ipv4 address in subnet masking  0: else 
 .RE
 .PP
 

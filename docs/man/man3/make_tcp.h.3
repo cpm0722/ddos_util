@@ -1,4 +1,4 @@
-.TH "includes/base/make_tcp.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.TH "includes/base/make_tcp.h" 3 "Thu Apr 15 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -95,63 +95,63 @@ Definition at line 7 of file make_tcp\&.h\&.
 .PP
 function: get empty tcphdr 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIvoid\fP 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tchpdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 7 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_get_checksum (struct iphdr ipv4h, struct tcphdr tcph, void * data, int datasize)"
 
 .PP
 function: tcphdr checksum value calculate with iphdr, data 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP iphdr ipv4h, struct tcphdr tcph, void *data, int datasize 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 81 of file make_tcp\&.c\&.
 .SS "int tcp_make_connection (\fB__u32\fP src_ip, \fB__u32\fP dest_ip, int * src_port_copy, int dest_port, int * seq_copy, int * ack_copy, \fB__u16\fP window_size)"
 
 .PP
 function: make tcp connection (3-way handshake, 1\&. send SYN, 2\&. receive SYN+ACK, 3\&. send ACK) 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fI__u32\fP src_ip, __u32 dest_ip, int *src_port_copy, int dest_port, int *seq_copy, int *ack_copy, __u16 window_size 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 int: socket 
 .RE
@@ -162,165 +162,165 @@ Definition at line 110 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_ack_flag (struct tcphdr tcph)"
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 63 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_ack_seq (struct tcphdr tcph, \fB__u32\fP ack_seq)"
 
 .PP
 function: set tcphdr's ack sequence 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP tcphdr tcph, __u32 ack sequence 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 51 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_dest_port (struct tcphdr tcph, \fB__u16\fP src_port)"
 
 .PP
 function: set tcphdr's src port 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP tcphdr tcph, __u16 src_port 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 39 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_psh_flag (struct tcphdr tcph)"
 
 .PP
 function: set tcphdr's psh flag as 1 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP tcphdr tcph 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 69 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_seq (struct tcphdr tcph, \fB__u32\fP seq)"
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 45 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_src_port (struct tcphdr tcph, \fB__u16\fP src_port)"
 
 .PP
 function: set tcphdr's src port 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP tcphdr tcph, __u16 src_port 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 33 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_syn_flag (struct tcphdr tcph)"
 
 .PP
 function: set tcphdr's syn flag as 1 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP tcphdr tcph 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 57 of file make_tcp\&.c\&.
 .SS "struct tcphdr tcp_set_window_size (struct tcphdr tcph, \fB__u16\fP window_size)"
 
 .PP
 function: set tcphdr's window size 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIstruct\fP tcphdr tcph, __u16 window_size 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 struct tcphdr 
 .RE
 .PP
 
 .PP
-Definition at line 5 of file make_tcp\&.c\&.
+Definition at line 75 of file make_tcp\&.c\&.
 .SS "void tcp_socket_send_data (int sock, \fB__u32\fP src_ip, \fB__u32\fP dest_ip, int src_port, int dest_port, char * data, int data_size, int seq, int ack, \fB__u16\fP window_size)"
 
 .PP
 function: after tcp-connection, send data with ACK requesting 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIint\fP sock, __u32 src_ip, __u32 dest_ip, int src_port, int dest_port, char *data, int data_size, int seq, int ack, __u16 window_size 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
@@ -333,17 +333,17 @@ Definition at line 220 of file make_tcp\&.c\&.
 .PP
 function: after tcp-connection, send data without ACK requesting 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/03 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIint\fP sock, __u32 src_ip, __u32 dest_ip, int src_port, int dest_port, char *data, int data_size, int seq, int ack, __u16 window_size 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE

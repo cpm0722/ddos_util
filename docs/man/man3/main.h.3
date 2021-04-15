@@ -1,4 +1,4 @@
-.TH "includes/main.h" 3 "Tue Apr 13 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
+.TH "includes/main.h" 3 "Thu Apr 15 2021" "Version v1.0" "ddos_util" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -49,24 +49,24 @@ includes/main.h
 .PP
 in command mode, convert argv to g_tokens 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIargv\fP main's argv 
 .br
 \fIargc\fP main's argc 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 attack_type 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fI1~10\fP correct atack type (attack_type's enum value) 
 .br
@@ -75,30 +75,30 @@ attack_type
 .PP
 
 .PP
-Definition at line 107 of file main\&.c\&.
+Definition at line 108 of file main\&.c\&.
 .SS "\fBbool\fP check_options (char * argv[], int argc)"
 
 .PP
 read argv[] and handle option (-r, -c, -t, --help), decide program's mode (command mode / prompt mode) 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIargv\fP main's argv 
 .br
 \fIargc\fP main's argc 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 bool 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fI1(true)\fP is command mode 
 .br
@@ -107,48 +107,48 @@ bool
 .PP
 
 .PP
-Definition at line 83 of file main\&.c\&.
+Definition at line 84 of file main\&.c\&.
 .SS "void get_input (void)"
 
 .PP
 read stdin g_input to with printing a prompt character('$') 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
 .PP
 
 .PP
-Definition at line 62 of file main\&.c\&.
+Definition at line 63 of file main\&.c\&.
 .SS "int main (int argc, char * argv[])"
 
 .PP
 program's main function 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBParameters\fP
+\fBParameters:\fP
 .RS 4
 \fIargv\fP argument vectors 
 .br
 \fIargc\fP argument count 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 int 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fI0\fP normal exit 
 .br
@@ -157,77 +157,77 @@ int
 .PP
 
 .PP
-Definition at line 320 of file main\&.c\&.
+Definition at line 321 of file main\&.c\&.
 .SS "void make_tokens (void)"
 
 .PP
 tokenize(seperator ' ') g_input to g_tokens 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
 .PP
 
 .PP
-Definition at line 69 of file main\&.c\&.
+Definition at line 70 of file main\&.c\&.
 .SS "void print_logo (void)"
 
 .PP
 print DDoS Util logo 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
 .PP
 
 .PP
-Definition at line 213 of file main\&.c\&.
+Definition at line 214 of file main\&.c\&.
 .SS "void print_usage (char * argv[])"
 
 .PP
 print man page when --help option or argument error 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 void 
 .RE
 .PP
 
 .PP
-Definition at line 272 of file main\&.c\&.
+Definition at line 273 of file main\&.c\&.
 .SS "\fBattack_type\fP type_choose_attack (void)"
 
 .PP
 print attack types and read stdin for choosing 
 .PP
-\fBDate\fP
+\fBDate:\fP
 .RS 4
 2021/04/12 
 .RE
 .PP
-\fBReturns\fP
+\fBReturns:\fP
 .RS 4
 int 
 .RE
 .PP
-\fBReturn values\fP
+\fBReturn values:\fP
 .RS 4
 \fI1~10\fP correct atack type (attack_type's enum value) 
 .br
@@ -236,7 +236,7 @@ int
 .PP
 
 .PP
-Definition at line 183 of file main\&.c\&.
+Definition at line 184 of file main\&.c\&.
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for ddos_util from the source code\&.

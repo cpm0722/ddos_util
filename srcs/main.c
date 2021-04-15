@@ -279,10 +279,14 @@ void print_usage(char *argv[])
 	printf("\e[1mOPTIONS\e[0m \n"
 				 "-r \n"
 				 "    RECV Flags.\n"
+				 "    It is a flag to choose between correct TCP connection and pseudo TCP connection. Enabling it causes a performance drop.\n"
+				 "    Default: 0(Disable)\n"
 				 "-t \n"
 				 "    Number of threads.\n"
+				 "    Default: 1\n"
 				 "-c \n"
-				 "    Number of CPU-cores(for multi-processing).\n");
+				 "    Number of CPU-cores(for multi-processing).\n"
+				 "    Default: 1\n");
 	printf("\n");
 	printf("\e[1mATTACK TYPES\e[0m \n"
 				 "  [Serverless Attacks]\n"
@@ -300,15 +304,18 @@ void print_usage(char *argv[])
 	printf("\e[1mSOURCE IP ADDRESS\e[0m \n"
 				 "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"
 				 "    IPv4 Address format is XXX.XXX.XXX.XXX.\n"
-				 "    Subnet Masking format is 0 ~ 32 integer. It is optional.\n");
+				 "    Subnet Masking format is 0 ~ 32 integer. It is optional.\n"
+				 "    Default: 32\n");
 	printf("\n");
 	printf("\e[1mDESTINATION IP ADDRESS\e[0m \n"
 				 "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"
 				 "    IPv4 Address format is XXX.XXX.XXX.XXX.\n"
-				 "    Subnet Masking format is 0 ~ 32 integer. It is optional.\n");
+				 "    Subnet Masking format is 0 ~ 32 integer. It is optional.\n"
+				 "    Default: 32\n");
 	printf("\n");
 	printf("\e[1mDESTINATION PORT NUMBER\e[0m \n"
-				 "    The format is 0 ~ 65,535 integer.\n");
+				 "    The format is port_start[-port_end(Optional)].\n"
+				 "    Each port number takes range from 0 to 65,535 integer.\n");
 	printf("\n");
 	printf("\e[1mNUMBER OF REQUESTS PER SECOND\e[0m \n"
 				 "    The format is unsigned integer.\n"

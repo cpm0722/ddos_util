@@ -79,9 +79,9 @@ struct tcphdr tcp_set_window_size(struct tcphdr tcph, __u16 window_size)
 }
 
 struct tcphdr tcp_get_checksum(struct iphdr ipv4h,
-															 struct tcphdr tcph,
-															 void *data,
-															 int datasize)
+                               struct tcphdr tcph,
+                               void *data,
+                               int datasize)
 {
 	struct tcp_pseudo_header psh;
 	memset(&psh, 0, sizeof(struct tcp_pseudo_header));
@@ -96,24 +96,25 @@ struct tcphdr tcp_get_checksum(struct iphdr ipv4h,
 	char *assembled = (char *) malloc(psize);
 	memcpy(assembled, (char *) &psh, sizeof(struct tcp_pseudo_header));
 	memcpy(assembled + sizeof(struct tcp_pseudo_header),
-				 &tcph,
-				 sizeof(struct tcphdr));
+			&tcph,
+			sizeof(struct tcphdr));
 	if (data != NULL && datasize != 0)
-		memcpy(assembled +
-					 sizeof(struct tcp_pseudo_header) +
-					 sizeof(struct tcphdr), data, datasize);
+		memcpy(assembled + sizeof(struct tcp_pseudo_header) + sizeof(struct tcphdr),
+				data,
+				datasize);
 	tcph.check = in_cksum((__u16*) assembled, psize);
+	free(assembled);
 	return tcph;
 }
 
 // 3way handshake completed socket, returns socket;
 int tcp_make_connection(__u32 src_ip,
-												__u32 dest_ip,
-												int *src_port_copy,
-												int dest_port,
-												int *seq_copy,
-												int *ack_copy,
-												__u16 window_size)
+                       __u32 dest_ip,
+                       int *src_port_copy,
+                       int dest_port,
+                       int *seq_copy,
+                       int *ack_copy,
+                       __u16 window_size)
 {
 	/*	CODE OPTIMIZATION
 	 *  1. PREPARE ipv4 or tcp headers before, so that less calculation in loop
@@ -218,15 +219,15 @@ int tcp_make_connection(__u32 src_ip,
 }
 
 void tcp_socket_send_data(int sock,
-													__u32 src_ip,
-													__u32 dest_ip,
-													int src_port,
-													int dest_port,
-													char *data,
-													int data_size,
-													int seq,
-													int ack,
-													__u16 window_size)
+                          __u32 src_ip,
+                          __u32 dest_ip,
+                          int src_port,
+                          int dest_port,
+                          char *data,
+                          int data_size,
+                          int seq,
+                          int ack,
+                          __u16 window_size)
 {
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();
@@ -278,15 +279,15 @@ void tcp_socket_send_data(int sock,
 }
 
 void tcp_socket_send_data_no_ack(int sock,
-																 __u32 src_ip,
-																 __u32 dest_ip,
-																 int src_port,
-																 int dest_port,
-																 char *data,
-																 int data_size,
-																 int seq,
-																 int ack,
-																 __u16 window_size)
+                                 __u32 src_ip,
+                                 __u32 dest_ip,
+                                 int src_port,
+                                 int dest_port,
+                                 char *data,
+                                 int data_size,
+                                 int seq,
+                                 int ack,
+                                 __u16 window_size)
 {
 	struct iphdr ipv4_h;
 	ipv4_h = prepare_empty_ipv4();

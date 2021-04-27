@@ -5,85 +5,102 @@
 
 void prepare_pid(int *pid_list, int num);
 
-/**
-	@fn struct iphdr prepare_empty_ipv4(void);
-	@brief function: get empty iphdr
-	@date 2021/04/03
-	@param void
-	@return struct iphdr
-*/
+/*!
+ * @brief
+ * get empty iphdr
+ * @date		2021/04/03
+ * @return		struct iphdr
+ * @retval		empty iphdr	
+ */
 struct iphdr prepare_empty_ipv4(void);
 
-/**
-	@fn struct iphdr ipv4_set_protocol(struct iphdr ip_head, __u8 protocol)
-	@brief function: set iphdr's protocol
-	@date 2021/04/03
-	@param struct iphdr ip_head, __u8 protocol: protocol value
-	@return struct iphdr
-*/
+/*!
+ * @brief
+ * set iphdr's protocol
+ * @date		2021/04/03
+ * @param[in]	ip_head		struct iphdr for update
+ * @param[in]	protocol	protocol value for update
+ * @return		struct iphdr
+ * @reval		updated iphdr
+ */
 struct iphdr ipv4_set_protocol(struct iphdr ip_head, __u8 protocol);
 
-/**
-	@fn struct iphdr ipv4_set_daddr(struct iphdr ip_head, __u32 daddr)
-	@brief function: set iphdr's dest address
-	@date 2021/04/03
-	@param struct iphdr ip_head, __u32 daddr: dest address value
-	@return struct iphdr
-*/
+/*!
+ * @brief
+ * set iphdr's dest address
+ * @date		2021/04/03
+ * @param[in]	ip_head		struct iphdr for update
+ * @param[in]	daddr		destination address value for update
+ * @return		struct iphdr
+ * @reval		updated iphdr
+ */
 struct iphdr ipv4_set_daddr(struct iphdr ip_head, __u32 daddr);
 
-/**
-	@fn struct iphdr ipv4_set_saddr(struct iphdr ip_head, __u32 saddr)
-	@brief function: set iphdr's src address
-	@date 2021/04/03
-	@param struct iphdr ip_head, __u32 saddr: src address value
-	@return struct iphdr
-*/
+/*!
+ * @brief
+ * set iphdr's src address
+ * @date		2021/04/03
+ * @param[in]	ip_head		struct iphdr for update
+ * @param[in]	saddr		source address value for update
+ * @return		struct iphdr
+ * @reval		updated iphdr
+ */
 struct iphdr ipv4_set_saddr(struct iphdr ip_head, __u32 saddr);
 
-/**
-	@fn struct iphdr ipv4_add_size(struct iphdr ip_head, __u32 data_size)
-	@brief function: update iphdr's size(add data_size)
-	@date 2021/04/03
-	@param struct iphdr ip_head, __u32 data_size
-	@return struct iphdr
-*/
+/*!
+ * @brief
+ * update iphdr's size(add data_size)
+ * @date		2021/04/03
+ * @param[in]	ip_head		struct iphdr for update
+ * @param[in]	data_size	data size value for update
+ * @return		struct iphdr
+ * @reval		updated iphdr
+ */
 struct iphdr ipv4_add_size(struct iphdr ip_head, __u32 data_size);
 
-/**
-	@fn char *packet_assemble(struct iphdr ip_head, void *data, __u32 data_size)
-	@brief function: assemble iphdr and data
-	@date 2021/04/03
-	@param struct iphdr ip_head, void *data, __u32 data_size
-	@return struct iphdr
-*/
+/*!
+ * @brief
+ * create new packet using malloc(). the packet is assemble of iphdr and data.
+ * @date		2021/04/03
+ * @param[in]	ip_head		struct iphdr for update
+ * @param[in]	data		data size value for update
+ * @param[in]	data_size	data size value for update
+ * @return		char *
+ * @reval		mallocated packet (assemble of iphdr and data)
+ */
 char *packet_assemble(struct iphdr ip_head, void *data, __u32 data_size);
 
-/**
-	@fn int make_socket(int protocol)
-	@brief function: make ipv4 raw socket
-	@date 2021/04/03
-	@param int protocol
-	@return int: socket
-*/
+/*!
+ * @brief
+ * create ipv4 raw socket
+ * @date		2021/04/03
+ * @param[in]	protocol	protocol for raw socket
+ * @return		int	
+ * @reval		socket descriptor
+ */
 int make_socket(int protocol);
 
-/**
-	@fn int send_packet(int sock, struct iphdr ip_head, char *packet, int port)
-	@brief function: send packet to ip_head's dest address + port
-	@date 2021/04/03
-	@param int sock, struct iphdr ip_head: dest's iphdr, char *packet: packet for send, int port: dest port
-	@return void
-*/
+/*!
+ * @brief
+ * send packet to ip_head's dest address + port
+ * @date		2021/04/03
+ * @param[in]	sock		socket descriptor for send
+ * @param[in]	ip_head		destination ip header for send
+ * @param[in]	packet		packet data for send
+ * @param[in]	port		destination port number for send
+ * @return		void
+ */
 void send_packet(int sock, struct iphdr ip_head, char *packet, int port);
 
-/**
-	@fn __u16 in_cksum(unsigned short *ptr, int nbytes)
-	@brief function: iphdr checksum value calculate
-	@date 2021/04/03
-	@param unsigned short *ptr: iphdr ptr, int nbytes: sizeof(iphdr)
-	@return __u16: checksum value
-*/
+/*!
+ * @brief
+ * iphdr checksum value calculate
+ * @date		2021/04/03
+ * @param[in]	ptr			iphdr's address for calcuate checksum
+ * @param[in]	nbytes		sizeof(iphdr)
+ * @return		__u16
+ * @retval		checksum value
+ */
 __u16 in_cksum(unsigned short *ptr, int nbytes);
 
 #endif // ifndef MAKE_IPV4

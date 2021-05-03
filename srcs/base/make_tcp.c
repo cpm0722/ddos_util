@@ -103,6 +103,7 @@ struct tcphdr TcphdrGetChecksum(struct iphdr ipv4h,
 					 sizeof(struct PseudoTcphdr) +
 					 sizeof(struct tcphdr), data, datasize);
 	tcph.check = IphdrGetChecksum((__u16*) assembled, psize);
+	free(assembled);
 	return tcph;
 }
 

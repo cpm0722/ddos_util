@@ -1,6 +1,6 @@
-#ifndef kHashDos_DOS
+#ifndef HASH_DOS_H_
 
-#define kHashDos_DOS
+#define HASH_DOS_H_
 
 /*!
  * @brief
@@ -39,4 +39,4 @@ void *HashDosTimeCheck(void *data);
  */
 void HashDosMain(char *argv[]);
 
-#endif // ifndef kHashDos_DOS
+#endif // ifndef HASH_DOS_H_

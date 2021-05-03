@@ -1,9 +1,9 @@
-#ifndef kUdpFlooding_FLOOD
+#ifndef UDP_FLOOD_H_
 
-#define kUdpFlooding_FLOOD
+#define UDP_FLOOD_H_
 
-#ifndef kUdpFloodingHDR
-#define kUdpFloodingHDR
+#ifndef UDPHDR
+#define UDPHDR
 /**
  * @brief udp header
  * @date 2021/02/13
@@ -16,7 +16,7 @@ struct udphdr
 	u_short checksum;   /** checksum (0) */
 	char data[1024];    /** data (maximum length: 1024) */
 };
-#endif // ifndef kUdpFlooding_HDR
+#endif // ifndef UDPHDR 
 
 /*!
  * @brief
@@ -55,4 +55,4 @@ void *UdpFloodTimeCheck(void *data);
  */
 void UdpFloodMain(char *argv[]);
 
-#endif // ifndef kUdpFlooding_FLOOD
+#endif // ifndef UDP_FLOOD_H_

@@ -1,6 +1,6 @@
-#ifndef kBodyBuffering_BUFFERING
+#ifndef BODY_BUFFERING_H_
 
-#define kBodyBuffering_BUFFERING
+#define BODY_BUFFERING_H_
 
 /// http request method message size in body buffering
 #define __kBodyBuffering_BUFFERING_REQUEST_MSG_SIZE__ 100
@@ -42,4 +42,4 @@ void *BodyBufferingTimeCheck(void *data);
  */
 void BodyBufferingMain(char *argv[]);
 
-#endif // ifndef kBodyBuffering_BUFFERING
+#endif // ifndef BODY_BUFFERING_H_

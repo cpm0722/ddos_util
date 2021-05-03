@@ -1,6 +1,6 @@
-#ifndef kSynFlooding_FLOOD
+#ifndef SYN_FLOOD_H_
 
-#define kSynFlooding_FLOOD
+#define SYN_FLOOD_H_
 
 /*!
  * @brief
@@ -39,4 +39,4 @@ void *SynFloodTimeCheck(void *data);
  */
 void SynFloodMain(char *argv[]);
 
-#endif // ifndef kSynFlooding_FLOOD
+#endif // ifndef SYN_FLOOD_H_

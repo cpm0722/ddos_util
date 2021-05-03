@@ -1,5 +1,5 @@
-#ifndef _I386_TYPES_H
-#define _I386_TYPES_H
+#ifndef ASM_TYPES_H_
+#define ASM_TYPES_H_
 
 typedef unsigned short umode_t;
 
@@ -43,6 +43,6 @@ typedef u32 dma_addr_t;
 #endif
 typedef u64 dma64_addr_t;
 
-#endif /* __KERNEL__ */
+#endif // ifndef __KERNEL__
 
-#endif
+#endif // ifndef ASM_TYPES_H_

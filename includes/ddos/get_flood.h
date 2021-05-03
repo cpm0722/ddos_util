@@ -1,6 +1,6 @@
-#ifndef kGetFlooding_FLOOD
+#ifndef GET_FLOOD_H_
 
-#define kGetFlooding_FLOOD
+#define GET_FLOOD_H_
 
 /// http request method message size in get flooding
 #define __kGetFlooding_REQUEST_MSG_SIZE__ 100
@@ -42,4 +42,4 @@ void *GetFloodTimeCheck(void *data);
  */
 void GetFloodMain(char *argv[]);
 
-#endif // ifndef kGetFlooding_FLOOD
+#endif // ifndef GET_FLOOD_H_

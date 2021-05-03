@@ -1,6 +1,6 @@
-#ifndef TIME_CHECK
+#ifndef TIME_CHECK_H_
 
-#define TIME_CHECK
+#define TIME_CHECK_H_
 
 #define NANO_PER_SEC 1000000000.0
 
@@ -19,4 +19,4 @@ void TimeCheck(pthread_cond_t *cond_p,
 				struct timespec *now_time_p,
 				__u64 *produced_in_sec_p);
 
-#endif // ifndef TIME_CHECK
+#endif // ifndef TIME_CHECK_H_

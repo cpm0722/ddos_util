@@ -59,7 +59,6 @@ void SigintHandler(int signo)
 
 }
 
-
 void GetInput(void)
 {
 	printf("$ ");
@@ -340,23 +339,18 @@ int main(int argc, char *argv[])
 		PrintUsage(argv);
 		return 0;
 	}
-	printf("num core : %d\n",g_num_cores);
-
-
+	printf("num core : %d\n", g_num_cores);
 
 	signal(SIGINT, SigintHandler);
-
 	int i;
-
-	for(i=0;i<g_num_cores;i++)
+	for(i = 0; i < g_num_cores; i++)
 	{
 		g_pid_list[i] = fork();
 		if(g_pid_list[i] < 0)
 		{
 			perror("fork");
 			abort();
-		}
-		else if(g_pid_list[i] == 0 )
+		} else if(g_pid_list[i] == 0)
 		{
 			PreparePid(g_pid_list, g_num_cores);
 			g_main_functions[type](g_tokens);

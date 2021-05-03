@@ -1,6 +1,6 @@
-#ifndef kResponseBufferingONSE_BUFFERING
+#ifndef RESPONSE_BUFFERING_H_
 
-#define kResponseBufferingONSE_BUFFERING
+#define RESPONSE_BUFFERING_H_
 
 /*!
  * @brief
@@ -39,4 +39,4 @@ void *ResponseBufferingTimeCheck(void *data);
  */
 void ResponseBufferingMain(char *argv[]);
 
-#endif // ifndef kResponseBufferingONSE_BUFFERING
+#endif // ifndef RESPONSE_BUFFERING_H_

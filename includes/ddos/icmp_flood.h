@@ -1,6 +1,6 @@
-#ifndef kIcmpFlooding_FLOOD
+#ifndef ICMP_FLOOD_H_
 
-#define kIcmpFlooding_FLOOD
+#define ICMP_FLOOD_H_
 
 /*!
  * @brief
@@ -39,4 +39,4 @@ void *IcmpFloodTimeCheck(void *data);
  */
 void IcmpFloodMain(char *argv[]);
 
-#endif // ifndef kIcmpFlooding_FLOOD
+#endif // ifndef ICMP_FLOOD_H_

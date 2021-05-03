@@ -1,6 +1,6 @@
-#ifndef kHeadBufferingER_BUFFERING
+#ifndef HEADER_BUFFERING_H_
 
-#define kHeadBufferingER_BUFFERING
+#define HEADER_BUFFERING_H_
 
 /// http request method message size in header buffering
 #define __kHeadBufferingER_BUFFERING_REQUEST_MSG_SIZE__ 100
@@ -42,4 +42,4 @@ void *HeaderBufferingTimeCheck(void *data);
  */
 void HeaderBufferingMain(char *argv[]);
 
-#endif // ifndef kHeadBufferingER_BUFFERING
+#endif // ifndef HEADER_BUFFERING_H_

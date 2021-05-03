@@ -1,6 +1,6 @@
-#ifndef MAKE_TCP
+#ifndef MAKE_TCP_H_
 
-#define MAKE_TCP
+#define MAKE_TCP_H_
 #define __MINIMUM_kResponseBufferingONSE_WAIT_TIME__ 0.1
 
 #ifndef TCP_PSEUDO_kHeadBufferingER
@@ -163,4 +163,4 @@ void TckSocketSendDataWithoutAck(int sock,
 																 int ack,
 																 __u16 window_size);
 
-#endif // ifndef MAKE_TCP
+#endif // ifndef MAKE_TCP_H_

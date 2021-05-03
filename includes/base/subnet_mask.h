@@ -1,6 +1,6 @@
-#ifndef SUBNET_MASK
+#ifndef SUBNET_MASK_H_
 
-#define SUBNET_MASK
+#define SUBNET_MASK_H_
 
 /// 32bit maximum value
 #define BIT_32_MAX_VAL 0xffffffff
@@ -89,4 +89,4 @@ int ArgvToInputArguments(char *argv[], InputArguments *input);
  */
 int GetMaskingArguments(InputArguments *input, MaskingArguments *now);
 
-#endif	// ifndef SUBNET_MASK
+#endif	// ifndef SUBNET_MASK_H_

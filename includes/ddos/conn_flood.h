@@ -1,6 +1,6 @@
-#ifndef kConnectionFlooding_FLOOD
+#ifndef CONN_FLOOD_H_
 
-#define kConnectionFlooding_FLOOD
+#define CONN_FLOOD_H_
 
 /*!
  * @brief
@@ -39,4 +39,4 @@ void *ConnectionFloodTimeCheck(void *data);
  */
 void ConnFloodMain(char *argv[]);
 
-#endif
+#endif // CONN_FLOOD_H_

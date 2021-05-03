@@ -1,6 +1,6 @@
-#ifndef MAKE_IPV4
+#ifndef MAKE_IPV4_H_
 
-#define MAKE_IPV4
+#define MAKE_IPV4_H_
 
 
 void PreparePid(int *pid_list, int num);
@@ -86,4 +86,4 @@ void SendPacket(int sock, struct iphdr ip_head, char *packet, int port);
 */
 __u16 IphdrGetChecksum(unsigned short *ptr, int nbytes);
 
-#endif // ifndef MAKE_IPV4
+#endif // ifndef MAKE_IPV4_H_

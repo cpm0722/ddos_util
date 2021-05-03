@@ -1,7 +1,7 @@
-#ifndef ASM_TYPES_H_
-#define ASM_TYPES_H_
+#ifndef INCLUDES_BASE_ASM_TYPES_H_
+#define INCLUDES_BASE_ASM_TYPES_H_
 
-typedef unsigned short umode_t;
+typedef uint16_t umode_t;
 
 /*
  * __xx is ok: it doesn't pollute the POSIX namespace. Use these in the
@@ -43,6 +43,6 @@ typedef u32 dma_addr_t;
 #endif
 typedef u64 dma64_addr_t;
 
-#endif // ifndef __KERNEL__
+#endif  // __KERNEL__
 
-#endif // ifndef ASM_TYPES_H_
+#endif  // INCLUDES_BASE_ASM_TYPES_H_

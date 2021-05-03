@@ -1,6 +1,6 @@
-#ifndef kHeadBufferingER_H
+#ifndef INCLUDES_HEADER_H_
 
-#define kHeadBufferingER_H
+#define INCLUDES_HEADER_H_
 
 /// maximum value of unsigned integer
 #define __UINT_MAXIMUM__ (1L << (31)) - 1
@@ -29,9 +29,18 @@
  * @brief attack types
  * @date 2021/04/12
  */
-typedef enum 
+typedef enum
 {
-	kNoneType, kSynFlooding, kUdpFlooding, kIcmpFlooding, kConnectionFlooding, kGetFlooding, kHeadBuffering, kBodyBuffering, kResponseBuffering, kHashDos
+  kNoneType,
+  kSynFlooding,
+  kUdpFlooding,
+  kIcmpFlooding,
+  kConnectionFlooding,
+  kGetFlooding,
+  kHeadBuffering,
+  kBodyBuffering,
+  kResponseBuffering,
+  kHashDos
 } AttackType;
 
 /**
@@ -40,7 +49,7 @@ typedef enum
  */
 typedef enum
 {
-	false, true
+  false, true
 } bool;
 
 /**
@@ -49,12 +58,18 @@ typedef enum
  */
 typedef struct
 {
-	unsigned char src[IPV4_STRLEN];   /** source ipv4 string, format: XXX.XXX.XXX.XXX */
-	unsigned char dest[IPV4_STRLEN];  /** destination ipv4 string, format: XXX.XXX.XXX.XXX */
-	__u32 src_mask;                   /** source ipv4 mask, range: 0~32, default: 32 */
-	__u32 dest_mask;                  /** destination ipv4 mask, range: 0~32, default: 32 */
-	__u32 port_start;                 /** destination port start, range: 0~65535 */
-	__u32 port_end;                   /** destination port end, range: 0~65535 */
+  /** source ipv4 string, format: XXX.XXX.XXX.XXX */
+  unsigned char src[IPV4_STRLEN];
+  /** destination ipv4 string, format: XXX.XXX.XXX.XXX */
+  unsigned char dest[IPV4_STRLEN];
+  /** source ipv4 mask, range: 0~32, default: 32 */
+  __u32 src_mask;
+  /** destination ipv4 mask, range: 0~32, default: 32 */
+  __u32 dest_mask;
+  /** destination port start, range: 0~65535 */
+  __u32 port_start;
+  /** destination port end, range: 0~65535 */
+  __u32 port_end;
 } InputArguments;
 
 /**
@@ -63,9 +78,12 @@ typedef struct
  */
 typedef struct
 {
-	unsigned char src[IPV4_STRLEN];   /** now source ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
-	unsigned char dest[IPV4_STRLEN];  /** now destination ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
-	__u32 port;                       /** now destination port in subnet masking, range: 0~65535 */
+  /** now source ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
+  unsigned char src[IPV4_STRLEN];
+  /** now destination ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
+  unsigned char dest[IPV4_STRLEN];
+  /** now destination port in subnet masking, range: 0~65535 */
+  __u32 port;
 } MaskingArguments;
 
-#endif // ifndef kHeadBufferingER_H
+#endif  // INCLUDES_HEADER_H_

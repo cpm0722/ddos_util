@@ -1,6 +1,6 @@
-#ifndef UDP_FLOOD_H_
+#ifndef INCLUDES_DDOS_UDP_FLOOD_H_
 
-#define UDP_FLOOD_H_
+#define INCLUDES_DDOS_UDP_FLOOD_H_
 
 #ifndef UDPHDR
 #define UDPHDR
@@ -10,49 +10,49 @@
  */
 struct udphdr
 {
-	u_short src_port;   /** source port (0) */
-	u_short dest_port;  /** destination port */
-	u_short len;        /** data length */
-	u_short checksum;   /** checksum (0) */
-	char data[1024];    /** data (maximum length: 1024) */
+  u_short src_port;   /** source port (0) */
+  u_short dest_port;  /** destination port */
+  u_short len;        /** data length */
+  u_short checksum;   /** checksum (0) */
+  char data[1024];    /** data (maximum length: 1024) */
 };
-#endif // ifndef UDPHDR 
+#endif  // ifndef UDPHDR
 
 /*!
  * @brief
  * print udp flooding usage
- * @date		2021/02/13
- * @return		void
+ * @date    2021/02/13
+ * @return    void
  */
 void UdpFloodPrintUsage(void);
 
 /*!
  * @brief
  * udp flooding generate thread
- * @date		2021/02/13
- * @param[in]	data	thread input, default: NULL
- * @return		void *
- * @retval		NULL: always
+ * @date    2021/02/13
+ * @param[in]  data  thread input, default: NULL
+ * @return    void *
+ * @retval    NULL: always
  */
 void *GenerateUdpFlood(void *data);
 
 /*!
  * @brief
  * udp flooding time check thread
- * @date		2021/02/13
- * @param[in]	data	thread input, default: NULL
- * @return		void *
- * @retval		NULL: always
+ * @date    2021/02/13
+ * @param[in]  data  thread input, default: NULL
+ * @return    void *
+ * @retval    NULL: always
  */
 void *UdpFloodTimeCheck(void *data);
 
 /*!
  * @brief
  * udp flooding main function
- * @date		2021/02/13
- * @param[in]	argv	arguments
- * @return		void
+ * @date    2021/02/13
+ * @param[in]  argv  arguments
+ * @return    void
  */
 void UdpFloodMain(char *argv[]);
 
-#endif // ifndef UDP_FLOOD_H_
+#endif  // INCLUDES_DDOS_UDP_FLOOD_H_

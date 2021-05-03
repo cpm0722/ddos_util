@@ -1,7 +1,7 @@
 #include "header.h"
 #include "base/subnet_mask.h"
 
-__u32 get_addr_val(__uc *str)
+__u32 GetAddressIntegerValue(__uc *str)
 {
 	__u32 res = 0;
 	__uc tmp_str[IPV4_STRLEN];
@@ -16,7 +16,7 @@ __u32 get_addr_val(__uc *str)
 	return res;
 }
 
-void get_addr_str(__u32 val, __uc str[IPV4_STRLEN])
+void GetAddressStr(__u32 val, __uc str[IPV4_STRLEN])
 {
 	__u32 split[4] = { 0, 0, 0, 0 };
 	for (int i = 3; i >= 0; i--) {
@@ -26,11 +26,11 @@ void get_addr_str(__u32 val, __uc str[IPV4_STRLEN])
 	return;
 }
 
-int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask)
+int MaskingNextIpAddress(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask)
 {
 	__u32 now_addr;
 	if (!strlen(now)) {	 // first call
-		__u32 ipv4_addr = get_addr_val(ipv4);
+		__u32 ipv4_addr = GetAddressIntegerValue(ipv4);
 		now_addr = ipv4_addr;
 		__u32 max_val = BIT_32_MAX_VAL;
 
@@ -40,14 +40,14 @@ int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask)
 		if ((now_addr & 0xff) == 0x00)
 						now_addr += 1;
 
-		get_addr_str(now_addr, now);
+		GetAddressStr(now_addr, now);
 		return -1;
 	}
-	now_addr = get_addr_val(now);
+	now_addr = GetAddressIntegerValue(now);
 	__u32 max_val = (__u32) pow(2, (32 - mask)) - 1;
 	if (((now_addr & max_val) == max_val) ||
 		   (((now_addr + 1) & 0xff) == 0xff)) {  // finish
-		__u32 ipv4_addr = get_addr_val(ipv4);
+		__u32 ipv4_addr = GetAddressIntegerValue(ipv4);
 		now_addr = ipv4_addr;
 
 		__u32 max_val = BIT_32_MAX_VAL;
@@ -56,15 +56,15 @@ int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask)
 		if ((now_addr & 0xff) == 0x00)
 			now_addr += 1;
 
-		get_addr_str(now_addr, now);
+		GetAddressStr(now_addr, now);
 		return 1;
 	}
 	now_addr++;
-	get_addr_str(now_addr, now);
+	GetAddressStr(now_addr, now);
 	return 0;
 }
 
-__u32 get_mask_from_ip_addr(__uc *ipv4)
+__u32 GetMaskFromIpv4Format(__uc *ipv4)
 {
 	__u32 mask = 32;
 	__uc *char_ptr = ipv4 + 7;
@@ -81,7 +81,7 @@ __u32 get_mask_from_ip_addr(__uc *ipv4)
 	return mask;
 }
 
-void get_ip_from_ip_addr(__uc *ipv4, __uc *now)
+void GetIpAddressFromIpv4Format(__uc *ipv4, __uc *now)
 {
 	__uc *char_ptr = ipv4;
 	int i = 0;
@@ -97,68 +97,15 @@ void get_ip_from_ip_addr(__uc *ipv4, __uc *now)
 	return;
 }
 
-int split_ip_mask_port(char *argv[],
-											 __uc src_ipv4[IPV4_STRLEN],
-											 __uc dest_ipv4[IPV4_STRLEN],
-											 __u32 *src_mask,
-											 __u32 *dest_mask,
-											 __u32 *port_start,
-											 __u32 *port_end)
+int ArgvToInputArguments(char *argv[], InputArguments *input)
 {
 	__uc *src = argv[0];
 	__uc *dest = argv[1];
 	__uc *port = argv[2];
-	get_ip_from_ip_addr(src, src_ipv4);
-	get_ip_from_ip_addr(dest, dest_ipv4);
-	*src_mask = get_mask_from_ip_addr(src);
-	*dest_mask = get_mask_from_ip_addr(dest);
-
-	__uc *ptr = strtok(port, "-");
-	*port_start = atoi(ptr);
-	ptr = strtok(NULL, "-");
-	if (ptr) {
-		*port_end = atoi(ptr);
-	} else {
-		*port_end = *port_start;
-	}
-	return 0;
-}
-
-int generator(__uc *src_ipv4,
-							__uc *dest_ipv4,
-							__u32 src_mask,
-							__u32 dest_mask,
-							__u32 port_start,
-							__u32 port_end,
-							__uc src_now[IPV4_STRLEN],
-							__uc dest_now[IPV4_STRLEN],
-							__u32 *port_now)
-{
-	// last dest_ipv4 or first(blank)
-	if (masking_next_ip_addr(dest_ipv4, dest_now, dest_mask)) {
-		int res;
-		// last src_ipv4
-		if ((res = masking_next_ip_addr(src_ipv4, src_now, src_mask)) > 0) {
-			(*port_now)++;
-			if (*port_now > port_end) {
-				*port_now = port_start;
-			}
-		} else if (res < 0) {
-			*port_now = port_start;
-		}
-	}
-	return 0;
-}
-
-int argv_to_input_arguments(char *argv[], InputArguments *input)
-{
-	__uc *src = argv[0];
-	__uc *dest = argv[1];
-	__uc *port = argv[2];
-	get_ip_from_ip_addr(src, input->src);
-	get_ip_from_ip_addr(dest, input->dest);
-	input->src_mask = get_mask_from_ip_addr(src);
-	input->dest_mask = get_mask_from_ip_addr(dest);
+	GetIpAddressFromIpv4Format(src, input->src);
+	GetIpAddressFromIpv4Format(dest, input->dest);
+	input->src_mask = GetMaskFromIpv4Format(src);
+	input->dest_mask = GetMaskFromIpv4Format(dest);
 
 	__uc *ptr = strtok(port, "-");
 	input->port_start = atoi(ptr);
@@ -171,13 +118,13 @@ int argv_to_input_arguments(char *argv[], InputArguments *input)
 	return 0;
 }
 
-int get_masking_arguments(InputArguments *input, MaskingArguments *now)
+int GetMaskingArguments(InputArguments *input, MaskingArguments *now)
 {
 	// last dest_ipv4 or first(blank)
-	if (masking_next_ip_addr(input->dest, now->dest, input->dest_mask)) {
+	if (MaskingNextIpAddress(input->dest, now->dest, input->dest_mask)) {
 		int res;
 		// last src_ipv4
-		if ((res = masking_next_ip_addr(input->src, now->src, input->src_mask)) > 0) {
+		if ((res = MaskingNextIpAddress(input->src, now->src, input->src_mask)) > 0) {
 			(now->port)++;
 			if (now->port > input->port_end) {
 				now->port = input->port_start;

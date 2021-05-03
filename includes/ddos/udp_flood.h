@@ -1,9 +1,9 @@
-#ifndef UDP_FLOOD
+#ifndef kUdpFlooding_FLOOD
 
-#define UDP_FLOOD
+#define kUdpFlooding_FLOOD
 
-#ifndef UDPHDR
-#define UDPHDR
+#ifndef kUdpFloodingHDR
+#define kUdpFloodingHDR
 /**
  * @brief udp header
  * @date 2021/02/13
@@ -16,7 +16,7 @@ struct udphdr
 	u_short checksum;   /** checksum (0) */
 	char data[1024];    /** data (maximum length: 1024) */
 };
-#endif // ifndef UDP_HDR
+#endif // ifndef kUdpFlooding_HDR
 
 /*!
  * @brief
@@ -24,7 +24,7 @@ struct udphdr
  * @date		2021/02/13
  * @return		void
  */
-void udp_flood_print_usage(void);
+void UdpFloodPrintUsage(void);
 
 /*!
  * @brief
@@ -34,7 +34,7 @@ void udp_flood_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_udp_flood(void *data);
+void *GenerateUdpFlood(void *data);
 
 /*!
  * @brief
@@ -44,7 +44,7 @@ void *generate_udp_flood(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *udp_flood_time_check(void *data);
+void *UdpFloodTimeCheck(void *data);
 
 /*!
  * @brief
@@ -53,6 +53,6 @@ void *udp_flood_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void udp_flood_main(char *argv[]);
+void UdpFloodMain(char *argv[]);
 
-#endif // ifndef UDP_FLOOD
+#endif // ifndef kUdpFlooding_FLOOD

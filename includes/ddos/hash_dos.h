@@ -1,6 +1,6 @@
-#ifndef HASH_DOS
+#ifndef kHashDos_DOS
 
-#define HASH_DOS
+#define kHashDos_DOS
 
 /*!
  * @brief
@@ -8,7 +8,7 @@
  * @date		2021/03/15
  * @return		void
  */
-void hash_dos_print_usage(void);
+void HashDosPrintUsage(void);
 
 /*!
  * @brief
@@ -18,7 +18,7 @@ void hash_dos_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_hash_dos(void *data);
+void *GenerateHashDos(void *data);
 
 /*!
  * @brief
@@ -28,7 +28,7 @@ void *generate_hash_dos(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *hash_dos_time_check(void *data);
+void *HashDosTimeCheck(void *data);
 
 /*!
  * @brief
@@ -37,6 +37,6 @@ void *hash_dos_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void hash_dos_main(char *argv[]);
+void HashDosMain(char *argv[]);
 
-#endif // ifndef HASH_DOS
+#endif // ifndef kHashDos_DOS

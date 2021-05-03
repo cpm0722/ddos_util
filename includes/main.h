@@ -8,7 +8,7 @@
  * @date		2021/04/12
  * @return		void
  */
-void get_input(void);
+void GetInput(void);
 
 /*!
  * @brief
@@ -16,7 +16,7 @@ void get_input(void);
  * @date		2021/04/12
  * @return		void
  */
-void make_tokens(void);
+void MakeTokens(void);
 
 /*!
  * @brief
@@ -29,7 +29,7 @@ void make_tokens(void);
  * @retval		1(true): is command mode
  * @retval		0(false): is prompt mode
  */
-bool check_options(char *argv[], int argc);
+bool CheckOptions(char *argv[], int argc);
 
 /*!
  * @brief
@@ -37,21 +37,21 @@ bool check_options(char *argv[], int argc);
  * @date		2021/04/12
  * @param[in]	argv	main's argv
  * @param[in]	argc	main's argc
- * @return		attack_type
- * @retval		1~10: correct atack type (attack_type's enum value)
- * @retval		0: NONE (error occured)
+ * @return		AttackType
+ * @retval		1~10: correct atack type (AttackType's enum value)
+ * @retval		0: kNoneType (error occured)
  */
-attack_type argv_to_tokens(char *argv[], int argc);
+AttackType ArgvToTokens(char *argv[], int argc);
 
 /*!
  * @brief
  * print attack types and read stdin for choosing
  * @date		2021/04/12
  * @return		int
- * @retval		1~10: correct atack type (attack_type's enum value)
- * @retval		0: NONE (error occured)
+ * @retval		1~10: correct atack type (AttackType's enum value)
+ * @retval		0: kNoneType (error occured)
  */
-attack_type type_choose_attack(void);
+AttackType ChooseAttackType(void);
 
 /*!
  * @brief
@@ -59,7 +59,7 @@ attack_type type_choose_attack(void);
  * @date		2021/04/12
  * @return		void
  */
-void print_logo(void);
+void PrintLogo(void);
 
 /*!
  * @brief
@@ -67,7 +67,7 @@ void print_logo(void);
  * @date		2021/04/12
  * @return		void
  */
-void print_usage(char *argv[]);
+void PrintUsage(char *argv[]);
 
 /*!
  * @brief

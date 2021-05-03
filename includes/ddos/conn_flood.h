@@ -1,6 +1,6 @@
-#ifndef CONN_FLOOD
+#ifndef kConnectionFlooding_FLOOD
 
-#define CONN_FLOOD
+#define kConnectionFlooding_FLOOD
 
 /*!
  * @brief
@@ -8,7 +8,7 @@
  * @date		2021/03/08
  * @return		void
  */
-void conn_flood_print_usage(void);
+void ConnectionFloodPrintUsage(void);
 
 /*!
  * @brief
@@ -18,7 +18,7 @@ void conn_flood_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_conn_flood(void *data);
+void *GenerateConnFlood(void *data);
 
 /*!
  * @brief
@@ -28,7 +28,7 @@ void *generate_conn_flood(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *conn_flood_time_check(void *data);
+void *ConnectionFloodTimeCheck(void *data);
 
 /*!
  * @brief
@@ -37,6 +37,6 @@ void *conn_flood_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void conn_flood_main(char *argv[]);
+void ConnFloodMain(char *argv[]);
 
 #endif

@@ -26,29 +26,29 @@ int g_pid_list[100];
 char g_input[__SIZE_OF_INPUT__];
 char *g_tokens[__MAX_TOKEN_NUM__ ];
 void (*g_usage_functions[__ATTACK_TYPES__ + 1])(void) = { NULL,
-				syn_flood_print_usage,
-				udp_flood_print_usage,
-				icmp_flood_print_usage,
-				conn_flood_print_usage,
-				get_flood_print_usage,
-				header_buffering_print_usage,
-				body_buffering_print_usage,
-				response_buffering_print_usage,
-				hash_dos_print_usage
+				SynFloodPrintUsage,
+				UdpFloodPrintUsage,
+				IcmpFloodPrintUsage,
+				ConnectionFloodPrintUsage,
+				GetFloodPrintUsage,
+				HeaderBufferingPrintUsage,
+				BodyBufferingPrintUsage,
+				ResponseBufferingPrintUsage,
+				HashDosPrintUsage
 			};
 void (*g_main_functions[__ATTACK_TYPES__ + 1])(char *[]) = { NULL,
-				syn_flood_main,
-				udp_flood_main,
-				icmp_flood_main,
-				conn_flood_main,
-				get_flood_main,
-				header_buffering_main,
-				body_buffering_main,
-				response_buffering_main,
-				hash_dos_main
+				SynFloodMain,
+				UdpFloodMain,
+				IcmpFloodMain,
+				ConnFloodMain,
+				GetFloodMain,
+				HeaderBufferingMain,
+				BodyBufferingMain,
+				ResponseBufferingMain,
+				HashDosMain
 			};
 
-void sigint_handler(int signo)
+void SigintHandler(int signo)
 {
 	int i;
 	for(i=0;i<g_num_cores;i++)
@@ -60,14 +60,14 @@ void sigint_handler(int signo)
 }
 
 
-void get_input(void)
+void GetInput(void)
 {
 	printf("$ ");
 	void *ptr = fgets(g_input, __SIZE_OF_INPUT__, stdin);
 	return;
 }
 
-void make_tokens(void)
+void MakeTokens(void)
 {
 	int i;
 	for (i = 0; i < __MAX_TOKEN_NUM__; i++)
@@ -81,7 +81,7 @@ void make_tokens(void)
 	return;
 }
 
-bool check_options(char *argv[], int argc)
+bool CheckOptions(char *argv[], int argc)
 {
 	bool is_command = false;
 	for (int i = 1; i < argc; i++) {
@@ -96,7 +96,7 @@ bool check_options(char *argv[], int argc)
 				g_num_threads = atoi(argv[i + 1]);
 			} else if (!strcmp(argv[i], "--help") ||
 								 !strcmp(argv[i], "-help")) {
-				print_usage(argv);
+				PrintUsage(argv);
 				exit(0);
 			}
 			i++;
@@ -105,11 +105,11 @@ bool check_options(char *argv[], int argc)
 	return is_command;
 }
 
-attack_type argv_to_tokens(char *argv[], int argc)
+AttackType ArgvToTokens(char *argv[], int argc)
 {
 	int argv_idx;
 	int token_idx;
-	attack_type type;
+	AttackType type;
 
 	for (argv_idx = 1; argv_idx < argc; argv_idx++) {
 		if (*argv[argv_idx] == '-') {
@@ -119,54 +119,50 @@ attack_type argv_to_tokens(char *argv[], int argc)
 		}
 	}
 	if (argv_idx == argc) {
-		return NONE;
+		return kNoneType;
 	}
 	if (!strcmp(argv[argv_idx], "syn") ||
-			!strcmp(argv[argv_idx], "SYN") ||
+			!strcmp(argv[argv_idx], "kSynFlooding") ||
 			!strcmp(argv[argv_idx], "1")) {
-		type = SYN;
+		type = kSynFlooding;
 	} else if (!strcmp(argv[argv_idx], "udp") ||
-					   !strcmp(argv[argv_idx], "UDP") ||
+					   !strcmp(argv[argv_idx], "kUdpFlooding") ||
 					   !strcmp(argv[argv_idx], "2")) {
-		type = UDP;
+		type = kUdpFlooding;
 	} else if (!strcmp(argv[argv_idx], "icmp") ||
-					   !strcmp(argv[argv_idx], "ICMP") ||
+					   !strcmp(argv[argv_idx], "kIcmpFlooding") ||
 					   !strcmp(argv[argv_idx], "3")) {
-		type = ICMP;
+		type = kIcmpFlooding;
 	} else if (!strcmp(argv[argv_idx], "conn") ||
-					 !strcmp(argv[argv_idx], "CONN") ||
+					 !strcmp(argv[argv_idx], "kConnectionFlooding") ||
 					 !strcmp(argv[argv_idx], "4")) {
-		type = CONN;
+		type = kConnectionFlooding;
 	} else if (!strcmp(argv[argv_idx], "get") ||
-					 !strcmp(argv[argv_idx], "GET") ||
+					 !strcmp(argv[argv_idx], "kGetFlooding") ||
 					 !strcmp(argv[argv_idx], "5")) {
-		type = GET;
+		type = kGetFlooding;
 	} else if (!strcmp(argv[argv_idx], "head") ||
-					 !strcmp(argv[argv_idx], "HEAD") ||
+					 !strcmp(argv[argv_idx], "kHeadBuffering") ||
 					 !strcmp(argv[argv_idx], "6")) {
-		type = HEAD;
+		type = kHeadBuffering;
 	} else if (!strcmp(argv[argv_idx], "body") ||
-					 !strcmp(argv[argv_idx], "BODY") ||
+					 !strcmp(argv[argv_idx], "kBodyBuffering") ||
 					 !strcmp(argv[argv_idx], "7")) {
-		type = BODY;
+		type = kBodyBuffering;
 	} else if (!strcmp(argv[argv_idx], "resp") ||
-					 !strcmp(argv[argv_idx], "RESP") ||
+					 !strcmp(argv[argv_idx], "kResponseBuffering") ||
 					 !strcmp(argv[argv_idx], "8")) {
-		type = RESP;
+		type = kResponseBuffering;
 	} else if (!strcmp(argv[argv_idx], "hash") ||
-					 !strcmp(argv[argv_idx], "HASH") ||
+					 !strcmp(argv[argv_idx], "kHashDos") ||
 					 !strcmp(argv[argv_idx], "9")) {
-		type = HASH;
-	} else if (!strcmp(argv[argv_idx], "ref") ||
-					 !strcmp(argv[argv_idx], "REF") ||
-					 !strcmp(argv[argv_idx], "10")) {
-		type = REF;
+		type = kHashDos;
 	} else {
-		type = NONE;
+		type = kNoneType;
 	}
 	argv_idx++;
 	if (argv_idx >= argc) {
-		return NONE;
+		return kNoneType;
 	}
 	for (token_idx = 0; argv_idx < argc; argv_idx++) {
 		if (*argv[argv_idx] == '-') {
@@ -176,18 +172,18 @@ attack_type argv_to_tokens(char *argv[], int argc)
 	}
 	g_tokens[token_idx] = NULL;
 	if (token_idx != 4) {
-		return NONE;
+		return kNoneType;
 	}
 	return type;
 }
 
-attack_type type_choose_attack(void)
+AttackType ChooseAttackType(void)
 {
 	printf("\n"
 			"   [Serverless Attacks]\n"
-			"1. SYN flooding\n"
-			"2. UDP flooding\n"
-			"3. ICMP flooding\n"
+			"1. kSynFlooding flooding\n"
+			"2. kUdpFlooding flooding\n"
+			"3. kIcmpFlooding flooding\n"
 			"\n"
 			"   [Server Required Attacks]\n"
 			"4. Connection flooding\n"
@@ -197,11 +193,11 @@ attack_type type_choose_attack(void)
 			"8. Response buffering\n"
 			"9. Hash Dos\n"
 			"\n");
-	get_input();
-	attack_type t = atoi(g_input);
+	GetInput();
+	AttackType t = atoi(g_input);
 	while (t <= 0 || t > 10) {
 		printf("Input should be over 0 AND <=10\n");
-		get_input();
+		GetInput();
 		t = atoi(g_input);
 	}
 	return t;
@@ -211,7 +207,7 @@ attack_type type_choose_attack(void)
 #define DRAW_WIDTHB 8
 #define DRAW_WIDTHS 6
 
-void print_logo(void)
+void PrintLogo(void)
 {
 	char num[11];  // here too one extra room is needed for the '\0'
 	char c;  // for option
@@ -270,9 +266,9 @@ void print_logo(void)
 	return;
 }
 
-void print_usage(char *argv[])
+void PrintUsage(char *argv[])
 {
-	printf("Usage: sudo %s [options] [attack_types] "
+	printf("Usage: sudo %s [options] [AttackTypes] "
 				 "[Src-IP] [Dest-IP] [Dest-Port] [#Request/s] ...\n",
 			argv[0]);
 	printf("\n");
@@ -290,16 +286,16 @@ void print_usage(char *argv[])
 	printf("\n");
 	printf("\e[1mATTACK TYPES\e[0m \n"
 				 "  [Serverless Attacks]\n"
-				 "    syn,  SYN,   1        SYN Flooding Attack\n"
-				 "    udp,  UDP,   2        UDP Flooding Attack\n"
-				 "    icmp, ICMP,  3        ICMP Flooding Attack\n"
+				 "    syn,  kSynFlooding,   1        kSynFlooding Flooding Attack\n"
+				 "    udp,  kUdpFlooding,   2        kUdpFlooding Flooding Attack\n"
+				 "    icmp, kIcmpFlooding,  3        kIcmpFlooding Flooding Attack\n"
 				 "  [Server Required Attacks]\n"
-				 "    conn, CONN,  4        Connection Flooding Attack\n"
-				 "    get,  GET,   5        GET Flooding Attack\n"
-				 "    head, HEAD,  6        Header Buffering Attack\n"
-				 "    body, BODY,  7        Body Buffering Attack\n"
-				 "    resp, RESP,  8        Response Buffering Attack\n"
-				 "    hash, HASH,  9        Hash Dos Attack\n");
+				 "    conn, kConnectionFlooding,  4        Connection Flooding Attack\n"
+				 "    get,  kGetFlooding,   5        kGetFlooding Flooding Attack\n"
+				 "    head, kHeadBuffering,  6        Header Buffering Attack\n"
+				 "    body, kBodyBuffering,  7        Body Buffering Attack\n"
+				 "    resp, kResponseBuffering,  8        Response Buffering Attack\n"
+				 "    hash, kHashDos,  9        Hash Dos Attack\n");
 	printf("\n");
 	printf("\e[1mSOURCE IP ADDRESS\e[0m \n"
 				 "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"
@@ -328,27 +324,27 @@ int main(int argc, char *argv[])
 {
 	int mode;
 	bool is_command;
-	attack_type type;
+	AttackType type;
 
-	is_command = check_options(argv, argc);
+	is_command = CheckOptions(argv, argc);
 	if (!is_command) {
-		print_logo();
-		type = type_choose_attack();
+		PrintLogo();
+		type = ChooseAttackType();
 		g_usage_functions[type]();
-		get_input();
-		make_tokens();
+		GetInput();
+		MakeTokens();
 	} else {
-		type = argv_to_tokens(argv, argc);
+		type = ArgvToTokens(argv, argc);
 	}
-	if (type == NONE) {
-		print_usage(argv);
+	if (type == kNoneType) {
+		PrintUsage(argv);
 		return 0;
 	}
 	printf("num core : %d\n",g_num_cores);
 
 
 
-	signal(SIGINT, sigint_handler);
+	signal(SIGINT, SigintHandler);
 
 	int i;
 
@@ -362,7 +358,7 @@ int main(int argc, char *argv[])
 		}
 		else if(g_pid_list[i] == 0 )
 		{
-			prepare_pid(g_pid_list, g_num_cores);
+			PreparePid(g_pid_list, g_num_cores);
 			g_main_functions[type](g_tokens);
 			exit(0);
 		}

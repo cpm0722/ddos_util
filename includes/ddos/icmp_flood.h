@@ -1,6 +1,6 @@
-#ifndef ICMP_FLOOD
+#ifndef kIcmpFlooding_FLOOD
 
-#define ICMP_FLOOD
+#define kIcmpFlooding_FLOOD
 
 /*!
  * @brief
@@ -8,7 +8,7 @@
  * @date		2021/02/20
  * @return		void
  */
-void icmp_flood_print_usage(void);
+void IcmpFloodPrintUsage(void);
 
 /*!
  * @brief
@@ -18,7 +18,7 @@ void icmp_flood_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_icmp_flood(void *data);
+void *GenerateIcmpFlood(void *data);
 
 /*!
  * @brief
@@ -28,7 +28,7 @@ void *generate_icmp_flood(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *icmp_flood_time_check(void *data);
+void *IcmpFloodTimeCheck(void *data);
 
 /*!
  * @brief
@@ -37,6 +37,6 @@ void *icmp_flood_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void icmp_flood_main(char *argv[]);
+void IcmpFloodMain(char *argv[]);
 
-#endif // ifndef ICMP_FLOOD
+#endif // ifndef kIcmpFlooding_FLOOD

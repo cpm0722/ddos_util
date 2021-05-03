@@ -1,6 +1,6 @@
-#ifndef RESPONSE_BUFFERING
+#ifndef kResponseBufferingONSE_BUFFERING
 
-#define RESPONSE_BUFFERING
+#define kResponseBufferingONSE_BUFFERING
 
 /*!
  * @brief
@@ -8,7 +8,7 @@
  * @date		2021/03/15
  * @return		void
  */
-void response_buffering_print_usage(void);
+void ResponseBufferingPrintUsage(void);
 
 /*!
  * @brief
@@ -18,7 +18,7 @@ void response_buffering_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_response_buffering(void *data);
+void *GenerateResponseBuffering(void *data);
 
 /*!
  * @brief
@@ -28,7 +28,7 @@ void *generate_response_buffering(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *response_buffering_time_check(void *data);
+void *ResponseBufferingTimeCheck(void *data);
 
 /*!
  * @brief
@@ -37,6 +37,6 @@ void *response_buffering_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void response_buffering_main(char *argv[]);
+void ResponseBufferingMain(char *argv[]);
 
-#endif // ifndef RESPONSE_BUFFERING
+#endif // ifndef kResponseBufferingONSE_BUFFERING

@@ -1,9 +1,9 @@
-#ifndef BODY_BUFFERING
+#ifndef kBodyBuffering_BUFFERING
 
-#define BODY_BUFFERING
+#define kBodyBuffering_BUFFERING
 
 /// http request method message size in body buffering
-#define __BODY_BUFFERING_REQUEST_MSG_SIZE__ 100
+#define __kBodyBuffering_BUFFERING_REQUEST_MSG_SIZE__ 100
 
 /*!
  * @brief
@@ -11,7 +11,7 @@
  * @date		2021/02/20
  * @return		void
  */
-void body_buffering_print_usage(void);
+void BodyBufferingPrintUsage(void);
 
 /*!
  * @brief
@@ -21,7 +21,7 @@ void body_buffering_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_body_buffering(void *data);
+void *GenerateBodyBuffering(void *data);
 
 /*!
  * @brief
@@ -31,7 +31,7 @@ void *generate_body_buffering(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *body_buffering_time_check(void *data);
+void *BodyBufferingTimeCheck(void *data);
 
 /*!
  * @brief
@@ -40,6 +40,6 @@ void *body_buffering_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void body_buffering_main(char *argv[]);
+void BodyBufferingMain(char *argv[]);
 
-#endif // ifndef BODY_BUFFERING
+#endif // ifndef kBodyBuffering_BUFFERING

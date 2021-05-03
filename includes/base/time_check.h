@@ -14,7 +14,7 @@
  * @param[out]		produced_in_sec_p	number of packets which produced in before time ~ now time, it will be initialized to 0
  * @return			void
  */
-void time_check(pthread_cond_t *cond_p,
+void TimeCheck(pthread_cond_t *cond_p,
 				struct timespec *before_time_p,
 				struct timespec *now_time_p,
 				__u64 *produced_in_sec_p);

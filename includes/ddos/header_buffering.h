@@ -1,9 +1,9 @@
-#ifndef HEADER_BUFFERING
+#ifndef kHeadBufferingER_BUFFERING
 
-#define HEADER_BUFFERING
+#define kHeadBufferingER_BUFFERING
 
 /// http request method message size in header buffering
-#define __HEADER_BUFFERING_REQUEST_MSG_SIZE__ 100
+#define __kHeadBufferingER_BUFFERING_REQUEST_MSG_SIZE__ 100
 
 /*!
  * @brief
@@ -11,7 +11,7 @@
  * @date		2021/02/20
  * @return		void
  */
-void header_buffering_print_usage();
+void HeaderBufferingPrintUsage();
 
 /*!
  * @brief
@@ -21,7 +21,7 @@ void header_buffering_print_usage();
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_header_buffering(void *data);
+void *GenerateHeaderBuffering(void *data);
 
 /*!
  * @brief
@@ -31,7 +31,7 @@ void *generate_header_buffering(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *header_buffering_time_check(void *data);
+void *HeaderBufferingTimeCheck(void *data);
 
 /*!
  * @brief
@@ -40,6 +40,6 @@ void *header_buffering_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void header_buffering_main(char *argv[]);
+void HeaderBufferingMain(char *argv[]);
 
-#endif // ifndef HEADER_BUFFERING
+#endif // ifndef kHeadBufferingER_BUFFERING

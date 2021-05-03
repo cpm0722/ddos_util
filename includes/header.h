@@ -1,6 +1,6 @@
-#ifndef HEADER_H
+#ifndef kHeadBufferingER_H
 
-#define HEADER_H
+#define kHeadBufferingER_H
 
 /// maximum value of unsigned integer
 #define __UINT_MAXIMUM__ (1L << (31)) - 1
@@ -31,8 +31,8 @@
  */
 typedef enum 
 {
-	NONE, SYN, UDP, ICMP, CONN, GET, HEAD, BODY, RESP, HASH, REF
-} attack_type;
+	kNoneType, kSynFlooding, kUdpFlooding, kIcmpFlooding, kConnectionFlooding, kGetFlooding, kHeadBuffering, kBodyBuffering, kResponseBuffering, kHashDos
+} AttackType;
 
 /**
  * @brief boolean
@@ -68,4 +68,4 @@ typedef struct
 	__u32 port;                       /** now destination port in subnet masking, range: 0~65535 */
 } MaskingArguments;
 
-#endif // ifndef HEADER_H
+#endif // ifndef kHeadBufferingER_H

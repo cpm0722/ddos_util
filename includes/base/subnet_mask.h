@@ -17,7 +17,7 @@
  * @return		__u32
  * @retval		ipv4 32bit value
  */
-__u32 get_addr_val(__uc *str);
+__u32 GetAddressIntegerValue(__uc *str);
 
 /*!
  * @brief
@@ -27,7 +27,7 @@ __u32 get_addr_val(__uc *str);
  * @param[out]	str		ipv4 string(XXX.XXX.XXX.XXX)
  * @return		void
  */
-void get_addr_str(__u32 val, __uc str[IPV4_STRLEN]);
+void GetAddressStr(__u32 val, __uc str[IPV4_STRLEN]);
 
 /*!
  * @brief
@@ -41,7 +41,7 @@ void get_addr_str(__u32 val, __uc str[IPV4_STRLEN]);
  * @retval		1: there is no next ipv4 address in subnet masking
  * @reval		0: else
  */
-int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask);
+int MaskingNextIpAddress(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask);
 
 /*!
  * @brief
@@ -51,7 +51,7 @@ int masking_next_ip_addr(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask);
  * @return		__u32
  * @retval		subnet masking value
  */
-__u32 get_mask_from_ip_addr(__uc *ipv4);
+__u32 GetMaskFromIpv4Format(__uc *ipv4);
 
 /*!
  * @brief
@@ -61,7 +61,7 @@ __u32 get_mask_from_ip_addr(__uc *ipv4);
  * @param[out]	now		now ipv4 string(XXX.XXX.XXX.XXX)
  * @return		void
  */
-void get_ip_from_ip_addr(__uc *ipv4, __uc *now);
+void GetIpAddressFromIpv4Format(__uc *ipv4, __uc *now);
 
 //int split_ip_mask_port(char *argv[], __uc src_ipv4[IPV4_STR_LEN], __uc dest_ipv4[IPV4_STR_LEN], __u32 *src_mask, __u32 *dest_mask, __u32 *port_start, __u32 *port_end);
 
@@ -76,7 +76,7 @@ void get_ip_from_ip_addr(__uc *ipv4, __uc *now);
  * @return		int
  * @retval		always 0 (normal exit)
  */
-int argv_to_input_arguments(char *argv[], InputArguments *input);
+int ArgvToInputArguments(char *argv[], InputArguments *input);
 
 /*!
  * @brief
@@ -87,6 +87,6 @@ int argv_to_input_arguments(char *argv[], InputArguments *input);
  * @return			int
  * @retval			always 0 (normal exit)
  */
-int get_masking_arguments(InputArguments *input, MaskingArguments *now);
+int GetMaskingArguments(InputArguments *input, MaskingArguments *now);
 
 #endif	// ifndef SUBNET_MASK

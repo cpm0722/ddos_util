@@ -515,11 +515,11 @@ int main(int argc, char *argv[]) {
 		}
 
 			/*struct iphdr ipv4_h;
-			ipv4_h = prepare_empty_ipv4();
-			ipv4_h = ipv4_set_protocol(ipv4_h, IPPROTO_TCP);
-			ipv4_h = ipv4_set_saddr(ipv4_h,src_ip_addr);
-			ipv4_h = ipv4_set_daddr(ipv4_h,dest_ip_addr);
-			ipv4_h = ipv4_add_size(ipv4_h,sizeof(struct tcphdr) + packet_data_size[i]+packets[i].payload_size));
+			ipv4_h = PrepareEmptyIphdr();
+			ipv4_h = IphdrSetProtocol(ipv4_h, IPPROTO_TCP);
+			ipv4_h = IphdrSetSrcAddr(ipv4_h,src_ip_addr);
+			ipv4_h = IphdrSetDestAddr(ipv4_h,dest_ip_addr);
+			ipv4_h = IphdrAddSize(ipv4_h,sizeof(struct tcphdr) + packet_data_size[i]+packets[i].payload_size));
 */
 
 			tcp->th_sum = tcp_get_checksum_for_tcp_replay(tcp,packets[i].payload,packets[i].payload_size);
@@ -826,30 +826,30 @@ u_short tcp_get_checksum_for_tcp_replay(
 															 char *data,
 															 int datasize)
 {
-	struct tcp_pseudo_header psh;
-	memset(&psh, 0, sizeof(struct tcp_pseudo_header));
+	struct PseudoTcphdr psh;
+	memset(&psh, 0, sizeof(struct PseudoTcphdr));
 	psh.source_address = inet_addr(src_ip_addr);
 	psh.dest_address = inet_addr(dest_ip_addr);
 	psh.placeholder = 0;
 	psh.protocol = IPPROTO_TCP;
 	psh.tcp_length = htons(sizeof(struct tcphdr) + datasize);
-	int psize = sizeof(struct tcp_pseudo_header) + sizeof(struct tcphdr) + datasize;
+	int psize = sizeof(struct PseudoTcphdr) + sizeof(struct tcphdr) + datasize;
 	char *assembled = (char *) malloc(psize);
-	memcpy(assembled, (char *) &psh, sizeof(struct tcp_pseudo_header));
+	memcpy(assembled, (char *) &psh, sizeof(struct PseudoTcphdr));
 
 	struct tcphdr tcph;
 
 	memcpy(&tcph, snifftcp, sizeof(struct sniff_tcp));
 
-	memcpy(assembled + sizeof(struct tcp_pseudo_header), &tcph, sizeof(struct tcphdr));
+	memcpy(assembled + sizeof(struct PseudoTcphdr), &tcph, sizeof(struct tcphdr));
 	if (data != NULL && datasize != 0)
 	{
 		printf("Copying data... cksum.\n");
-		memcpy(assembled + sizeof(struct tcp_pseudo_header) + sizeof(struct tcphdr), data, datasize);
+		memcpy(assembled + sizeof(struct PseudoTcphdr) + sizeof(struct tcphdr), data, datasize);
 	}
 
 
-	u_short ck_sum = in_cksum((__u16*) assembled, psize);
+	u_short ck_sum = IphdrGetChecksum((__u16*) assembled, psize);
 	free(assembled);
 	return ck_sum;
 
@@ -861,7 +861,7 @@ void *tcpreplay_thread()
 {
 	printf("Thread init\n");
 	//make socket for new data send;
-		int sock = make_socket(IPPROTO_TCP);
+		int sock = MakeRawSocket(IPPROTO_TCP);
 		struct sockaddr_in dest;
 		dest.sin_family = AF_INET;
 

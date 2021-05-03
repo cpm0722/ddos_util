@@ -1,6 +1,6 @@
-#ifndef SYN_FLOOD
+#ifndef kSynFlooding_FLOOD
 
-#define SYN_FLOOD
+#define kSynFlooding_FLOOD
 
 /*!
  * @brief
@@ -8,7 +8,7 @@
  * @date		2021/03/08
  * @return		void
  */
-void syn_flood_print_usage(void);
+void SynFloodPrintUsage(void);
 
 /*!
  * @brief
@@ -18,7 +18,7 @@ void syn_flood_print_usage(void);
  * @return		void *
  * @retval		NULL: always
  */
-void *generate_syn_flood(void *data);
+void *GenerateSynFlood(void *data);
 
 /*!
  * @brief
@@ -28,7 +28,7 @@ void *generate_syn_flood(void *data);
  * @return		void *
  * @retval		NULL: always
  */
-void *syn_flood_time_check(void *data);
+void *SynFloodTimeCheck(void *data);
 
 /*!
  * @brief
@@ -37,6 +37,6 @@ void *syn_flood_time_check(void *data);
  * @param[in]	argv	arguments
  * @return		void
  */
-void syn_flood_main(char *argv[]);
+void SynFloodMain(char *argv[]);
 
-#endif // ifndef SYN_FLOOD
+#endif // ifndef kSynFlooding_FLOOD

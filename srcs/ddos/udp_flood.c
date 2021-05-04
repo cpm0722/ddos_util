@@ -56,7 +56,7 @@ void *GenerateUdpFlood(void *data)
     udp_h_ptr->checksum = 0;
     udp_h_ptr->src_port = htons(0);
     udp_h_ptr->dest_port = htons(g_udp_now.port);
-    strcpy(udp_h_ptr -> data, DATA);
+    snprintf(udp_h_ptr->data, UDP_DATA_SIZE, "%s", DATA);
     udp_h_ptr->len = htons(strlen(DATA));
     // wait a second
     if (g_udp_num_generated_in_sec >= g_udp_request_per_sec) {

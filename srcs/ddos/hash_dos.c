@@ -112,15 +112,16 @@ void HashDosMain(char *argv[])
   g_hash_dos_num_generated_in_sec = 0;
   g_hash_dos_num_total = 0;
   // prepare arbitary post method args
-  srand(time(NULL));
+  unsigned int seed = time(NULL);
+  srand(seed);
 
   char arg[21] = "arrrarrarrarrAaAa=1&";
   int index = 0, j = 0;
   for (int i = 0; i < 50; i++) {
-    arg[13] = rand() % 26 + 'A';
-    arg[14] = rand() % 26 + 'a';
-    arg[15] = rand() % 26 + 'A';
-    arg[16] = rand() % 26 + 'a';
+    arg[13] = rand_r(&seed) % 26 + 'A';
+    arg[14] = rand_r(&seed) % 26 + 'a';
+    arg[15] = rand_r(&seed) % 26 + 'A';
+    arg[16] = rand_r(&seed) % 26 + 'a';
 
     for (j = 0; j < 21; j++) {
       g_hash_dos_content[index+j] = arg[j];
@@ -129,7 +130,8 @@ void HashDosMain(char *argv[])
   }
   g_hash_dos_content[index] = '\0';
 
-  sprintf(g_hash_dos_method,
+  snprintf(g_hash_dos_method,
+    sizeof(g_hash_dos_method),
     "POST / HTTP/1.1\r\nHost: %s\r\n"
     "User-Agent: python-requests/2.22.0\r\n"
     "Accept-Encoding: gzip, deflate\r\n"
@@ -139,7 +141,9 @@ void HashDosMain(char *argv[])
     "Content-Length: %d\r\n\r\n",
     g_hash_dos_input.src,
     (int) sizeof(g_hash_dos_content));
-  sprintf(g_hash_dos_method + strlen(g_hash_dos_method), "%s\r\n",
+  snprintf(g_hash_dos_method + strlen(g_hash_dos_method),
+    strlen(g_hash_dos_content) + 3,
+    "%s\r\n",
     g_hash_dos_content);
   memset(&g_hash_dos_before_time, 0, sizeof(struct timespec));
   memset(&g_hash_dos_now_time, 0, sizeof(struct timespec));

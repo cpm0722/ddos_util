@@ -143,11 +143,13 @@ int MakeTcpConnection(__u32 src_ip,
     tcp_h.window = htons(window_size);
   }
   // set src port number random
-  int src_port = rand() % 63535 + 1500;
+  unsigned int seed = time(NULL);
+  srand(seed);
+  int src_port = rand_r(&seed) % 63535 + 1500;
   *(src_port_copy) = src_port;
   tcp_h.source = htons(src_port);
   tcp_h.dest = htons(dest_port);
-  int seq = rand() % 10000000;
+  int seq = rand_r(&seed) % 10000000;
   tcp_h.seq = htonl(seq);
   seq++;
   // ***For kSynFlooding TCP request, ACK seq should not be provided
@@ -181,7 +183,7 @@ int MakeTcpConnection(__u32 src_ip,
     // printf("\n\n");
 
   } else {
-    req_seq = rand() % 10000000;
+    req_seq = rand_r(&seed) % 10000000;
   }
   ipv4_h = PrepareEmptyIphdr();
   ipv4_h.protocol = IPPROTO_TCP;

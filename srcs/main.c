@@ -72,10 +72,11 @@ void MakeTokens(void)
     g_tokens[i] = NULL;
   }
   i = 0;
-  g_tokens[i] = strtok(g_input, " ");
+  char *next_ptr;
+  g_tokens[i] = strtok_r(g_input, " ", &next_ptr);
   while (g_tokens[i] != NULL) {
     i++;
-    g_tokens[i] = strtok(NULL, " ");
+    g_tokens[i] = strtok_r(NULL, " ", &next_ptr);
   }
   return;
 }

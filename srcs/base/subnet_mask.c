@@ -6,12 +6,13 @@ __u32 GetAddressIntegerValue(__uc *str)
   __u32 res = 0;
   __uc tmp_str[IPV4_STRLEN];
   memset(tmp_str, '\0', IPV4_STRLEN);
-  strcpy(tmp_str, str);
-  __uc *ptr = strtok(tmp_str, ".");
+  snprintf(tmp_str, IPV4_STRLEN, "%s", str);
+  char *next_ptr;
+  char *ret_ptr = strtok_r(tmp_str, ".", &next_ptr);
   for (int i = 3; i >= 0; i--) {
-    __u32 val = atoi(ptr);
+    __u32 val = atoi(ret_ptr);
     res |= val << (BYTE_LEN * i);
-    ptr = strtok(NULL, ".");
+    ret_ptr = strtok_r(NULL, ".", &next_ptr);
   }
   return res;
 }
@@ -22,7 +23,8 @@ void GetAddressStr(__u32 val, __uc str[IPV4_STRLEN])
   for (int i = 3; i >= 0; i--) {
     split[i] = (val >> (BYTE_LEN * i)) & BYTE_MAX_VAL;
   }
-  sprintf(str, "%u.%u.%u.%u", split[3], split[2], split[1], split[0]);
+  snprintf(str, IPV4_STRLEN, "%u.%u.%u.%u",
+      split[3], split[2], split[1], split[0]);
   return;
 }
 
@@ -74,10 +76,10 @@ __u32 GetMaskFromIpv4Format(__uc *ipv4)
     if (i > strlen(ipv4))
       return 32;
   }
-  __uc mask_string[4];
+  __uc mask_str[4];
   i++;
-  strcpy(mask_string, char_ptr + i);
-  mask = atoi(mask_string);
+  snprintf(mask_str, sizeof(mask_str), "%s", char_ptr + i);
+  mask = atoi(mask_str);
   return mask;
 }
 
@@ -88,7 +90,7 @@ void GetIpAddressFromIpv4Format(__uc *ipv4, __uc *now)
   while (char_ptr[i] != '/') {
     i++;
     if (i > strlen(ipv4)){
-      strcpy(now, ipv4);
+      snprintf(now, IPV4_STRLEN, "%s", ipv4);
       return;
     }
   }
@@ -107,11 +109,12 @@ int ArgvToInputArguments(char *argv[], InputArguments *input)
   input->src_mask = GetMaskFromIpv4Format(src);
   input->dest_mask = GetMaskFromIpv4Format(dest);
 
-  __uc *ptr = strtok(port, "-");
-  input->port_start = atoi(ptr);
-  ptr = strtok(NULL, "-");
-  if (ptr) {
-    input->port_end = atoi(ptr);
+  char *next_ptr;
+  char *ret_ptr = strtok_r(port, "-", &next_ptr);
+  input->port_start = atoi(ret_ptr);
+  ret_ptr = strtok_r(NULL, "-", &next_ptr);
+  if (ret_ptr) {
+    input->port_end = atoi(ret_ptr);
   } else {
     input->port_end = input->port_start;
   }

@@ -2,11 +2,10 @@
 #include "base/time_check.h"
 
 void TimeCheck(pthread_cond_t *cond_p,
-                struct timespec *before_time_p,
-                struct timespec *now_time_p,
-                __u64 *produced_in_sec_p)
+               struct timespec *before_time_p,
+               struct timespec *now_time_p,
+               __u64 *produced_in_sec_p)
 {
-  // Get Time
   clock_gettime(CLOCK_MONOTONIC, now_time_p);
   long double elapsed_time = (now_time_p->tv_sec - before_time_p->tv_sec) +
     ((now_time_p->tv_nsec - before_time_p->tv_nsec) / NANO_PER_SEC);

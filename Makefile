@@ -36,7 +36,16 @@ BASE_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(BASE_FNAMES)))
 DDOS_OBJS = $(addsuffix .o,$(addprefix $(OBJ_DIR)/,$(DDOS_FNAMES)))
 MAIN_C = $(SRC_DIR)/main.c
 MAIN_O = $(OBJ_DIR)/main.o
+MAIN_H = $(INCLUDE_DIR)/main.h
+HEADER_H = $(INCLUDE_DIR)/header.h
 DOC_HTML = man.html
+
+#################
+#     LINTER    #
+#################
+LINTER = cpplint
+LINTER_EXCLUDE_LIST = -legal/copyright,-build/include_subdir,-whitespace/braces,-readability/casting,-runtime/arrays,-whitespace/indent
+LINTER_TARGET = $(SRC_DIR)/$(BASE_DIR)/*.c $(SRC_DIR)/$(DDOS_DIR)/*.c $(MAIN_C) $(INCLUDE_DIR)/$(BASE_DIR)/*.h $(INCLUDE_DIR)/$(DDOS_DIR)/*.h $(MAIN_H) $(HEADER_H)
 
 #################
 #     RULES     #
@@ -50,6 +59,7 @@ CLEAN = clean
 ERASE = erase
 FCLEAN = fclean
 DOXYGEN = docs
+LINT = lint
 
 #################
 #  TCP  REPLAY  #
@@ -58,7 +68,7 @@ DOXYGEN = docs
 TCP_REPLAY = tcp_replay
 
 .SUFFIXES : .c.o
-.PHONY: .c.o $(ALL) $(RE) $(MKDIR_OBJS) $(MKDIR_LIBS) $(CLEAN) $(ERASE) $(DOXYGEN)
+.PHONY: .c.o $(ALL) $(RE) $(MKDIR_OBJS) $(MKDIR_LIBS) $(CLEAN) $(ERASE) $(DOXYGEN) $(LINT)
 
 $(ALL): $(TARGET) $(TCP_REPLAY)
 
@@ -105,3 +115,6 @@ $(TCP_REPLAY):
 $(DOXYGEN):
 	doxygen Doxyfile
 	ln -s $(DOC_DIR)/index.html $(DOC_HTML) 
+
+$(LINT):
+	$(LINTER) --filter=$(LINTER_EXCLUDE_LIST) $(LINTER_TARGET)

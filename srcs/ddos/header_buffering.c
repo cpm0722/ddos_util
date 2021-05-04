@@ -5,7 +5,7 @@
 #include "base/time_check.h"
 #include "ddos/header_buffering.h"
 
-#define GET_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 #define GET_METHOD_LEN 50
 extern int g_num_threads;
 
@@ -42,8 +42,9 @@ void *GenerateHeaderBuffering(void *data)
   int head_buffering_cnt = 0;
   int index = 0;
 
-  char get_method[kGetFlooding_METHOD_LEN];
-  strcpy(get_method, "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+  char get_method[GET_METHOD_LEN];
+  snprintf(get_method, sizeof(get_method), "%s",
+      "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
   int get_method_len = strlen(get_method);
 

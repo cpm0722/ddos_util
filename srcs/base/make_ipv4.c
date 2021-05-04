@@ -21,7 +21,9 @@ struct iphdr PrepareEmptyIphdr(void)
   ip_head.version = 4;
   ip_head.tos = 0;
   ip_head.tot_len = sizeof(struct iphdr);
-  ip_head.id = htons(31337 + (rand() % 100));
+  unsigned int seed = time(NULL);
+  srand(seed);
+  ip_head.id = htons(31337 + (rand_r(&seed) % 100));
   ip_head.frag_off = 0;
   ip_head.ttl = 255;
   ip_head.protocol = IPPROTO_TCP;

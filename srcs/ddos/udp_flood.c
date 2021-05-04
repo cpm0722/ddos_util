@@ -25,7 +25,7 @@ struct timespec g_udp_now_time;
 
 void UdpFloodPrintUsage(void)
 {
-  printf("kUdpFlooding flood Usage : "
+  printf("UDP Flooding Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
   return;
 }
@@ -120,7 +120,7 @@ void UdpFloodMain(char *argv[])
   for (int i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
-  printf("Sending kUdpFlooding requests to %s using %d threads %u per sec\n",
+  printf("Sending UDP Flooding requests to %s using %d threads %u per sec\n",
       g_udp_input.dest, num_threads, g_udp_request_per_sec);
   int i;
   for (i = 0; i < num_threads; i++) {
@@ -136,7 +136,7 @@ void UdpFloodMain(char *argv[])
     printf("thread %d joined\n", i);
   }
   pthread_mutex_destroy(&g_udp_mutex);
-  printf("kUdpFlooding flood finished\nTotal %lu packets sent.\n",
+  printf("UDP Flooding finished\nTotal %lu packets sent.\n",
       g_udp_num_total);
   pthread_exit(NULL);
   return;

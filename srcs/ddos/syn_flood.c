@@ -24,7 +24,7 @@ struct timespec g_syn_now_time;
 
 void SynFloodPrintUsage(void)
 {
-  printf("kSynFlooding flood Usage : "
+  printf("SYN Flooding Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
   return;
 }
@@ -54,7 +54,7 @@ void *GenerateSynFlood(void *data)
     tcp_h = TcphdrSetSrcPort(tcp_h, rand() % 65535 + 1);
     tcp_h = TcphdrSetDestPort(tcp_h, g_syn_now.port);
     tcp_h = TcphdrSetSeq(tcp_h, g_syn_num_total);
-    // ***For kSynFlooding TCP request, ACK seq should not be provided
+    // ***For SYN TCP request, ACK seq should not be provided
     // tcp_h = TcphdrSetAckSeq(tcp_h,35623);
     tcp_h = TcphdrSetSynFlag(tcp_h);
     tcp_h = TcphdrGetChecksum(ipv4_h, tcp_h, NULL, 0);
@@ -118,7 +118,7 @@ void SynFloodMain(char *argv[])
   for (int i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
-  printf("Sending kSynFlooding requests to %s using %d threads\n",
+  printf("Sending SYN Flooding requests to %s using %d threads\n",
       g_syn_input.dest, num_threads);
   int i;
   for (i = 0; i < num_threads; i++) {
@@ -134,7 +134,7 @@ void SynFloodMain(char *argv[])
     printf("thread %d joined\n", i);
   }
   pthread_mutex_destroy(&g_syn_mutex);
-  printf("kSynFlooding flood finished\nTotal %lu packets sent.\n",
+  printf("SYN Flooding finished\nTotal %lu packets sent.\n",
       g_syn_num_total);
   pthread_exit(NULL);
   return;

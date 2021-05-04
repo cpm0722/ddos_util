@@ -5,8 +5,8 @@
 #include "base/time_check.h"
 #include "ddos/header_buffering.h"
 
-#define kGetFlooding_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define kGetFlooding_METHOD_LEN 50
+#define GET_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define GET_METHOD_LEN 50
 extern int g_num_threads;
 
 // session counting
@@ -28,7 +28,7 @@ struct timespec g_headbuf_now_time;
 void HeaderBufferingPrintUsage(void)
 {
   printf(
-      "header buffering Usage : "
+      "Header Buffering Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
   return;
 }
@@ -43,7 +43,7 @@ void *GenerateHeaderBuffering(void *data)
   int index = 0;
 
   char get_method[kGetFlooding_METHOD_LEN];
-  strcpy(get_method, "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+  strcpy(get_method, "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
 
   int get_method_len = strlen(get_method);
 
@@ -156,7 +156,7 @@ void HeaderBufferingMain(char *argv[])
     pthread_join(threads[i], NULL);
     printf("threads %d joined\n", i);
   }
-  printf("Head Buffering attack finished\nTotal %lu packets sent.\n",
+  printf("Header Buffering attack finished\nTotal %lu packets sent.\n",
       g_headbuf_num_total);
 
   pthread_mutex_destroy(&g_headbuf_mutex);

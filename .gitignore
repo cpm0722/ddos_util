@@ -3,5 +3,7 @@
 *.tmp
 *.a
 *.swp
+cscope.*
+tags
 docs/
 ./**/.DS_Store

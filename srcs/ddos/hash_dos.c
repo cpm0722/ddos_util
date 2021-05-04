@@ -27,7 +27,7 @@ char g_hash_dos_method[1300];
 
 void HashDosPrintUsage(void)
 {
-  printf("kHashDos DOS Attack Usage : "
+  printf("Hash DOS Attack Usage : "
          "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
   return;
 }
@@ -149,7 +149,7 @@ void HashDosMain(char *argv[])
   pthread_t threads[9999];
   int thread_ids[9999];
 
-  printf("Sending hash_dos requests to %s per %d\n",
+  printf("Sending Hash Dos requests to %s per %d\n",
       g_hash_dos_input.dest, g_hash_dos_request_per_sec);
   int i;
   for (i = 0; i < num_threads; i++) {
@@ -166,7 +166,7 @@ void HashDosMain(char *argv[])
     printf("thread %d joined\n", i);
   }
   pthread_mutex_destroy(&g_hash_dos_mutex);
-  printf("hash_dos flood Finished\nTotal %ld packets sent.\n",
+  printf("Hash Dos Attack Finished\nTotal %ld packets sent.\n",
       g_hash_dos_num_total);
   pthread_exit(NULL);
   return;

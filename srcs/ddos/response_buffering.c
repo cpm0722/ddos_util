@@ -5,9 +5,9 @@
 #include "base/time_check.h"
 #include "ddos/body_buffering.h"
 
-#define GET_METHOD "kGetFlooding /Force.mp3 HTTP/1.1\r\nHost: localhost\r\n\r\n"
+#define GET_METHOD "GET /Force.mp3 HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
-#define kResponseBufferingONSE_BUFFERING_CNT 50
+#define RESPONSE_BUFFERING_CNT 50
 
 extern int g_num_threads;
 
@@ -51,7 +51,7 @@ void *GenerateResponseBuffering(void *data)
     pthread_mutex_lock(&g_resbuf_mutex);
     // get now resource
     GetMaskingArguments(&g_resbuf_input, &g_resbuf_now);
-    if (resbuf_cnt % kResponseBufferingONSE_BUFFERING_CNT == 0) {
+    if (resbuf_cnt % RESPONSE_BUFFERING_CNT == 0) {
       if (sock != -1) {
         close(sock);
       }
@@ -174,7 +174,7 @@ void ResponseBufferingMain(char *argv[])
     printf("threads %d joined\n", i);
   }
   pthread_mutex_destroy(&g_resbuf_mutex);
-  printf("Body Buffering attack finished.\n");
+  printf("Response Buffering attack finished.\n");
   pthread_exit(NULL);
   return;
 }

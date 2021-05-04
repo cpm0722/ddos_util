@@ -2,9 +2,6 @@
 
 #define INCLUDES_DDOS_GET_FLOOD_H_
 
-/// http request method message size in get flooding
-#define __kGetFlooding_REQUEST_MSG_SIZE__ 100
-
 /*!
  * @brief
  * print get flooding usage

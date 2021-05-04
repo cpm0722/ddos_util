@@ -25,7 +25,7 @@ struct timespec g_conn_now_time;
 void ConnectionFloodPrintUsage(void)
 {
   printf(
-      "kConnectionFlooding flood Usage : "
+      "Connection Flooding Usage : "
       "[Src-IP/mask] [Dest-IP/mask] [Dest-Port] [# requests/s]\n");
   return;
 }
@@ -111,7 +111,7 @@ void ConnFloodMain(char *argv[])
   for (int i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
-  printf("Sending kConnectionFlooding requests to %s using %d threads\n",
+  printf("Sending Connection Flooding requests to %s using %d threads\n",
     g_conn_input.dest, num_threads);
   int i;
   for (i = 0; i < num_threads; i++) {
@@ -127,7 +127,7 @@ void ConnFloodMain(char *argv[])
     printf("thread %d joined\n", i);
   }
   pthread_mutex_destroy(&g_conn_mutex);
-  printf("kConnectionFlooding flood finished\nTotal %lu packets sent.\n",
+  printf("Connection Flooding finished\nTotal %lu packets sent.\n",
     g_conn_num_total);
   pthread_exit(NULL);
   return;

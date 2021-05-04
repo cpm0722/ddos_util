@@ -2,9 +2,6 @@
 
 #define INCLUDES_DDOS_HEADER_BUFFERING_H_
 
-/// http request method message size in header buffering
-#define __kHeadBufferingER_BUFFERING_REQUEST_MSG_SIZE__ 100
-
 /*!
  * @brief
  * print header buffering usage

@@ -2,9 +2,6 @@
 
 #define INCLUDES_DDOS_BODY_BUFFERING_H_
 
-/// http request method message size in body buffering
-#define __kBodyBuffering_BUFFERING_REQUEST_MSG_SIZE__ 100
-
 /*!
  * @brief
  * print body buffering usage

@@ -84,7 +84,8 @@ void MakeTokens(void)
 bool CheckOptions(char *argv[], int argc)
 {
   bool is_command = false;
-  for (int i = 1; i < argc; i++) {
+  int i;
+  for (i = 1; i < argc; i++) {
     if (*argv[i] != '-') {
       is_command = true;
     } else {

@@ -108,12 +108,12 @@ void ConnFloodMain(char *argv[])
   const int num_threads = g_num_threads;
   pthread_t threads[9999];
   int thread_ids[9999];
-  for (int i = 0; i < num_threads; i++) {
+  int i;
+  for (i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
   printf("Sending Connection Flooding requests to %s using %d threads\n",
     g_conn_input.dest, num_threads);
-  int i;
   for (i = 0; i < num_threads; i++) {
     pthread_create(
         &threads[i],
@@ -122,7 +122,7 @@ void ConnFloodMain(char *argv[])
         (void *)&thread_ids[i]);
   }
   pthread_create(&threads[i], NULL, ConnectionFloodTimeCheck, NULL);
-  for (int i = 0; i < num_threads; i++) {
+  for (i = 0; i < num_threads; i++) {
     pthread_join(threads[i], NULL);
     printf("thread %d joined\n", i);
   }

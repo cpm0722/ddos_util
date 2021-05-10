@@ -128,14 +128,15 @@ void IcmpFloodMain(char *argv[])
   int num_threads = g_num_threads;
   pthread_t threads[9999];
   int thread_ids[9999];
-  for (int i = 0; i < num_threads; i++) {
+  int i;
+  for (i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
   printf("Sending ICMP Flooding requests to %s using %d threads %u per sec\n",
       g_icmp_input.dest,
       num_threads,
       g_icmp_request_per_sec);
-  int i;
+
   for (i = 0; i < num_threads; i++) {
     pthread_create(
         &threads[i],
@@ -144,7 +145,7 @@ void IcmpFloodMain(char *argv[])
         (void *)&thread_ids[i]);
   }
   pthread_create(&threads[i], NULL, IcmpFloodTimeCheck, NULL);
-  for (int i = 0; i < num_threads; i++) {
+  for (i = 0; i < num_threads; i++) {
     pthread_join(threads[i], NULL);
     printf("thread %d joined\n", i);
   }

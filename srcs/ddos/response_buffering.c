@@ -154,13 +154,14 @@ void ResponseBufferingMain(char *argv[])
   const int num_threads = g_num_threads;
   pthread_t threads[9999];
   int thread_ids[9999];
-  for (int i = 0; i < num_threads; i++) {
+  int i;
+  for (i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
   printf("Response Buffering attack to %s using %d threads\n",
       g_resbuf_input.dest,
       num_threads);
-  int i;
+
   for (i = 0; i < num_threads; i++) {
     pthread_create(&threads[i], NULL, GenerateResponseBuffering,
         (void*) &thread_ids[i]);
@@ -169,7 +170,7 @@ void ResponseBufferingMain(char *argv[])
   }
   pthread_create(&threads[i], NULL, ResponseBufferingTimeCheck,
       (void*) &thread_ids[i]);
-  for (int i = 0; i < num_threads; i++) {
+  for (i = 0; i < num_threads; i++) {
     pthread_join(threads[i], NULL);
     printf("threads %d joined\n", i);
   }

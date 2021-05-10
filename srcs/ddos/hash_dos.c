@@ -116,8 +116,9 @@ void HashDosMain(char *argv[])
   srand(seed);
 
   char arg[21] = "arrrarrarrarrAaAa=1&";
+  int i;
   int index = 0, j = 0;
-  for (int i = 0; i < 50; i++) {
+  for (i = 0; i < 50; i++) {
     arg[13] = rand_r(&seed) % 26 + 'A';
     arg[14] = rand_r(&seed) % 26 + 'a';
     arg[15] = rand_r(&seed) % 26 + 'A';
@@ -155,7 +156,7 @@ void HashDosMain(char *argv[])
 
   printf("Sending Hash Dos requests to %s per %d\n",
       g_hash_dos_input.dest, g_hash_dos_request_per_sec);
-  int i;
+
   for (i = 0; i < num_threads; i++) {
     pthread_create(
         &threads[i],
@@ -164,7 +165,7 @@ void HashDosMain(char *argv[])
         (void *)&thread_ids[i]);
   }
   pthread_create(&threads[i], NULL, HashDosTimeCheck, NULL);
-  for (int i = 0; i < num_threads; i++) {
+  for (i = 0; i < num_threads; i++) {
     printf("called\n");
     pthread_join(threads[i], NULL);
     printf("thread %d joined\n", i);

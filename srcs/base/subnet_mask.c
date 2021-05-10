@@ -9,7 +9,8 @@ __u32 GetAddressIntegerValue(__uc *str)
   snprintf(tmp_str, IPV4_STRLEN, "%s", str);
   char *next_ptr;
   char *ret_ptr = strtok_r(tmp_str, ".", &next_ptr);
-  for (int i = 3; i >= 0; i--) {
+  int i;
+  for (i = 3; i >= 0; i--) {
     __u32 val = atoi(ret_ptr);
     res |= val << (BYTE_LEN * i);
     ret_ptr = strtok_r(NULL, ".", &next_ptr);
@@ -20,7 +21,8 @@ __u32 GetAddressIntegerValue(__uc *str)
 void GetAddressStr(__u32 val, __uc str[IPV4_STRLEN])
 {
   __u32 split[4] = { 0, 0, 0, 0 };
-  for (int i = 3; i >= 0; i--) {
+  int i;
+  for (i = 3; i >= 0; i--) {
     split[i] = (val >> (BYTE_LEN * i)) & BYTE_MAX_VAL;
   }
   snprintf(str, IPV4_STRLEN, "%u.%u.%u.%u",

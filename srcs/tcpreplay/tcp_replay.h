@@ -1,5 +1,4 @@
 
-#include "header.h"
 
 struct ip_pair {
 	char ip1[16];
@@ -75,8 +74,8 @@ struct sniff_ip {
 struct sniff_tcp {
 	u_short th_sport; /* source port */
 	u_short th_dport; /* destination port */
-	tcp_seq th_seq; /* sequence number */
-	tcp_seq th_ack; /* acknowledgement number */
+	u_long th_seq; /* sequence number */
+	u_long th_ack; /* acknowledgement number */
 	u_char th_offx2; /* data offset, rsvd */
 #define TH_OFF(th)  (((th)->th_offx2 & 0xf0) >> 4)
 	u_char th_flags;

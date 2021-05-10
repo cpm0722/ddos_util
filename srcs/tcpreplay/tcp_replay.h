@@ -1,4 +1,5 @@
 
+#include "header.h"
 
 struct ip_pair {
 	char ip1[16];

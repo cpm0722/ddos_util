@@ -59,8 +59,10 @@ void *GenerateHeaderBuffering(void *data)
       if (sock != -1) {
         close(sock);
       }
-      sock = MakeTcpConnection(
-          inet_addr(g_headbuf_now.src),
+	sock = MakeRawSocket(IPPROTO_TCP);
+      	  MakeTcpConnection(
+          sock,
+	  inet_addr(g_headbuf_now.src),
           inet_addr(g_headbuf_now.dest),
           &src_port,
           g_headbuf_now.port,
@@ -103,6 +105,7 @@ void *GenerateHeaderBuffering(void *data)
 
     pthread_mutex_unlock(&g_headbuf_mutex);
   }
+  close(sock);
   return NULL;
 }
 

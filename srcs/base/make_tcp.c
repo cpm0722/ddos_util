@@ -109,7 +109,7 @@ struct tcphdr TcphdrGetChecksum(struct iphdr ipv4h,
 }
 
 // 3way handshake completed socket, returns socket;
-int MakeTcpConnection(__u32 src_ip,
+void MakeTcpConnection(int sock,__u32 src_ip,
                         __u32 dest_ip,
                         int *src_port_copy,
                         int dest_port,
@@ -124,7 +124,6 @@ int MakeTcpConnection(__u32 src_ip,
    */
 
   // in make_ipv4.c -> make tcp socket via raw socket.
-  int sock = MakeRawSocket(IPPROTO_TCP);
   struct iphdr ipv4_h;
 
   ipv4_h = PrepareEmptyIphdr();
@@ -216,7 +215,7 @@ int MakeTcpConnection(__u32 src_ip,
   *(seq_copy) = seq;
   *(ack_copy) = req_seq + 1;
 
-  return sock;
+  return ;
 }
 
 void TcpSocketSendData(int sock,

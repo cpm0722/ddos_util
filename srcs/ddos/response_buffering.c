@@ -55,11 +55,13 @@ void *GenerateResponseBuffering(void *data)
       if (sock != -1) {
         close(sock);
       }
+      sock = MakeRawSocket(IPPROTO_TCP);
       int rvsz = 2;
       setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
                 sizeof(rvsz));
-      sock = MakeTcpConnection(
-          inet_addr(g_resbuf_now.src),
+      	  MakeTcpConnection(
+          sock,
+       	  inet_addr(g_resbuf_now.src),
           inet_addr(g_resbuf_now.dest),
           &src_port,
           g_resbuf_now.port,

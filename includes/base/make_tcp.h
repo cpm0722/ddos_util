@@ -119,7 +119,7 @@ struct tcphdr TcphdrGetChecksum(struct iphdr ipv4h,
   @param __u32 src_ip, __u32 dest_ip, int *src_port_copy, int dest_port, int *seq_copy, int *ack_copy, __u16 window_size
   @return int: socket
 */
-int MakeTcpConnection(__u32 src_ip,
+void MakeTcpConnection(int sock,__u32 src_ip,
                         __u32 dest_ip,
                         int *src_port_copy,
                         int dest_port,

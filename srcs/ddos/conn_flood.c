@@ -34,7 +34,7 @@ void *GenerateConnFlood(void *data)
 {
   srand(time(NULL));
   int thread_id = *((int*) data);
-
+  int sock = MakeRawSocket(IPPROTO_TCP);
   clock_t thread_clock;
   while (1) {
     // *** begin of critical section ***
@@ -47,7 +47,8 @@ void *GenerateConnFlood(void *data)
     GetMaskingArguments(&g_conn_input, &g_conn_now);
     // make and do tcp connection using raw socket
     int src_port, seq, ack;
-    int sock = MakeTcpConnection(
+    MakeTcpConnection(
+	sock,
         inet_addr(g_conn_now.src),
         inet_addr(g_conn_now.dest),
         &src_port,
@@ -64,10 +65,10 @@ void *GenerateConnFlood(void *data)
     // session count
     g_conn_num_generated_in_sec++;
     g_conn_num_total++;
-    close(sock);
     // *** end of critical section ***
     pthread_mutex_unlock(&g_conn_mutex);
   }
+  close(sock);
   return 0;
 }
 

@@ -37,7 +37,7 @@ void *GenerateBodyBuffering(void *data)
 {
   int thread_id = *((int*) data);
   // make tcp connection
-  int sock = -1;
+  int sock = MakeRawSocket(IPPROTO_TCP);
   // for data transfer
   int src_port, seq, ack;
   int bodybuf_cnt = 0;
@@ -49,7 +49,8 @@ void *GenerateBodyBuffering(void *data)
       if (sock != -1) {
         close(sock);
       }
-      sock = MakeTcpConnection(
+      MakeTcpConnection(
+	  sock,
           inet_addr(g_bodybuf_now.src),
           inet_addr(g_bodybuf_now.dest),
           &src_port,

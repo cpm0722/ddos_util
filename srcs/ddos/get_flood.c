@@ -107,8 +107,7 @@ void *GetFloodTimeCheck(void *data)
 
 void GetFloodMain(char *argv[])
 {
-  snprintf(g_get_request_msg, sizeof(g_get_request_msg), "%s", GET_METHOD);
-  printf("Requesting: \n%s\n", g_get_request_msg);
+  printf("Requesting: \n%s\n", GET_METHOD);
   int argc = 0;
   while (argv[argc] != NULL) {
     argc++;

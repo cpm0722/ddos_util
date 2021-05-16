@@ -46,19 +46,11 @@ void *GenerateResponseBuffering(void *data)
   servaddr.sin_addr.s_addr = inet_addr(g_resbuf_input.dest);
   servaddr.sin_port = htons(g_resbuf_input.port_start);
   int resbuf_cnt = 0;
-  while (1) {
-    // *** begin of critical section ***
-    pthread_mutex_lock(&g_resbuf_mutex);
-    // get now resource
-    GetMaskingArguments(&g_resbuf_input, &g_resbuf_now);
-    if (resbuf_cnt % RESPONSE_BUFFERING_CNT == 0) {
-      if (sock != -1) {
-        close(sock);
-      }
-      sock = MakeRawSocket(IPPROTO_TCP);
-      int rvsz = 2;
-      setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
-                sizeof(rvsz));
+
+  sock = MakeRawSocket(IPPROTO_TCP);
+  int rvsz = 2;
+  setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
+          sizeof(rvsz));
       	  MakeTcpConnection(
           sock,
        	  inet_addr(g_resbuf_now.src),
@@ -68,6 +60,16 @@ void *GenerateResponseBuffering(void *data)
           &seq,
           &ack,
           1);
+
+      fcntl(sock, F_SETFL, O_NONBLOCK);
+
+  while (1) {
+    // *** begin of critical section ***
+    pthread_mutex_lock(&g_resbuf_mutex);
+    // get now resource
+    GetMaskingArguments(&g_resbuf_input, &g_resbuf_now);
+    if (resbuf_cnt % RESPONSE_BUFFERING_CNT == 0) {
+     
 
       char http_request[] = GET_METHOD;
       /*if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
@@ -86,7 +88,7 @@ void *GenerateResponseBuffering(void *data)
           1);
       resbuf_cnt = 0;
 
-      fcntl(sock, F_SETFL, O_NONBLOCK);
+
     }
     // wait a second
     if (g_resbuf_num_generated_in_sec >= g_resbuf_request_per_sec) {

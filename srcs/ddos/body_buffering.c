@@ -46,9 +46,6 @@ void *GenerateBodyBuffering(void *data)
     pthread_mutex_lock(&g_bodybuf_mutex);
     GetMaskingArguments(&g_bodybuf_input, &g_bodybuf_now);
     if (bodybuf_cnt % BODY_BUFFERING_CNT == 0) {
-      if (sock != -1) {
-        close(sock);
-      }
       MakeTcpConnection(
 	  sock,
           inet_addr(g_bodybuf_now.src),

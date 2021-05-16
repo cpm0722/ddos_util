@@ -49,18 +49,9 @@ void *GenerateResponseBuffering(void *data)
 
   sock = MakeRawSocket(IPPROTO_TCP);
   int rvsz = 2;
-  setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz,
-          sizeof(rvsz));
-      	  MakeTcpConnection(
-          sock,
-       	  inet_addr(g_resbuf_now.src),
-          inet_addr(g_resbuf_now.dest),
-          &src_port,
-          g_resbuf_now.port,
-          &seq,
-          &ack,
-          1);
-
+  
+ 	 setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &rvsz, sizeof(rvsz));
+  
       fcntl(sock, F_SETFL, O_NONBLOCK);
 
   while (1) {
@@ -75,6 +66,17 @@ void *GenerateResponseBuffering(void *data)
       /*if ((send(sock, http_request, strlen(http_request), 0)) < 0) {
        perror("get send err\n");
        }*/
+       
+         MakeTcpConnection(
+          sock,
+       	  inet_addr(g_resbuf_now.src),
+          inet_addr(g_resbuf_now.dest),
+          &src_port,
+          g_resbuf_now.port,
+          &seq,
+          &ack,
+          1);
+ 
       TcpSocketSendData(
           sock,
           inet_addr(g_resbuf_now.src),

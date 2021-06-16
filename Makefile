@@ -65,7 +65,7 @@ LINT = lint
 #  TCP  REPLAY  #
 #################
 
-TCP_REPLAY = tcp_replay
+ #TCP_REPLAY = tcp_replay
 
 .SUFFIXES : .c.o
 .PHONY: .c.o $(ALL) $(RE) $(MKDIR_OBJS) $(MKDIR_LIBS) $(CLEAN) $(ERASE) $(DOXYGEN) $(LINT)
@@ -108,9 +108,9 @@ $(FCLEAN): $(CLEAN)
 $(CLEAN):
 	rm -f $(OBJ_DIR)/*.o $(DDOS_LIB_A) $(BASE_LIB_A)
 
-$(TCP_REPLAY):
-	rm -f ./tmp/tcpreplay.out
-	$(CC) $(INCLUDE_OPT) $(LIBOPTS) srcs/tcpreplay/tcp_replay.c -l$(BASE_LIB_NAME) -lpthread -lpcap -lm -o tmp/a.out
+#$(TCP_REPLAY):
+#	rm -f ./tmp/tcpreplay.out
+#	$(CC) $(INCLUDE_OPT) $(LIBOPTS) srcs/tcpreplay/tcp_replay.c -l$(BASE_LIB_NAME) -lpthread -lpcap -lm -o tmp/a.out
 
 $(DOXYGEN):
 	doxygen Doxyfile

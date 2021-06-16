@@ -4,8 +4,7 @@
 
 #ifndef UDPHDR
 #define UDPHDR
-
-#define UDP_DATA_SIZE 1024
+#define UDP_DATA_MAX 1024
 /**
  * @brief udp header
  * @date 2021/02/13
@@ -16,7 +15,7 @@ struct udphdr
   u_short dest_port;         /** destination port */
   u_short len;               /** data length */
   u_short checksum;          /** checksum (0) */
-  char data[UDP_DATA_SIZE];  /** data (maximum length: 1024) */
+  char* data;  /** data (maximum length: 1024) */
 };
 #endif  // ifndef UDPHDR
 

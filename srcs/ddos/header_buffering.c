@@ -8,6 +8,7 @@
 #define GET_METHOD "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n"
 extern int g_num_threads;
 
+
 // session counting
 __u64 g_headbuf_num_total;
 __u64 g_headbuf_num_generated_in_sec;

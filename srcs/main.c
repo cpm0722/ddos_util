@@ -20,6 +20,7 @@ int g_recv_flag = 0;
 int g_num_threads = 1;
 int g_num_cores = 1;
 int  g_fork_cnt = 0;
+int g_packet_size = 100;
 
 int g_pid_list[100];
 
@@ -95,7 +96,9 @@ bool CheckOptions(char *argv[], int argc)
         g_num_cores = atoi(argv[i + 1]);
       } else if (!strcmp(argv[i], "-t")) {
         g_num_threads = atoi(argv[i + 1]);
-      } else if (!strcmp(argv[i], "--help") ||
+      }else if(!strcmp(argv[i], "-s")){
+      	g_packet_size = atoi(argv[i+1]);
+      }else if (!strcmp(argv[i], "--help") ||
                  !strcmp(argv[i], "-help")) {
         PrintUsage(argv);
         exit(0);
@@ -123,39 +126,39 @@ AttackType ArgvToTokens(char *argv[], int argc)
     return kNoneType;
   }
   if (!strcmp(argv[argv_idx], "syn") ||
-      !strcmp(argv[argv_idx], "kSynFlooding") ||
+      !strcmp(argv[argv_idx], "SynFlooding") ||
       !strcmp(argv[argv_idx], "1")) {
     type = kSynFlooding;
   } else if (!strcmp(argv[argv_idx], "udp") ||
-             !strcmp(argv[argv_idx], "kUdpFlooding") ||
+             !strcmp(argv[argv_idx], "UdpFlooding") ||
              !strcmp(argv[argv_idx], "2")) {
     type = kUdpFlooding;
   } else if (!strcmp(argv[argv_idx], "icmp") ||
-             !strcmp(argv[argv_idx], "kIcmpFlooding") ||
+             !strcmp(argv[argv_idx], "IcmpFlooding") ||
              !strcmp(argv[argv_idx], "3")) {
     type = kIcmpFlooding;
   } else if (!strcmp(argv[argv_idx], "conn") ||
-           !strcmp(argv[argv_idx], "kConnectionFlooding") ||
+           !strcmp(argv[argv_idx], "ConnectionFlooding") ||
            !strcmp(argv[argv_idx], "4")) {
     type = kConnectionFlooding;
   } else if (!strcmp(argv[argv_idx], "get") ||
-           !strcmp(argv[argv_idx], "kGetFlooding") ||
+           !strcmp(argv[argv_idx], "GetFlooding") ||
            !strcmp(argv[argv_idx], "5")) {
     type = kGetFlooding;
   } else if (!strcmp(argv[argv_idx], "head") ||
-           !strcmp(argv[argv_idx], "kHeadBuffering") ||
+           !strcmp(argv[argv_idx], "HeadBuffering") ||
            !strcmp(argv[argv_idx], "6")) {
     type = kHeadBuffering;
   } else if (!strcmp(argv[argv_idx], "body") ||
-           !strcmp(argv[argv_idx], "kBodyBuffering") ||
+           !strcmp(argv[argv_idx], "BodyBuffering") ||
            !strcmp(argv[argv_idx], "7")) {
     type = kBodyBuffering;
   } else if (!strcmp(argv[argv_idx], "resp") ||
-           !strcmp(argv[argv_idx], "kResponseBuffering") ||
+           !strcmp(argv[argv_idx], "ResponseBuffering") ||
            !strcmp(argv[argv_idx], "8")) {
     type = kResponseBuffering;
   } else if (!strcmp(argv[argv_idx], "hash") ||
-           !strcmp(argv[argv_idx], "kHashDos") ||
+           !strcmp(argv[argv_idx], "HashDos") ||
            !strcmp(argv[argv_idx], "9")) {
     type = kHashDos;
   } else {
@@ -182,9 +185,9 @@ AttackType ChooseAttackType(void)
 {
   printf("\n"
       "   [Serverless Attacks]\n"
-      "1. kSynFlooding flooding\n"
-      "2. kUdpFlooding flooding\n"
-      "3. kIcmpFlooding flooding\n"
+      "1. SynFlooding flooding\n"
+      "2. UdpFlooding flooding\n"
+      "3. IcmpFlooding flooding\n"
       "\n"
       "   [Server Required Attacks]\n"
       "4. Connection flooding\n"
@@ -284,20 +287,24 @@ void PrintUsage(char *argv[])
          "    Default: 1\n"
          "-c \n"
          "    Number of CPU-cores(for multi-processing).\n"
-         "    Default: 1\n");
+         "    Default: 1\n"
+         "-s\n"
+         " Size of each packet generated.\n"
+         " Default: 100\n"
+         );
   printf("\n");
   printf("\e[1mATTACK TYPES\e[0m \n"
          "  [Serverless Attacks]\n"
-         "    syn,  kSynFlooding,   1        kSynFlooding Flooding Attack\n"
-         "    udp,  kUdpFlooding,   2        kUdpFlooding Flooding Attack\n"
-         "    icmp, kIcmpFlooding,  3        kIcmpFlooding Flooding Attack\n"
+         "    syn,  SynFlooding,   1        SynFlooding Flooding Attack\n"
+         "    udp,  UdpFlooding,   2        UdpFlooding Flooding Attack\n"
+         "    icmp, IcmpFlooding,  3        IcmpFlooding Flooding Attack\n"
          "  [Server Required Attacks]\n"
-         "    conn, kConnectionFlooding,  4        Connection Flooding Attack\n"
-         "    get,  kGetFlooding,   5        kGetFlooding Flooding Attack\n"
-         "    head, kHeadBuffering,  6        Header Buffering Attack\n"
-         "    body, kBodyBuffering,  7        Body Buffering Attack\n"
-         "    resp, kResponseBuffering,  8        Response Buffering Attack\n"
-         "    hash, kHashDos,  9        Hash Dos Attack\n");
+         "    conn, ConnectionFlooding,  4        Connection Flooding Attack\n"
+         "    get,  GetFlooding,   5        GetFlooding Flooding Attack\n"
+         "    head, HeadBuffering,  6        Header Buffering Attack\n"
+         "    body, BodyBuffering,  7        Body Buffering Attack\n"
+         "    resp, ResponseBuffering,  8        Response Buffering Attack\n"
+         "    hash, HashDos,  9        Hash Dos Attack\n");
   printf("\n");
   printf("\e[1mSOURCE IP ADDRESS\e[0m \n"
          "    The format is [IPv4 Address]/[Subnet Masking(Optional)].\n"
@@ -319,6 +326,7 @@ void PrintUsage(char *argv[])
          "    The format is unsigned integer.\n"
          "    It is a number of Packet sent to Dest every second.\n");
   printf("\n");
+
   return;
 }
 

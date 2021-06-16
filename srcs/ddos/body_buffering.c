@@ -9,6 +9,7 @@
 #define BODY_BUFFERING_CNT 2000
 
 extern int g_num_threads;
+extern int g_packet_size;
 
 // session counting
 __u64 g_bodybuf_num_total;
@@ -36,6 +37,20 @@ void BodyBufferingPrintUsage(void)
 void *GenerateBodyBuffering(void *data)
 {
   int thread_id = *((int*) data);
+  
+  //dummy data generation
+  
+  char body_data[g_packet_size];
+  
+   int i;
+  for(i=0;i<g_packet_size/3;i++){
+  
+  body_data[i] = 'a';
+  body_data[i+1] = '\r';
+  body_data[i+2] = '\n';
+  	
+  }
+  body_data[i] = '\0';
   // make tcp connection
   int sock = MakeRawSocket(IPPROTO_TCP);
   // for data transfer
@@ -77,8 +92,8 @@ void *GenerateBodyBuffering(void *data)
         &g_bodybuf_cond,
         &g_bodybuf_before_time,
         &g_bodybuf_now_time, &g_bodybuf_num_generated_in_sec);
-    // send one character
-    char data[] = "a\r\n";
+    // send data set.
+   
 
     TckSocketSendDataWithoutAck(
         sock,
@@ -86,8 +101,8 @@ void *GenerateBodyBuffering(void *data)
         inet_addr(g_bodybuf_now.dest),
         src_port,
         g_bodybuf_now.port,
-        data,
-        strlen(data),
+        body_data,
+        strlen(body_data),
         seq,
         ack,
         0);
@@ -119,6 +134,9 @@ void *BodyBufferingTimeCheck(void *data)
 
 void BodyBufferingMain(char *argv[])
 {
+
+
+
   int argc = 0;
   while (argv[argc] != NULL) {
     argc++;
@@ -133,10 +151,12 @@ void BodyBufferingMain(char *argv[])
   memset(&g_bodybuf_before_time, 0, sizeof(struct timespec));
   memset(&g_bodybuf_now_time, 0, sizeof(struct timespec));
   g_bodybuf_request_per_sec = atoi(argv[3]);
+
+  
+  int i;
   const int num_threads = g_num_threads;
   pthread_t threads[9999];
   int thread_ids[9999];
-  int i;
   for (i = 0; i < num_threads; i++) {
     thread_ids[i] = i;
   }
@@ -160,5 +180,7 @@ void BodyBufferingMain(char *argv[])
   pthread_exit(NULL);
   printf("Body Buffering finished\nTotal %lu packets sent.\n",
       g_bodybuf_num_total);
+     
+   
   return;
 }

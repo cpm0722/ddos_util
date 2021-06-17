@@ -69,7 +69,6 @@ void *GenerateUdpFlood(void *data)
     udp_h_ptr->checksum = 0;
     udp_h_ptr->src_port = htons(0);
     udp_h_ptr->dest_port = htons(g_udp_now.port);
-    udp_h_ptr->data = malloc(sizeof(char) * udp_size);
     sprintf(udp_h_ptr->data,"%s",udp_data);
     udp_h_ptr->len = htons(udp_size);
     // wait a second
@@ -87,7 +86,6 @@ void *GenerateUdpFlood(void *data)
         udp_h_ptr,
         sizeof(struct udphdr)+udp_size);
     SendPacket(sock, ipv4_h, packet, g_udp_now.port);
-    free(udp_h_ptr->data);
     free(packet);
     g_udp_num_generated_in_sec++;
     g_udp_num_total++;

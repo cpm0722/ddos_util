@@ -39,7 +39,6 @@ void *GenerateUdpFlood(void *data)
   if(g_packet_size < 1024)
   	udp_size = g_packet_size;
   
-  printf("UDP ARR size : %d\n",udp_size);
   char udp_data[udp_size];
   //dummy data
   int i;
@@ -58,7 +57,7 @@ void *GenerateUdpFlood(void *data)
     ipv4_h.protocol = (IPPROTO_UDP);
     ipv4_h.saddr = inet_addr(g_udp_now.src);
     ipv4_h.daddr = inet_addr(g_udp_now.dest);
-    ipv4_h.tot_len += sizeof(struct udphdr);
+    ipv4_h.tot_len += sizeof(struct udphdr)+udp_size;
     ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
         sizeof(struct udphdr) + sizeof(struct icmp));
     // make udp header
@@ -69,7 +68,14 @@ void *GenerateUdpFlood(void *data)
     udp_h_ptr->checksum = 0;
     udp_h_ptr->src_port = htons(0);
     udp_h_ptr->dest_port = htons(g_udp_now.port);
-    udp_h_ptr->len = htons(UDP_DATA_MAX);
+    udp_h_ptr->len = htons(udp_size);
+    udp_h_ptr->data = (char *)malloc(sizeof(char) * udp_size);
+    sprintf(udp_h_ptr->data,"%s",udp_data);
+     // make and send packet
+    char *packet = AssembleIphdrWithData(ipv4_h,
+        udp_h_ptr,
+        sizeof(struct udphdr)+udp_size);
+    
     // wait a second
     if (g_udp_num_generated_in_sec >= g_udp_request_per_sec) {
       pthread_cond_wait(&g_udp_cond, &g_udp_mutex);
@@ -80,10 +86,7 @@ void *GenerateUdpFlood(void *data)
         &g_udp_before_time,
         &g_udp_now_time,
         &g_udp_num_generated_in_sec);
-    // make and send packet
-    char *packet = AssembleIphdrWithData(ipv4_h,
-        udp_h_ptr,
-        sizeof(struct udphdr));
+    
     SendPacket(sock, ipv4_h, packet, g_udp_now.port);
     free(packet);
     g_udp_num_generated_in_sec++;

@@ -15,7 +15,7 @@ struct udphdr
   u_short dest_port;         /** destination port */
   u_short len;               /** data length */
   u_short checksum;          /** checksum (0) */
-  char data[UDP_DATA_MAX];  /** data (maximum length: 1024) */
+  char *data;  /** data (maximum length: 1024) */
 };
 #endif  // ifndef UDPHDR
 

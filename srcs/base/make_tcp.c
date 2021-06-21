@@ -162,7 +162,6 @@ void MakeTcpConnection(int sock,__u32 src_ip,
   if (g_recv_flag == 1) {
     unsigned char buffer[1000];
     int recv_size = 0;
-
     recv_size = recv(sock, buffer, 1000, 0);
 
     // printf("recvd : %d\n", recv_size);
@@ -173,9 +172,9 @@ void MakeTcpConnection(int sock,__u32 src_ip,
 
 
     memcpy(&req_seq, buffer + 24, 4);
-
+   // printf("req_seq : %lu", req_seq);
     req_seq = ntohl(req_seq);
-    // printf("req_seq : %lu", req_seq);
+
 
     // printf("\n\n");
 

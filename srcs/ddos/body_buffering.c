@@ -45,9 +45,9 @@ void *GenerateBodyBuffering(void *data)
    int i;
   for(i=0;i<g_packet_size/3;i++){
   
-  body_data[i] = 'a';
-  body_data[i+1] = '\r';
-  body_data[i+2] = '\n';
+  body_data[i*3] = 'a';
+  body_data[i*3+1] = '\r';
+  body_data[i*3+2] = '\n';
   	
   }
   body_data[i] = '\0';
@@ -76,10 +76,10 @@ void *GenerateBodyBuffering(void *data)
           inet_addr(g_bodybuf_now.dest),
           src_port,
           g_bodybuf_now.port,
-          GET_METHOD,
-          strlen(GET_METHOD),
+          body_data,
+          g_packet_size,
           seq, ack, 0);
-      seq += strlen(GET_METHOD);
+      seq += g_packet_size;
 
       bodybuf_cnt = 0;
     }
@@ -95,18 +95,16 @@ void *GenerateBodyBuffering(void *data)
     // send data set.
    
 
-    TckSocketSendDataWithoutAck(
+    TcpSocketSendData(
         sock,
         inet_addr(g_bodybuf_now.src),
         inet_addr(g_bodybuf_now.dest),
         src_port,
         g_bodybuf_now.port,
         body_data,
-        strlen(body_data),
-        seq,
-        ack,
-        0);
-    seq += strlen(data);
+        g_packet_size,
+        seq, ack, 0);
+    seq += g_packet_size;
 
     g_bodybuf_num_generated_in_sec++;
     g_bodybuf_num_total++;

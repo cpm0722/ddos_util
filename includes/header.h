@@ -3,7 +3,7 @@
 #define INCLUDES_HEADER_H_
 
 /// maximum value of unsigned integer
-#define __UINT_MAXIMUM__ (1L << (31)) - 1
+#define __UINT_MAXIMUM__ (1ul << (31)) - 1
 /// ipv4 string's length
 #define IPV4_STRLEN 20
 

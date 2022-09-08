@@ -8,6 +8,7 @@
 #define IPV4_STRLEN 20
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -23,7 +24,6 @@
 #include <netinet/ip_icmp.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include "base/asm_types.h"
 
 /**
  * @brief attack types
@@ -63,13 +63,13 @@ typedef struct
   /** destination ipv4 string, format: XXX.XXX.XXX.XXX */
   unsigned char dest[IPV4_STRLEN];
   /** source ipv4 mask, range: 0~32, default: 32 */
-  __u32 src_mask;
+  uint32_t src_mask;
   /** destination ipv4 mask, range: 0~32, default: 32 */
-  __u32 dest_mask;
+  uint32_t dest_mask;
   /** destination port start, range: 0~65535 */
-  __u32 port_start;
+  uint32_t port_start;
   /** destination port end, range: 0~65535 */
-  __u32 port_end;
+  uint32_t port_end;
 } InputArguments;
 
 /**
@@ -83,7 +83,7 @@ typedef struct
   /** now destination ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
   unsigned char dest[IPV4_STRLEN];
   /** now destination port in subnet masking, range: 0~65535 */
-  __u32 port;
+  uint32_t port;
 } MaskingArguments;
 
 #endif  // INCLUDES_HEADER_H_

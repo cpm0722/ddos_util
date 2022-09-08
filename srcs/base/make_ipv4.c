@@ -30,38 +30,38 @@ struct iphdr PrepareEmptyIphdr(void)
   ip_head.check = 0;
   ip_head.saddr = 0;
   ip_head.daddr = 0;
-  ip_head.check = IphdrGetChecksum((__u16 *) &ip_head, sizeof(struct iphdr));
+  ip_head.check = IphdrGetChecksum((uint16_t *) &ip_head, sizeof(struct iphdr));
   return ip_head;
 }
 
 
-struct iphdr IphdrSetProtocol(struct iphdr ip_head, __u8 protocol)
+struct iphdr IphdrSetProtocol(struct iphdr ip_head, unsigned char protocol)
 {
   ip_head.protocol = protocol;
   return ip_head;
 }
 
-struct iphdr IphdrSetSrcAddr(struct iphdr ip_head, __u32 saddr)
+struct iphdr IphdrSetSrcAddr(struct iphdr ip_head, uint32_t saddr)
 {
   ip_head.saddr = saddr;
   return ip_head;
 }
 
-struct iphdr IphdrSetDestAddr(struct iphdr ip_head, __u32 daddr)
+struct iphdr IphdrSetDestAddr(struct iphdr ip_head, uint32_t daddr)
 {
   ip_head.daddr = daddr;
   return ip_head;
 }
 
-struct iphdr IphdrAddSize(struct iphdr ip_head, __u32 data_size)
+struct iphdr IphdrAddSize(struct iphdr ip_head, uint32_t data_size)
 {
   ip_head.tot_len += data_size;
-  ip_head.check = IphdrGetChecksum((__u16 *) &ip_head,
+  ip_head.check = IphdrGetChecksum((uint16_t *) &ip_head,
       sizeof(struct iphdr) + data_size);
   return ip_head;
 }
 
-char *AssembleIphdrWithData(struct iphdr ip_head, void *data, __u32 data_size)
+char *AssembleIphdrWithData(struct iphdr ip_head, void *data, uint32_t data_size)
 {
   char *packet = (char *)malloc(sizeof(ip_head) + data_size);
   memcpy(packet, (char *)&ip_head, sizeof(ip_head));
@@ -106,11 +106,11 @@ void SendPacket(int sock, struct iphdr ip_head, char *packet, int port)
   return;
 }
 
-__u16 IphdrGetChecksum(__u16 *ptr, int nbytes)
+uint16_t IphdrGetChecksum(uint16_t *ptr, int nbytes)
 {
-  register __u64 sum;
-  __u16 oddbyte;
-  register __u16 answer;
+  register uint32_t sum;
+  uint16_t oddbyte;
+  register uint16_t answer;
   sum = 0;
   while (nbytes > 1) {
     sum += *ptr++;

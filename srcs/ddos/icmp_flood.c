@@ -7,11 +7,11 @@
 extern int g_num_threads;
 
 // session counting
-__u64 g_icmp_num_total;
-__u64 g_icmp_num_generated_in_sec;
+uint32_t g_icmp_num_total;
+uint32_t g_icmp_num_generated_in_sec;
 // from main()
 InputArguments g_icmp_input;
-__u32 g_icmp_request_per_sec;
+uint32_t g_icmp_request_per_sec;
 // for masking next ip address
 MaskingArguments g_icmp_now;
 // thread
@@ -53,7 +53,7 @@ void *GenerateIcmpFlood(void *data)
     ipv4_h.saddr = inet_addr(g_icmp_now.src);
     ipv4_h.daddr = inet_addr(g_icmp_now.dest);
     ipv4_h.tot_len += sizeof(struct icmp);
-    ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
+    ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
         sizeof(struct iphdr) + sizeof(struct icmp));
 
     // make icmp header

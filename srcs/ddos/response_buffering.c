@@ -12,11 +12,11 @@
 extern int g_num_threads;
 
 // session counting
-__u64 g_resbuf_num_total;
-__u64 g_resbuf_num_generated_in_sec;
+uint32_t g_resbuf_num_total;
+uint32_t g_resbuf_num_generated_in_sec;
 // from main()
 InputArguments g_resbuf_input;
-__u32 g_resbuf_request_per_sec;
+uint32_t g_resbuf_request_per_sec;
 // for masking next ip address
 MaskingArguments g_resbuf_now;
 // thread

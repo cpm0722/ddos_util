@@ -6,45 +6,45 @@ struct ip_pair {
 };
 
 struct port_pair {
-	__u8 port1;
-	__u8 port2;
+	unsigned char port1;
+	unsigned char port2;
 };
 
 struct session {
 	char ip_src[16];
 	char ip_dst[16];
-	__u16 sport;
-	__u16 dport;
+	uint16_t sport;
+	uint16_t dport;
 
 	//to be used with modification count;
-	__u16 modify_id;
+	uint16_t modify_id;
 
 };
 
 struct sudo_packet_data {
-	__u16 sport;
-	__u16 dport;
+	uint16_t sport;
+	uint16_t dport;
 	char src_ip[16];
 	char dest_ip[16];
 	char *payload;
-	__u16 payload_size;
+	uint16_t payload_size;
 };
 
 struct pcap_hdr {
-	__u32 magic_number;
-	__u16 version_major;
-	__u16 version_minor;
+	uint32_t magic_number;
+	uint16_t version_major;
+	uint16_t version_minor;
 	__s32 thiszone;
-	__u32 sigfigs;
-	__u32 snaplen;
-	__u32 network;
+	uint32_t sigfigs;
+	uint32_t snaplen;
+	uint32_t network;
 };
 
 struct pcaprec_hdr {
-	__u32 ts_sec;
-	__u32 ts_usec;
-	__u32 incl_len;
-	__u32 orig_len;
+	uint32_t ts_sec;
+	uint32_t ts_usec;
+	uint32_t incl_len;
+	uint32_t orig_len;
 };
 
 struct sniff_ethernet {
@@ -99,9 +99,9 @@ u_short tcp_get_checksum_for_tcp_replay( struct sniff_tcp *, char *data, int dat
 
 //Function prototypes
 int session_match_check(struct session a_session, struct session b_session);
-int session_exist_check(struct session *session_list, __u16 session_num,
+int session_exist_check(struct session *session_list, uint16_t session_num,
 		struct session a_session);
-int session_table_check(struct session *session_list, __u16 session_num,
+int session_table_check(struct session *session_list, uint16_t session_num,
 		struct session a_session);
 
 int ip_pair_match_check(struct ip_pair pair1, struct ip_pair pair2);
@@ -114,9 +114,9 @@ struct ip_pair* ip_table_element_to_end(struct ip_pair *table_p, int index,
 int port_pair_match_check(struct port_pair pair1, struct port_pair pair2);
 int port_pair_exist_check(struct port_pair *pairs, struct port_pair new_pair,
 		int count);
-int port_table_check(struct port_pair *table, __u8 port, int size);
+int port_table_check(struct port_pair *table, unsigned char port, int size);
 struct port_pair* port_table_element_to_end(struct port_pair *table_p,
 		int index, int size);
-char* get_masked_ip_addr(char *current, __u8 mask);
+char* get_masked_ip_addr(char *current, unsigned char mask);
 
 void *tcpreplay_thread();

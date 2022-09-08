@@ -30,25 +30,25 @@ struct tcphdr PrepareEmptyTcphdr(void)
   return tcp_head;
 }
 
-struct tcphdr TcphdrSetSrcPort(struct tcphdr tcph, __u16 src_port)
+struct tcphdr TcphdrSetSrcPort(struct tcphdr tcph, uint16_t src_port)
 {
   tcph.source = htons(src_port);
   return tcph;
 }
 
-struct tcphdr TcphdrSetDestPort(struct tcphdr tcph, __u16 dest_port)
+struct tcphdr TcphdrSetDestPort(struct tcphdr tcph, uint16_t dest_port)
 {
   tcph.dest = htons(dest_port);
   return tcph;
 }
 
-struct tcphdr TcphdrSetSeq(struct tcphdr tcph, __u32 seq)
+struct tcphdr TcphdrSetSeq(struct tcphdr tcph, uint32_t seq)
 {
   tcph.seq = htonl(seq);
   return tcph;
 }
 
-struct tcphdr TcphdrSetAckSeq(struct tcphdr tcph, __u32 ack_seq)
+struct tcphdr TcphdrSetAckSeq(struct tcphdr tcph, uint32_t ack_seq)
 {
   tcph.ack_seq = htonl(ack_seq);
   return tcph;
@@ -72,7 +72,7 @@ struct tcphdr TcphdrSetPshFlag(struct tcphdr tcph)
   return tcph;
 }
 
-struct tcphdr TcphdrSetWindowSize(struct tcphdr tcph, __u16 window_size)
+struct tcphdr TcphdrSetWindowSize(struct tcphdr tcph, uint16_t window_size)
 {
   tcph.window = htons(window_size);
   return tcph;
@@ -103,19 +103,19 @@ struct tcphdr TcphdrGetChecksum(struct iphdr ipv4h,
            sizeof(struct PseudoTcphdr) +
            sizeof(struct tcphdr), data, datasize);
   }
-  tcph.check = IphdrGetChecksum((__u16*) assembled, psize);
+  tcph.check = IphdrGetChecksum((uint16_t*) assembled, psize);
   free(assembled);
   return tcph;
 }
 
 // 3way handshake completed socket, returns socket;
-void MakeTcpConnection(int sock,__u32 src_ip,
-                        __u32 dest_ip,
+void MakeTcpConnection(int sock,uint32_t src_ip,
+                        uint32_t dest_ip,
                         int *src_port_copy,
                         int dest_port,
                         int *seq_copy,
                         int *ack_copy,
-                        __u16 window_size)
+                        uint16_t window_size)
 {
   /*  CODE OPTIMIZATION
    *  1. PREPARE ipv4 or tcp headers before, so that less calculation in loop
@@ -132,7 +132,7 @@ void MakeTcpConnection(int sock,__u32 src_ip,
   ipv4_h.saddr = src_ip;
   ipv4_h.daddr = dest_ip;
   ipv4_h.tot_len += sizeof(struct tcphdr);
-  ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
+  ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
       sizeof(struct iphdr) + sizeof(struct tcphdr));
 
   // make tcp header.
@@ -157,7 +157,7 @@ void MakeTcpConnection(int sock,__u32 src_ip,
   char *packet = AssembleIphdrWithData(ipv4_h, &tcp_h, sizeof(tcp_h));
   SendPacket(sock, ipv4_h, packet, dest_port);
   free(packet);
-  __u64 req_seq;
+  uint32_t req_seq;
 
   if (g_recv_flag == 1) {
     unsigned char buffer[1000];
@@ -186,7 +186,7 @@ void MakeTcpConnection(int sock,__u32 src_ip,
   ipv4_h.saddr = src_ip;
   ipv4_h.daddr = dest_ip;
   ipv4_h.tot_len += sizeof(struct tcphdr);
-  ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
+  ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
       sizeof(struct iphdr) + sizeof(struct tcphdr));
   // make tcp header.
   tcp_h = PrepareEmptyTcphdr();
@@ -216,15 +216,15 @@ void MakeTcpConnection(int sock,__u32 src_ip,
 }
 
 void TcpSocketSendData(int sock,
-                          __u32 src_ip,
-                          __u32 dest_ip,
+                          uint32_t src_ip,
+                          uint32_t dest_ip,
                           int src_port,
                           int dest_port,
                           char *data,
                           int data_size,
                           int seq,
                           int ack,
-                          __u16 window_size)
+                          uint16_t window_size)
 {
   struct iphdr ipv4_h;
   ipv4_h = PrepareEmptyIphdr();
@@ -253,7 +253,7 @@ void TcpSocketSendData(int sock,
     tcp_h.ack = 1;
 
   ipv4_h.tot_len += sizeof(struct tcphdr) + data_size;
-  ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
+  ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
       sizeof(struct iphdr) + sizeof(struct tcphdr)+data_size);
 
   tcp_h = TcphdrGetChecksum(ipv4_h, tcp_h, data, data_size);
@@ -273,15 +273,15 @@ void TcpSocketSendData(int sock,
 }
 
 void TckSocketSendDataWithoutAck(int sock,
-                                 __u32 src_ip,
-                                 __u32 dest_ip,
+                                 uint32_t src_ip,
+                                 uint32_t dest_ip,
                                  int src_port,
                                  int dest_port,
                                  char *data,
                                  int data_size,
                                  int seq,
                                  int ack,
-                                 __u16 window_size)
+                                 uint16_t window_size)
 {
   struct iphdr ipv4_h;
   ipv4_h = PrepareEmptyIphdr();
@@ -308,7 +308,7 @@ void TckSocketSendDataWithoutAck(int sock,
   // tcp_h = TcphdrSetAckFlag(tcp_h);
 
   ipv4_h.tot_len += sizeof(struct tcphdr) + data_size;
-  ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
+  ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
       sizeof(struct iphdr) + sizeof(struct tcphdr)+data_size);
   tcp_h = TcphdrGetChecksum(ipv4_h, tcp_h, data, data_size);
 

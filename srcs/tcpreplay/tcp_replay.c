@@ -15,16 +15,16 @@
 pthread_mutex_t tcp_replay_mutex;
 
 u_char *packet_data[PACKET_NUM_MAXIMUM];
-__u16 packet_data_size[PACKET_NUM_MAXIMUM];
+uint16_t packet_data_size[PACKET_NUM_MAXIMUM];
 
 char src_ip_addr[16];
 char dest_ip_addr[16];
-  __u8 dest_port;
+  unsigned char dest_port;
 int packetCount = 0;
 
-__u16 send_count=1;
-__u8 thread_count=1;
-__u16 sent_count=0;
+uint16_t send_count=1;
+unsigned char thread_count=1;
+uint16_t sent_count=0;
 int loop_index=-1;
 
 int main(int argc, char *argv[]) {
@@ -35,8 +35,8 @@ int main(int argc, char *argv[]) {
   char *modify_filename;
   int manual_mode = 1;
 
-  __u16 ip_table_c = 0;
-  __u16 port_table_c = 0;
+  uint16_t ip_table_c = 0;
+  uint16_t port_table_c = 0;
 
   struct ip_pair ip_table[MODIFY_MAXIMUM];
   struct port_pair port_table[MODIFY_MAXIMUM];
@@ -110,8 +110,8 @@ int main(int argc, char *argv[]) {
 
   char ipA[20];
   char ipB[20];
-  __u16 portA;
-  __u16 portB;
+  uint16_t portA;
+  uint16_t portB;
 
   if (manual_mode == 1) {
 
@@ -120,8 +120,8 @@ int main(int argc, char *argv[]) {
       char *ip_listB;
       short freeA_flag = 0;
       short freeB_flag = 0;
-      __u8 availA = 0;
-      __u8 availB = 0;
+      unsigned char availA = 0;
+      unsigned char availB = 0;
 
       char *slash_pointer;
 
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 
       if ((slash_pointer = strstr(ipA, "/")) != NULL) {
         freeA_flag = 1;
-        __u8 subnet = atoi(slash_pointer + 1);
+        unsigned char subnet = atoi(slash_pointer + 1);
         memset(slash_pointer, 0x0, 4);
         ip_listA = get_masked_ip_addr(ipA, subnet);
         availA = pow(2, (32 - subnet)) - 2;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 
       if ((slash_pointer = strstr(ipB, "/")) != NULL) {
         freeB_flag = 1;
-        __u8 subnet = atoi(slash_pointer + 1);
+        unsigned char subnet = atoi(slash_pointer + 1);
         memset(slash_pointer, 0x0, 4);
         ip_listB = get_masked_ip_addr(ipB, subnet);
         availB = pow(2, (32 - subnet)) - 2;
@@ -224,8 +224,8 @@ int main(int argc, char *argv[]) {
           char *ip_listB = NULL;
           short freeA_flag = 0;
           short freeB_flag = 0;
-          __u8 availA = 0;
-          __u8 availB = 0;
+          unsigned char availA = 0;
+          unsigned char availB = 0;
 
           char *slash_pointer;
 
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
 
           if ((slash_pointer = strstr(ipA, "/")) != NULL) {
             freeA_flag = 1;
-            __u8 subnet = atoi(slash_pointer + 1);
+            unsigned char subnet = atoi(slash_pointer + 1);
             memset(slash_pointer, 0x0, 4);
             ip_listA = get_masked_ip_addr(ipA, subnet);
             availA = pow(2, (32 - subnet)) - 2;
@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
 
           if ((slash_pointer = strstr(ipB, "/")) != NULL) {
             freeB_flag = 1;
-            __u8 subnet = atoi(slash_pointer + 1);
+            unsigned char subnet = atoi(slash_pointer + 1);
             memset(slash_pointer, 0x0, 4);
             ip_listB = get_masked_ip_addr(ipB, subnet);
             availB = pow(2, (32 - subnet)) - 2;
@@ -313,10 +313,10 @@ int main(int argc, char *argv[]) {
   struct sudo_packet_data packets[PACKET_NUM_MAXIMUM];
 
   //packets to corresponding session
-  __u8 packet_to_session[PACKET_NUM_MAXIMUM];
+  unsigned char packet_to_session[PACKET_NUM_MAXIMUM];
   unsigned char packet_to_session_reverse_bit[PACKET_NUM_MAXIMUM];
 
-  __u16 sessions_c = 0;
+  uint16_t sessions_c = 0;
   struct session sessions[MODIFY_MAXIMUM];
 
   //errbuff used like stderr in pcap.h
@@ -595,7 +595,7 @@ int session_match_check(struct session a_session, struct session b_session)
   return 0;
 }
 
-int session_exist_check(struct session *session_list, __u16 session_num,
+int session_exist_check(struct session *session_list, uint16_t session_num,
     struct session a_session) {
   int i = 0;
 
@@ -612,7 +612,7 @@ int session_exist_check(struct session *session_list, __u16 session_num,
   //no match
   return 0;
 }
-int session_table_check(struct session *session_list, __u16 session_num,
+int session_table_check(struct session *session_list, uint16_t session_num,
     struct session a_session) {
   int i = 0;
   while (i < session_num) {
@@ -717,7 +717,7 @@ int port_pair_exist_check(struct port_pair *pairs, struct port_pair new_pair,
   return -1;
 }
 // returns location, -1 if no
-int port_table_check(struct port_pair *table, __u8 port, int size) {
+int port_table_check(struct port_pair *table, unsigned char port, int size) {
   int i = 0;
   while (i < size) {
     if (table[i].port1 == port)
@@ -731,8 +731,8 @@ int port_table_check(struct port_pair *table, __u8 port, int size) {
 
 struct port_pair* port_table_element_to_end(struct port_pair *table_p,
     int index, int size) {
-  __u8 tmp_port1;
-  __u8 tmp_port2;
+  unsigned char tmp_port1;
+  unsigned char tmp_port2;
 
   tmp_port1 = table_p[index].port1;
   tmp_port1 = table_p[index].port2;
@@ -750,13 +750,13 @@ struct port_pair* port_table_element_to_end(struct port_pair *table_p,
  * returns available IPs in subnetmask.
  * avail = pow(2,(32-mask)) -2 ;
  */
-char* get_masked_ip_addr(char *current, __u8 mask) {
+char* get_masked_ip_addr(char *current, unsigned char mask) {
 
   unsigned int avail = pow(2, (32 - mask)) - 2;
   char *buffer = malloc(sizeof(char) * 16 * avail);
 
   char c_buffer[16];
-  __u8 ips[4];
+  unsigned char ips[4];
   int i = 0;
 
   i = 0;
@@ -849,7 +849,7 @@ u_short tcp_get_checksum_for_tcp_replay(
   }
 
 
-  u_short ck_sum = IphdrGetChecksum((__u16*) assembled, psize);
+  u_short ck_sum = IphdrGetChecksum((uint16_t*) assembled, psize);
   free(assembled);
   return ck_sum;
 

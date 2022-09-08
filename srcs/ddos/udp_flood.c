@@ -8,11 +8,11 @@ extern int g_num_threads;
 extern int g_packet_size;
 
 // session counting
-__u64 g_udp_num_total;
-__u64 g_udp_num_generated_in_sec;
+uint32_t g_udp_num_total;
+uint32_t g_udp_num_generated_in_sec;
 // from main()
 InputArguments g_udp_input;
-__u32 g_udp_request_per_sec;
+uint32_t g_udp_request_per_sec;
 // for masking next ip address
 MaskingArguments g_udp_now;
 // thread
@@ -58,7 +58,7 @@ void *GenerateUdpFlood(void *data)
     ipv4_h.saddr = inet_addr(g_udp_now.src);
     ipv4_h.daddr = inet_addr(g_udp_now.dest);
     ipv4_h.tot_len += sizeof(struct udphdr)+udp_size;
-    ipv4_h.check = IphdrGetChecksum((__u16 *) &ipv4_h,
+    ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
         sizeof(struct udphdr) + sizeof(struct icmp));
     // make udp header
     struct udphdr *udp_h_ptr;

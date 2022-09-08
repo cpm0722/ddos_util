@@ -4,7 +4,7 @@
 void TimeCheck(pthread_cond_t *cond_p,
                struct timespec *before_time_p,
                struct timespec *now_time_p,
-               __u64 *produced_in_sec_p)
+               uint32_t *produced_in_sec_p)
 {
   clock_gettime(CLOCK_MONOTONIC, now_time_p);
   long double elapsed_time = (now_time_p->tv_sec - before_time_p->tv_sec) +

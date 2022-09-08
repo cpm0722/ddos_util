@@ -12,13 +12,13 @@ extern int g_num_threads;
 extern int g_packet_size;
 
 // session counting
-__u64 g_bodybuf_num_total;
-__u64 g_bodybuf_num_generated_in_sec;
+uint32_t g_bodybuf_num_total;
+uint32_t g_bodybuf_num_generated_in_sec;
 // from main()
 InputArguments g_bodybuf_input;
 // for masking next ip address
 MaskingArguments g_bodybuf_now;
-__u32 g_bodybuf_request_per_sec;
+uint32_t g_bodybuf_request_per_sec;
 // thread
 pthread_mutex_t g_bodybuf_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t g_bodybuf_cond = PTHREAD_COND_INITIALIZER;

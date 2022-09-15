@@ -17,6 +17,6 @@
 void TimeCheck(pthread_cond_t *cond_p,
         struct timespec *before_time_p,
         struct timespec *now_time_p,
-        __u64 *produced_in_sec_p);
+        uint32_t *produced_in_sec_p);
 
 #endif  // INCLUDES_BASE_TIME_CHECK_H_

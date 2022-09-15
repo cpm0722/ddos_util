@@ -11,13 +11,13 @@
 
 /*!
  * @brief
- * change ipv4 format: string(XXX.XXX.XXX.XXX) -> __u32
+ * change ipv4 format: string(XXX.XXX.XXX.XXX) -> uint32_t
  * @date    2021/04/03
  * @param[in]  str    ipv4 string(XXX.XXX.XXX.XXX)
- * @return    __u32
+ * @return    uint32_t
  * @retval    ipv4 32bit value
  */
-__u32 GetAddressIntegerValue(__uc *str);
+uint32_t GetAddressIntegerValue(char *str);
 
 /*!
  * @brief
@@ -27,7 +27,7 @@ __u32 GetAddressIntegerValue(__uc *str);
  * @param[out]  str    ipv4 string(XXX.XXX.XXX.XXX)
  * @return    void
  */
-void GetAddressStr(__u32 val, __uc str[IPV4_STRLEN]);
+void GetAddressStr(uint32_t val, char str[IPV4_STRLEN]);
 
 /*!
  * @brief
@@ -41,17 +41,17 @@ void GetAddressStr(__u32 val, __uc str[IPV4_STRLEN]);
  * @retval    1: there is no next ipv4 address in subnet masking
  * @reval    0: else
  */
-int MaskingNextIpAddress(__uc *ipv4, __uc now[IPV4_STRLEN], __u32 mask);
+int MaskingNextIpAddress(char *ipv4, char now[IPV4_STRLEN], uint32_t mask);
 
 /*!
  * @brief
  * get subnet masking value from masking ipv4 string(XXX.XXX.XXX.XXX/XX)
  * @date    2021/04/03
  * @param[in]  ipv4  initial input of ipv4/mask string(XXX.XXX.XXX.XXX/XX)
- * @return    __u32
+ * @return    uint32_t
  * @retval    subnet masking value
  */
-__u32 GetMaskFromIpv4Format(__uc *ipv4);
+uint32_t GetMaskFromIpv4Format(char *ipv4);
 
 /*!
  * @brief
@@ -61,7 +61,7 @@ __u32 GetMaskFromIpv4Format(__uc *ipv4);
  * @param[out]  now    now ipv4 string(XXX.XXX.XXX.XXX)
  * @return    void
  */
-void GetIpAddressFromIpv4Format(__uc *ipv4, __uc *now);
+void GetIpAddressFromIpv4Format(char *ipv4, char *now);
 
 /*!
  * @brief

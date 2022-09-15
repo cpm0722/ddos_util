@@ -2,62 +2,68 @@
 
 #define INCLUDES_BASE_MAKE_IPV4_H_
 
-
+/**
+  @fn void PreparePid(int *pid_list ,int num);
+  @brief function: get list of pid from forked processes
+  @date 2021/04/03
+  @param pid_list, num(process)
+  @return void
+*/
 void PreparePid(int *pid_list, int num);
 
 /**
-  @fn struct iphdr PrepareEmptyIphdr(void);
-  @brief function: get empty iphdr
+  @fn void PrepareEmptyIphdr(struct iphdr *ip_head);
+  @brief function: get default(empty) ip header struct
   @date 2021/04/03
-  @param void
-  @return struct iphdr
+  @param out: struct iphdr *ip_head
+  @return void
 */
-struct iphdr PrepareEmptyIphdr(void);
+void PrepareEmptyIphdr(struct iphdr *ip_head);
 
 /**
-  @fn struct iphdr IphdrSetProtocol(struct iphdr ip_head, __u8 protocol)
+  @fn void IphdrSetProtocol(struct iphdr *ip_head, unsigned char protocol)
   @brief function: set iphdr's protocol
   @date 2021/04/03
-  @param struct iphdr ip_head, __u8 protocol: protocol value
-  @return struct iphdr
+  @param out: struct iphdr *ip_head, unsigned char protocol: protocol value
+  @return void
 */
-struct iphdr IphdrSetProtocol(struct iphdr ip_head, __u8 protocol);
+void IphdrSetProtocol(struct iphdr *ip_head, unsigned char protocol);
 
 /**
-  @fn struct iphdr IphdrSetDestAddr(struct iphdr ip_head, __u32 daddr)
+  @fn void iphdr IphdrSetDestAddr(struct iphdr *ip_head, uint32_t daddr)
   @brief function: set iphdr's dest address
   @date 2021/04/03
-  @param struct iphdr ip_head, __u32 daddr: dest address value
-  @return struct iphdr
+  @param out: struct iphdr *ip_head, uint32_t daddr: dest address value
+  @return void 
 */
-struct iphdr IphdrSetDestAddr(struct iphdr ip_head, __u32 daddr);
+void IphdrSetDestAddr(struct iphdr *ip_head, uint32_t daddr);
 
 /**
-  @fn struct iphdr IphdrSetSrcAddr(struct iphdr ip_head, __u32 saddr)
+  @fn void IphdrSetSrcAddr(struct iphdr *ip_head, uint32_t saddr)
   @brief function: set iphdr's src address
   @date 2021/04/03
-  @param struct iphdr ip_head, __u32 saddr: src address value
-  @return struct iphdr
+  @param out: struct iphdr *ip_head, uint32_t saddr: src address value
+  @return void
 */
-struct iphdr IphdrSetSrcAddr(struct iphdr ip_head, __u32 saddr);
+void IphdrSetSrcAddr(struct iphdr *ip_head, uint32_t saddr);
 
 /**
-  @fn struct iphdr IphdrAddSize(struct iphdr ip_head, __u32 data_size)
+  @fn void IphdrAddSize(struct iphdr *ip_head, uint32_t data_size)
   @brief function: update iphdr's size(add data_size)
   @date 2021/04/03
-  @param struct iphdr ip_head, __u32 data_size
-  @return struct iphdr
+  @param out: struct iphdr *ip_head, uint32_t data_size
+  @return void
 */
-struct iphdr IphdrAddSize(struct iphdr ip_head, __u32 data_size);
+void IphdrAddSize(struct iphdr *ip_head, uint32_t data_size);
 
 /**
-  @fn char *AssembleIphdrWithData(struct iphdr ip_head, void *data, __u32 data_size)
+  @fn void AssembleIphdrWithData(char *packet, struct iphdr *ip_head, void *data, uint32_t data_size)
   @brief function: assemble iphdr and data
   @date 2021/04/03
-  @param struct iphdr ip_head, void *data, __u32 data_size
-  @return struct iphdr
+  @param out: char *packet, in: struct iphdr *ip_head, void *data, uint32_t data_size
+  @return void
 */
-char *AssembleIphdrWithData(struct iphdr ip_head, void *data, __u32 data_size);
+void AssembleIphdrWithData(char *packet, struct iphdr *ip_head, void *data, uint32_t data_size);
 
 /**
   @fn int MakeRawSocket(int protocol)
@@ -69,21 +75,21 @@ char *AssembleIphdrWithData(struct iphdr ip_head, void *data, __u32 data_size);
 int MakeRawSocket(int protocol);
 
 /**
-  @fn int SendPacket(int sock, struct iphdr ip_head, char *packet, int port)
+  @fn void SendPacket(int sock, char *packet, uint32_t daddr, uint16_t tot_len, int port)
   @brief function: send packet to ip_head's dest address + port
   @date 2021/04/03
-  @param int sock, struct iphdr ip_head: dest's iphdr, char *packet: packet for send, int port: dest port
+  @param int sock, char *packet: packet for send, uint32_t : dest ip, uint16_t tot_len : length of packet, int port: dest port
   @return void
 */
-void SendPacket(int sock, struct iphdr ip_head, char *packet, int port);
+void SendPacket(int sock, char *packet, uint32_t daddr, uint16_t tot_len, int port);
 
 /**
-  @fn __u16 IphdrGetChecksum(unsigned short *ptr, int nbytes)
+  @fn uint16_t IphdrGetChecksum(uint16_t* ip_head, int nbytes)
   @brief function: iphdr checksum value calculate
   @date 2021/04/03
-  @param unsigned short *ptr: iphdr ptr, int nbytes: sizeof(iphdr)
-  @return __u16: checksum value
+  @param uint16_t *ip_head: iphdr, int nbytes: sizeof(iphdr)
+  @return uint16_t: checksum value
 */
-__u16 IphdrGetChecksum(__u16 *ptr, int nbytes);
+uint16_t IphdrGetChecksum(uint16_t* ip_head, int nbytes);
 
 #endif  // INCLUDES_BASE_MAKE_IPV4_H_

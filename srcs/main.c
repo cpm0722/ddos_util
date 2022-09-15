@@ -62,7 +62,7 @@ void SigintHandler(int signo)
 void GetInput(void)
 {
   printf("$ ");
-  void *ptr = fgets(g_input, __SIZE_OF_INPUT__, stdin);
+  fgets(g_input, __SIZE_OF_INPUT__, stdin);
   return;
 }
 
@@ -213,9 +213,7 @@ AttackType ChooseAttackType(void)
 
 void PrintLogo(void)
 {
-  char num[11];  // here too one extra room is needed for the '\0'
-  char c;  // for option
-  int i, j, k;
+  int i, j;
   // declaring char 2D arrays and initializing with hash-printed digits
   char upp_d[DRAW_HEIGHT][DRAW_WIDTHB] = { " ####  ", " #   # ", " #   # ",
           " #   # ", " #   # ", " #   # ", " ####  " },
@@ -332,7 +330,6 @@ void PrintUsage(char *argv[])
 
 int main(int argc, char *argv[])
 {
-  int mode;
   bool is_command;
   AttackType type;
 
@@ -367,9 +364,10 @@ int main(int argc, char *argv[])
   }
 
   int status;
-  int count;
+  int count = g_num_cores;
   while (count >= 0) {
     int pid = wait(&status);
+    printf("Child pid:%ld exitedo status : 0x%x\n", (long)pid, status);
     --count;
   }
 

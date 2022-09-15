@@ -40,15 +40,10 @@ void ResponseBufferingPrintUsage(void)
 
 void *GenerateResponseBuffering(void *data)
 {
-    int thread_id = *((int*) data);
     // making tcp connection
     int sock = -1;
     int src_port, seq, ack;
 
-    struct sockaddr_in servaddr;
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = inet_addr(g_resbuf_input.dest);
-    servaddr.sin_port = htons(g_resbuf_input.port_start);
     int resbuf_cnt = 0;
 
     sock = MakeRawSocket(IPPROTO_TCP);
@@ -75,9 +70,9 @@ void *GenerateResponseBuffering(void *data)
         g_resbuf_num_generated_in_sec++;
         g_resbuf_num_total++;
         // *** end of critical section ***
+
         pthread_mutex_unlock(&g_resbuf_mutex);
         if (resbuf_cnt % RESPONSE_BUFFERING_CNT == 0) {
-            char http_request[] = GET_METHOD;
             MakeTcpConnection(
                     sock,
                     inet_addr(resbuf_now.src),
@@ -104,12 +99,7 @@ void *GenerateResponseBuffering(void *data)
 
         // read a character
         char buffer[2];
-        int recv_size = -1;
-        int sockaddrlen = sizeof(struct sockaddr_in);
-        recv_size = recv(sock, buffer, 2, 0);
-        if (recv_size == -1) {
-            // printf("null recvd\n");
-        }
+        recv(sock, buffer, 2, 0);
         ack++;
         resbuf_cnt++;
     }

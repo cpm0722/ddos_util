@@ -40,8 +40,6 @@ void BodyBufferingPrintUsage(void)
 
 void *GenerateBodyBuffering(void *data)
 {
-    int thread_id = *((int*) data);
-
     char body_data[g_packet_size];
 
     int i;
@@ -49,7 +47,6 @@ void *GenerateBodyBuffering(void *data)
         body_data[i*3] = 'a';
         body_data[i*3+1] = '\r';
         body_data[i*3+2] = '\n';
-
     }
 
     body_data[i] = '\0';
@@ -137,9 +134,6 @@ void *BodyBufferingTimeCheck(void *data)
 
 void BodyBufferingMain(char *argv[])
 {
-
-
-
     int argc = 0;
     while (argv[argc] != NULL) {
         argc++;
@@ -181,7 +175,7 @@ void BodyBufferingMain(char *argv[])
     }
     pthread_mutex_destroy(&g_bodybuf_mutex);
     pthread_exit(NULL);
-    printf("Body Buffering finished\nTotal %lu packets sent.\n",
+    printf("Body Buffering finished\nTotal %u packets sent.\n",
             g_bodybuf_num_total);
 
 

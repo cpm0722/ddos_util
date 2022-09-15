@@ -1,10 +1,10 @@
 #include "header.h"
 #include "base/subnet_mask.h"
 
-uint32_t GetAddressIntegerValue(unsigned char *str)
+uint32_t GetAddressIntegerValue(char *str)
 {
   uint32_t res = 0;
-  unsigned char tmp_str[IPV4_STRLEN];
+  char tmp_str[IPV4_STRLEN];
   memset(tmp_str, '\0', IPV4_STRLEN);
   snprintf(tmp_str, IPV4_STRLEN, "%s", str);
   char *next_ptr;
@@ -18,7 +18,7 @@ uint32_t GetAddressIntegerValue(unsigned char *str)
   return res;
 }
 
-void GetAddressStr(uint32_t val, unsigned char str[IPV4_STRLEN])
+void GetAddressStr(uint32_t val, char str[IPV4_STRLEN])
 {
   uint32_t split[4] = { 0, 0, 0, 0 };
   int i;
@@ -30,7 +30,7 @@ void GetAddressStr(uint32_t val, unsigned char str[IPV4_STRLEN])
   return;
 }
 
-int MaskingNextIpAddress(unsigned char *ipv4, unsigned char now[IPV4_STRLEN], uint32_t mask)
+int MaskingNextIpAddress(char *ipv4, char now[IPV4_STRLEN], uint32_t mask)
 {
   uint32_t now_addr;
   if (!strlen(now)) {   // first call
@@ -68,26 +68,26 @@ int MaskingNextIpAddress(unsigned char *ipv4, unsigned char now[IPV4_STRLEN], ui
   return 0;
 }
 
-uint32_t GetMaskFromIpv4Format(unsigned char *ipv4)
+uint32_t GetMaskFromIpv4Format(char *ipv4)
 {
   uint32_t mask = 32;
-  unsigned char *char_ptr = ipv4 + 7;
+  char *char_ptr = ipv4 + 7;
   int i = 0;
   while (char_ptr[i] != '/') {
     i++;
     if (i > strlen(ipv4))
       return 32;
   }
-  unsigned char mask_str[4];
+  char mask_str[4];
   i++;
   snprintf(mask_str, sizeof(mask_str), "%s", char_ptr + i);
   mask = atoi(mask_str);
   return mask;
 }
 
-void GetIpAddressFromIpv4Format(unsigned char *ipv4, unsigned char *now)
+void GetIpAddressFromIpv4Format(char *ipv4, char *now)
 {
-  unsigned char *char_ptr = ipv4;
+  char *char_ptr = ipv4;
   int i = 0;
   while (char_ptr[i] != '/') {
     i++;
@@ -96,16 +96,16 @@ void GetIpAddressFromIpv4Format(unsigned char *ipv4, unsigned char *now)
       return;
     }
   }
-  memcpy(now, ipv4, sizeof(unsigned char) * i);
+  memcpy(now, ipv4, sizeof(char) * i);
   now[i] = '\0';
   return;
 }
 
 int ArgvToInputArguments(char *argv[], InputArguments *input)
 {
-  unsigned char *src = argv[0];
-  unsigned char *dest = argv[1];
-  unsigned char *port = argv[2];
+  char *src = argv[0];
+  char *dest = argv[1];
+  char *port = argv[2];
   GetIpAddressFromIpv4Format(src, input->src);
   GetIpAddressFromIpv4Format(dest, input->dest);
   input->src_mask = GetMaskFromIpv4Format(src);

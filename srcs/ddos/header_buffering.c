@@ -36,7 +36,6 @@ void HeaderBufferingPrintUsage(void)
 }
 
 void *GenerateHeaderBuffering(void *data) {
-    int thread_id = *((int*) data);
     // make tcp connection
     int src_port, seq, ack;
     int head_buffering_cnt = 0;
@@ -157,7 +156,7 @@ void HeaderBufferingMain(char *argv[])
         pthread_join(threads[i], NULL);
         printf("threads %d joined\n", i);
     }
-    printf("Header Buffering attack finished\nTotal %lu packets sent.\n",
+    printf("Header Buffering attack finished\nTotal %u packets sent.\n",
             g_headbuf_num_total);
 
     pthread_mutex_destroy(&g_headbuf_mutex);

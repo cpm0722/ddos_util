@@ -2,10 +2,12 @@
 
 #define INCLUDES_HEADER_H_
 
-/// maximum value of unsigned integer
+// maximum value of unsigned integer
 #define __UINT_MAXIMUM__ (1ul << (31)) - 1
-/// ipv4 string's length
+// ipv4 string's length
 #define IPV4_STRLEN 20
+
+#define BUFFER_SIZE 8192
 
 #include <stdio.h>
 #include <stdint.h>
@@ -59,9 +61,9 @@ typedef enum
 typedef struct
 {
   /** source ipv4 string, format: XXX.XXX.XXX.XXX */
-  unsigned char src[IPV4_STRLEN];
+  char src[IPV4_STRLEN];
   /** destination ipv4 string, format: XXX.XXX.XXX.XXX */
-  unsigned char dest[IPV4_STRLEN];
+  char dest[IPV4_STRLEN];
   /** source ipv4 mask, range: 0~32, default: 32 */
   uint32_t src_mask;
   /** destination ipv4 mask, range: 0~32, default: 32 */
@@ -79,11 +81,11 @@ typedef struct
 typedef struct
 {
   /** now source ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
-  unsigned char src[IPV4_STRLEN];
+  char src[IPV4_STRLEN];
   /** now destination ipv4 string in subnet masking, format: XXX.XXX.XXX.XXX */
-  unsigned char dest[IPV4_STRLEN];
+  char dest[IPV4_STRLEN];
   /** now destination port in subnet masking, range: 0~65535 */
-  uint32_t port;
+  uint16_t port;
 } MaskingArguments;
 
 #endif  // INCLUDES_HEADER_H_

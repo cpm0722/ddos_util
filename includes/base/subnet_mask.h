@@ -17,7 +17,7 @@
  * @return    uint32_t
  * @retval    ipv4 32bit value
  */
-uint32_t GetAddressIntegerValue(unsigned char *str);
+uint32_t GetAddressIntegerValue(char *str);
 
 /*!
  * @brief
@@ -27,7 +27,7 @@ uint32_t GetAddressIntegerValue(unsigned char *str);
  * @param[out]  str    ipv4 string(XXX.XXX.XXX.XXX)
  * @return    void
  */
-void GetAddressStr(uint32_t val, unsigned char str[IPV4_STRLEN]);
+void GetAddressStr(uint32_t val, char str[IPV4_STRLEN]);
 
 /*!
  * @brief
@@ -41,7 +41,7 @@ void GetAddressStr(uint32_t val, unsigned char str[IPV4_STRLEN]);
  * @retval    1: there is no next ipv4 address in subnet masking
  * @reval    0: else
  */
-int MaskingNextIpAddress(unsigned char *ipv4, unsigned char now[IPV4_STRLEN], uint32_t mask);
+int MaskingNextIpAddress(char *ipv4, char now[IPV4_STRLEN], uint32_t mask);
 
 /*!
  * @brief
@@ -51,7 +51,7 @@ int MaskingNextIpAddress(unsigned char *ipv4, unsigned char now[IPV4_STRLEN], ui
  * @return    uint32_t
  * @retval    subnet masking value
  */
-uint32_t GetMaskFromIpv4Format(unsigned char *ipv4);
+uint32_t GetMaskFromIpv4Format(char *ipv4);
 
 /*!
  * @brief
@@ -61,7 +61,7 @@ uint32_t GetMaskFromIpv4Format(unsigned char *ipv4);
  * @param[out]  now    now ipv4 string(XXX.XXX.XXX.XXX)
  * @return    void
  */
-void GetIpAddressFromIpv4Format(unsigned char *ipv4, unsigned char *now);
+void GetIpAddressFromIpv4Format(char *ipv4, char *now);
 
 /*!
  * @brief

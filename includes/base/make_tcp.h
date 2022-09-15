@@ -20,95 +20,95 @@ struct PseudoTcphdr {
 #endif  // TCP_PSEUDO_HEADER
 
 /**
-  @fn struct tcphdr PrepareEmptyTcphdr(void)
+  @fn void PrepareEmptyTcphdr(void)
   @brief function: get empty tcphdr
   @date 2021/04/03
-  @param void
-  @return struct tchpdr
+  @param out: struct tcphdr *tcp_h 
+  @return void
 */
-struct tcphdr PrepareEmptyTcphdr(void);
+void PrepareEmptyTcphdr(struct tcphdr *tcp_h);
 
 /**
-  @fn struct tcphdr TcphdrSetSrcPort(struct tcphdr tcph, uint16_t src_port)
+  @fn void TcphdrSetSrcPort(struct tcphdr* tcph, uint16_t src_port)
   @brief function: set tcphdr's src port
   @date 2021/04/03
-  @param struct tcphdr tcph, uint16_t src_port
-  @return struct tcphdr
+  @param out: struct tcphdr tcph, uint16_t src_port
+  @return void 
 */
-struct tcphdr TcphdrSetSrcPort(struct tcphdr tcph, uint16_t src_port);
+void TcphdrSetSrcPort(struct tcphdr* tcph, uint16_t src_port);
 
 /**
-  @fn struct tcphdr TcphdrSetDestPort(struct tcphdr tcph, uint16_t src_port)
+  @fn void TcphdrSetDestPort(struct tcphdr *tcph, uint16_t src_port)
   @brief function: set tcphdr's src port
   @date 2021/04/03
-  @param struct tcphdr tcph, uint16_t src_port
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph, uint16_t src_port
+  @return void
 */
-struct tcphdr TcphdrSetDestPort(struct tcphdr tcph, uint16_t dest_port);
+void TcphdrSetDestPort(struct tcphdr *tcph, uint16_t dest_port);
 
 /**
-  @fn struct tcphdr TcphdrSetSeq(struct tcphdr tcph, uint16_t dest_port)
+  @fn void TcphdrSetSeq(struct tcphdr *tcph, uint16_t dest_port)
   @brief function: set tcphdr's dest port
   @date 2021/04/03
-  @param struct tcphdr tcph, uint16_t dest_port
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph, uint16_t dest_port
+  @return void 
 */
-struct tcphdr TcphdrSetSeq(struct tcphdr tcph, uint32_t seq);
+void TcphdrSetSeq(struct tcphdr *tcph, uint32_t seq);
 
 /**
-  @fn struct tcphdr TcphdrSetAckSeq(struct tcphdr tcph, uint32_t ack_seq)
+  @fn void TcphdrSetAckSeq(struct tcphdr *tcph, uint32_t ack_seq)
   @brief function: set tcphdr's ack sequence
   @date 2021/04/03
-  @param struct tcphdr tcph, uint32_t ack sequence
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph, uint32_t ack sequence
+  @return void
 */
-struct tcphdr TcphdrSetAckSeq(struct tcphdr tcph, uint32_t ack_seq);
+void TcphdrSetAckSeq(struct tcphdr *tcph, uint32_t ack_seq);
 
 /**
-  @fn struct tcphdr TcphdrSetSynFlag(struct tcphdr tcph)
+  @fn void TcphdrSetSynFlag(struct tcphdr *tcph)
   @brief function: set tcphdr's syn flag as 1
   @date 2021/04/03
-  @param struct tcphdr tcph
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph
+  @return void
 */
-struct tcphdr TcphdrSetSynFlag(struct tcphdr tcph);
+void TcphdrSetSynFlag(struct tcphdr *tcph);
 
 /**
-  @fn struct tcphdr TcphdrSetAckFlag(struct tcphdr tcph, uint16_t src_port)
+  @fn void TcphdrSetAckFlag(struct tcphdr *tcph, uint16_t src_port)
   @brief function: set tcphdr's ack flag as 1
   @date 2021/04/03
-  @param struct tcphdr tcph
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph, uint16_t src_port
+  @return void 
 */
-struct tcphdr TcphdrSetAckFlag(struct tcphdr tcph);
+void TcphdrSetAckFlag(struct tcphdr *tcph);
 
 /**
-  @fn struct tcphdr TcphdrSetPshFlag(struct tcphdr tcph)
+  @fn void TcphdrSetPshFlag(struct tcphdr *tcph)
   @brief function: set tcphdr's psh flag as 1
   @date 2021/04/03
-  @param struct tcphdr tcph
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph
+  @return void 
 */
-struct tcphdr TcphdrSetPshFlag(struct tcphdr tcph);
+void TcphdrSetPshFlag(struct tcphdr *tcph);
 
 /**
-  @fn struct tcphdr TcphdrSetWindowSize(struct tcphdr tcph, uint16_t window_size)
+  @fn void TcphdrSetWindowSize(struct tcphdr *tcph, uint16_t window_size)
   @brief function: set tcphdr's window size
   @date 2021/04/03
-  @param struct tcphdr tcph, uint16_t window_size
-  @return struct tcphdr
+  @param out: struct tcphdr *tcph, uint16_t window_size
+  @return void 
 */
-struct tcphdr TcphdrSetWindowSize(struct tcphdr tcph, uint16_t window_size);
+void TcphdrSetWindowSize(struct tcphdr *tcph, uint16_t window_size);
 
 /**
-  @fn struct tcphdr TcphdrGetChecksum(struct iphdr ipv4h, struct tcphdr tcph, void *data, int datasize)
+  @fn void TcphdrGetChecksum(struct iphdr *ipv4h, struct tcphdr *tcph, void *data, int datasize)
   @brief function: tcphdr checksum value calculate with iphdr, data
   @date 2021/04/03
-  @param struct iphdr ipv4h, struct tcphdr tcph, void *data, int datasize
-  @return struct tcphdr
+  @param struct iphdr *ipv4h, out: struct tcphdr *tcph, void *data, int datasize
+  @return void
 */
-struct tcphdr TcphdrGetChecksum(struct iphdr ipv4h,
-                               struct tcphdr tcph,
+void TcphdrGetChecksum(struct iphdr *ipv4h,
+                               struct tcphdr *tcph,
                                void *data,
                                int datasize);
 

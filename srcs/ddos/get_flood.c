@@ -45,7 +45,6 @@ void GetFloodPrintUsage(void)
 void *GenerateGetFlood(void *data)
 {
     srand(time(NULL));
-    int thread_id = *((int*) data);
     int sock = MakeRawSocket(IPPROTO_TCP);
 
     char get_data[g_packet_size];
@@ -155,7 +154,7 @@ void GetFloodMain(char *argv[])
         printf("threads %d joined\n", i);
     }
     pthread_mutex_destroy(&g_get_mutex);
-    printf("GET Flooding finished\nTotal %lu packets sent.\n",
+    printf("GET Flooding finished\nTotal %u packets sent.\n",
             g_get_num_total);
     pthread_exit(NULL);
     return;

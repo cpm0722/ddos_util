@@ -39,7 +39,6 @@ void HashDosPrintUsage(void)
 
 void *GenerateHashDos(void *data)
 {
-    int thread_id = *((int *)data);
     int sock = MakeRawSocket(IPPROTO_TCP);
 
     int hash_data_size = -1;
@@ -188,7 +187,7 @@ void HashDosMain(char *argv[])
         printf("thread %d joined\n", i);
     }
     pthread_mutex_destroy(&g_hash_dos_mutex);
-    printf("Hash Dos Attack Finished\nTotal %ld packets sent.\n",
+    printf("Hash Dos Attack Finished\nTotal %u packets sent.\n",
             g_hash_dos_num_total);
     pthread_exit(NULL);
     return;
